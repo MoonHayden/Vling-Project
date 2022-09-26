@@ -7,7 +7,7 @@ const LabelTitle = () => {
       <div>Email</div>
       <SubWrap>
         <div>Progress</div>
-        <div>Status</div>
+        <div>Value</div>
       </SubWrap>
     </Wrap>
   );

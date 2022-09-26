@@ -1,18 +1,38 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
+import CheckBox from './CheckBox';
 
-const LabelerInfo = ({ labeler, value, _id }) => {
+const LabelerInfo = ({
+  labeler,
+  value,
+  _id,
+  clickedDeleteBtn,
+  selectedLabeler,
+  setSelectedLabeler,
+}) => {
   const router = useRouter();
 
-  function routerHandler() {
-    const path = `/labeler/${_id}`;
-    router.push(path);
+  function eventHandler() {
+    if (clickedDeleteBtn) {
+      setSelectedLabeler({ ...selectedLabeler, [_id]: !selectedLabeler[_id] });
+    } else {
+      const path = `/labeler/${_id}`;
+      router.push(path);
+    }
   }
 
   return (
-    <Wrap onClick={routerHandler}>
-      <Email>{labeler}</Email>
+    <Wrap onClick={eventHandler}>
+      <SubWrap>
+        <CheckBox
+          _id={_id}
+          clickedDeleteBtn={clickedDeleteBtn}
+          selectedLabeler={selectedLabeler}
+          setSelectedLabeler={setSelectedLabeler}
+        />
+        <Email>{labeler}</Email>
+      </SubWrap>
       <InfoWrap>
         <div>3</div>
         <div>{value}</div>
@@ -31,6 +51,7 @@ const Wrap = styled.div`
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid black;
+  padding: 10px 40px 10px 6px;
 
   cursor: pointer;
 `;
@@ -41,4 +62,8 @@ const InfoWrap = styled.div`
   width: 30%;
   display: flex;
   justify-content: space-between;
+`;
+
+const SubWrap = styled.div`
+  display: flex;
 `;
