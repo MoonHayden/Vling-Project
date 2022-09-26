@@ -5,10 +5,7 @@ export default function Layout({ children }) {
   return (
     <>
       <MainWrap>
-        <NavBar />
-        <SubWrap>
-          <InnerWrap></InnerWrap>
-        </SubWrap>
+        <SubWrap></SubWrap>
       </MainWrap>
     </>
   );
@@ -19,21 +16,16 @@ const MainWrap = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   background-color: #ede7f6;
 `;
 
 const SubWrap = styled.div`
   width: 60%;
-  height: 50rem;
+  height: 75%;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #bbb5c3;
-`;
-
-const InnerWrap = styled.div`
-  width: 90%;
-  height: 90%;
-  padding: 1rem;
 `;
