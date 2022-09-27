@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import LabelerList from './_components/LabelerList';
-import client from '../../components/apollo-client';
 import LabelTitle from './_components/LabelTitle';
 import { gql } from '@apollo/client';
 import { LABELER_LIST } from '../../data/LABELER_LIST';
 import Search from './_components/Search';
 import { useState } from 'react';
 import DeleteLabeler from './_components/DeleteLabeler';
+import client from '../../components/apollo-client';
 
 function labelersPage(props) {
   const [selectedLabeler, setSelectedLabeler] = useState({});
@@ -17,13 +17,14 @@ function labelersPage(props) {
         <Search />
         <DeleteLabeler
           selectedLabeler={selectedLabeler}
+          setSelectedLabeler={setSelectedLabeler}
           clickedDeleteBtn={clickedDeleteBtn}
           setClickedDeleteBtn={setClickedDeleteBtn}
         />
       </Menus>
       <LabelTitle>이메일</LabelTitle>
       <LabelerList
-        labeling={props.data.labeling}
+        labeling={props.labelersData.labelings}
         clickedDeleteBtn={clickedDeleteBtn}
         selectedLabeler={selectedLabeler}
         setSelectedLabeler={setSelectedLabeler}
@@ -33,27 +34,29 @@ function labelersPage(props) {
 }
 export default labelersPage;
 
-///////// graphQL ///////////
+//////////////////////// graphQL /////////////////////////
 export async function getServerSideProps() {
+  //테스트용
+  // return {
+  //   props: {
+  //     data: LABELER_LIST,
+  //   },
+  // };
+
+  const { data } = await client.query({
+    query: LabelerGET,
+  });
+
   return {
     props: {
-      data: LABELER_LIST,
+      labelersData: data,
     },
   };
-  //   const { data } = await client.query({
-  //     query: GET,
-  //   });
-
-  //   return {
-  //     props: {
-  //       data: data,
-  //     },
-  //   };
 }
 
-const GET = gql`
+const LabelerGET = gql`
   query {
-    labeling {
+    labelings {
       _id
       labeler
       value
@@ -61,10 +64,7 @@ const GET = gql`
   }
 `;
 
-///// 스타일컴포넌트 //////
-const Title = styled.div`
-  width: 100%;
-`;
+//////////////////////// 스타일컴포넌트 /////////////////////////
 
 const Wrap = styled.div`
   width: 100%;

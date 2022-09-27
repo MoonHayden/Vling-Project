@@ -3,32 +3,35 @@ import styled from 'styled-components';
 import TaskList from './_components/TaskList';
 import { useState } from 'react';
 import { gql } from '@apollo/client';
-import client from '../../components/apollo-client';
 import OngoingTasks from './_components/OngoingTasks';
+import sehanClient from '../../components/apollo-client-sehan';
+import CompleteTasks from './_components/CompleteTasks';
 
-function labelerDetail() {
+function labelerDetail(props) {
   const router = useRouter();
   const labelerId = router.query.labelerId;
-
   const [selectedTask, setSelectedTask] = useState('');
 
   return (
     <Wrap>
-      <InfoContainer>
-        <Email>ID: {labelerId}</Email>
-        <OngoingTasks />
-      </InfoContainer>
-      <TaskContainer>
+      <TitleWrap>
+        <Email>Email: {labelerId}</Email>
         <DeleteBtn>라벨러 삭제</DeleteBtn>
+      </TitleWrap>
+      <TaskContainer>
+        <SubWrap>
+          <OngoingTasks />
+          <CompleteTasks />
+        </SubWrap>
         <TaskListBox>
           <ListBoxTitle>
             <BoldText>테스크 리스트</BoldText>
             <SelectedText>{selectedTask}</SelectedText>
-            <button>추가</button>
+            <button>할당</button>
           </ListBoxTitle>
           <TotalTasks>
             <TaskList
-              // taskData={props.data.tasks}
+              taskData={props.data.tasks}
               selectedTask={selectedTask}
               setSelectedTask={setSelectedTask}
             />
@@ -41,27 +44,27 @@ function labelerDetail() {
 
 export default labelerDetail;
 
-// export async function getServerSideProps() {
-//   const { data } = await client.query({
-//     query: GET,
-//   });
+export async function getServerSideProps() {
+  const { data } = await sehanClient.query({
+    query: GET,
+  });
 
-//   return {
-//     props: {
-//       data: data,
-//     },
-//   };
-// }
+  return {
+    props: {
+      data: data,
+    },
+  };
+}
 
-// ///////// graphQL ///////////
-// const GET = gql`
-//   query {
-//     tasks {
-//       name
-//       id
-//     }
-//   }
-// `;
+///////// graphQL ///////////
+const GET = gql`
+  query {
+    tasks {
+      name
+      id
+    }
+  }
+`;
 
 ///// 스타일컴포넌트 //////
 const BoldText = styled.div`
@@ -73,12 +76,12 @@ const Wrap = styled.div`
   width: 90%;
   height: 90%;
   padding: 1rem;
-  display: flex;
   position: relative;
 `;
 
-const InfoContainer = styled.div`
-  width: 50%;
+const TitleWrap = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Email = styled.div`
@@ -88,14 +91,17 @@ const Email = styled.div`
 `;
 
 const TaskContainer = styled.div`
-  width: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const TaskListBox = styled.div`
-  margin-top: 5rem;
+  width: 45%;
 `;
 
 const TotalTasks = styled.ul`
+  margin-top: 1rem;
   padding: 1rem;
   height: 20rem;
   background-color: white;
@@ -105,7 +111,7 @@ const TotalTasks = styled.ul`
 const ListBoxTitle = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  align-items: center;
 `;
 
 const DeleteBtn = styled.button`
@@ -116,4 +122,10 @@ const DeleteBtn = styled.button`
 const SelectedText = styled.div`
   color: #08088a;
   font-weight: bold;
+`;
+
+const SubWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;

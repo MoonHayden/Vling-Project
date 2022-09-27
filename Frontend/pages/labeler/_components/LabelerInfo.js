@@ -15,9 +15,12 @@ const LabelerInfo = ({
 
   function eventHandler() {
     if (clickedDeleteBtn) {
-      setSelectedLabeler({ ...selectedLabeler, [_id]: !selectedLabeler[_id] });
+      setSelectedLabeler({
+        ...selectedLabeler,
+        [labeler]: !selectedLabeler[labeler],
+      });
     } else {
-      const path = `/labeler/${_id}`;
+      const path = `/labeler/${labeler}`;
       router.push(path);
     }
   }
@@ -26,7 +29,7 @@ const LabelerInfo = ({
     <Wrap onClick={eventHandler}>
       <SubWrap>
         <CheckBox
-          _id={_id}
+          labeler={labeler}
           clickedDeleteBtn={clickedDeleteBtn}
           selectedLabeler={selectedLabeler}
           setSelectedLabeler={setSelectedLabeler}

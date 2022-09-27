@@ -2,14 +2,12 @@ import React from 'react';
 import TaskInfo from './TaskInfo';
 
 const TaskList = ({ taskData, selectedTask, setSelectedTask }) => {
-  console.log(taskData);
   return (
     <>
-      {tasks.map(task => {
+      {taskData.map(task => {
         return (
           <TaskInfo
             key={task.id}
-            // taskData={taskData}
             name={task.name}
             selectedTask={selectedTask}
             setSelectedTask={setSelectedTask}

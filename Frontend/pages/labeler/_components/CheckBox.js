@@ -4,10 +4,8 @@ import blankBox from '../../../public/images/blankBox.png';
 import Image from 'next/image';
 import styled from 'styled-components';
 
-const CheckBox = ({ _id, clickedDeleteBtn, selectedLabeler }) => {
-  console.log(selectedLabeler);
-  console.log(selectedLabeler[_id]);
-  const isCheck = selectedLabeler[_id] ? checkBox : blankBox;
+const CheckBox = ({ labeler, clickedDeleteBtn, selectedLabeler }) => {
+  const isCheck = selectedLabeler[labeler] ? checkBox : blankBox;
 
   return (
     <Wrap clickedDeleteBtn={clickedDeleteBtn}>
