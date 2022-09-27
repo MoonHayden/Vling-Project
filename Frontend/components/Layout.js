@@ -17,6 +17,7 @@ const MainWrap = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  justify-content: center;
   background-color: #ede7f6;
 `;
 
