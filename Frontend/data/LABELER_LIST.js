@@ -1,5 +1,5 @@
 export const LABELER_LIST = {
-  labeling: [
+  labelings: [
     {
       _id: 1,
       labeler: 'fsdaf@fasd.com',

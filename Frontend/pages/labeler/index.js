@@ -11,6 +11,8 @@ import client from '../../components/apollo-client';
 function labelersPage(props) {
   const [selectedLabeler, setSelectedLabeler] = useState({});
   const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
+  const filteredData =
+    props.labelersData.labeling || props.labelersData.labelings;
   return (
     <Wrap>
       <Menus>
@@ -24,7 +26,7 @@ function labelersPage(props) {
       </Menus>
       <LabelTitle>이메일</LabelTitle>
       <LabelerList
-        labeling={props.labelersData.labelings}
+        labeling={filteredData}
         clickedDeleteBtn={clickedDeleteBtn}
         selectedLabeler={selectedLabeler}
         setSelectedLabeler={setSelectedLabeler}
@@ -35,13 +37,19 @@ function labelersPage(props) {
 export default labelersPage;
 
 //////////////////////// graphQL /////////////////////////
-export async function getServerSideProps() {
-  //테스트용
-  // return {
-  //   props: {
-  //     data: LABELER_LIST,
-  //   },
-  // };
+export async function getServerSideProps(context) {
+  const { query } = context;
+  const { search } = context;
+
+  let a = 'ff';
+
+  if (query.page !== undefined) {
+    a = LabelersGET;
+  } else if (query.search !== undefined) {
+    a = LabelersGET;
+  } else {
+    a = LabelersGET;
+  }
 
   const { data } = await client.query({
     query: LabelerGET,
@@ -52,9 +60,19 @@ export async function getServerSideProps() {
       labelersData: data,
     },
   };
+
+  const LabelerGET = gql`
+    query {
+      labeling(labeler: "ethanzzang@email.com") {
+        _id
+        labeler
+        value
+      }
+    }
+  `;
 }
 
-const LabelerGET = gql`
+const LabelersGET = gql`
   query {
     labelings {
       _id
@@ -63,6 +81,13 @@ const LabelerGET = gql`
     }
   }
 `;
+
+// // 테스트용
+// return {
+//   props: {
+//     labelersData: LABELER_LIST,
+//   },
+// };
 
 //////////////////////// 스타일컴포넌트 /////////////////////////
 
