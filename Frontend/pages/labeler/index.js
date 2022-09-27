@@ -41,6 +41,16 @@ export async function getServerSideProps(context) {
   const { query } = context;
   const { search } = context;
 
+  const LabelerGET = gql`
+    query {
+      labeling(labeler: search) {
+        _id
+        labeler
+        value
+      }
+    }
+  `;
+
   let a = 'ff';
 
   if (query.page !== undefined) {
@@ -60,16 +70,6 @@ export async function getServerSideProps(context) {
       labelersData: data,
     },
   };
-
-  const LabelerGET = gql`
-    query {
-      labeling(labeler: "ethanzzang@email.com") {
-        _id
-        labeler
-        value
-      }
-    }
-  `;
 }
 
 const LabelersGET = gql`
