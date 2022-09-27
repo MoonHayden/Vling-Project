@@ -20,8 +20,9 @@ const LabelerInfo = ({
         [labeler]: !selectedLabeler[labeler],
       });
     } else {
-      const path = `/labeler/${labeler}`;
-      router.push(path);
+      const url = `/labeler/detail/${labeler}`;
+      const as = `/labeler/detail`;
+      router.push(url);
     }
   }
 
