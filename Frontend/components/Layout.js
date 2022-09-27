@@ -1,11 +1,10 @@
 import styled from 'styled-components';
-import NavBar from './NavBar';
 
 export default function Layout({ children }) {
   return (
     <>
       <MainWrap>
-        <SubWrap></SubWrap>
+        <SubWrap>{children}</SubWrap>
       </MainWrap>
     </>
   );
