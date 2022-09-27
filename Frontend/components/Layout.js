@@ -15,6 +15,7 @@ const MainWrap = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   justify-content: center;
   background-color: #ede7f6;
