@@ -1,9 +1,11 @@
 import styled from 'styled-components';
+import Nav from './Nav';
 
 export default function Layout({ children }) {
   return (
     <>
       <MainWrap>
+        <Nav />
         <SubWrap>{children}</SubWrap>
       </MainWrap>
     </>

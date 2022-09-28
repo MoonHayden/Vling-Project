@@ -9,7 +9,7 @@ import client from '../../components/apollo-client';
 
 const LabelerGET = gql`
   query ($labeler: String) {
-    labeling(labeler: $labeler) {
+    searchLabelers(labeler: $labeler) {
       _id
       labeler
       value
@@ -18,7 +18,7 @@ const LabelerGET = gql`
 `;
 const LabelersGET = gql`
   query {
-    labelings {
+    getAllLabelers {
       _id
       labeler
       value
@@ -27,11 +27,12 @@ const LabelersGET = gql`
 `;
 
 function labelersPage(props) {
+  console.log(props);
   const [selectedLabeler, setSelectedLabeler] = useState({});
   const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
 
   const filteredData =
-    props.labelersData.labeling || props.labelersData.labelings;
+    props.labelersData.searchLabelers || props.labelersData.getAllLabelers;
 
   return (
     <Wrap>
@@ -60,7 +61,7 @@ export async function getServerSideProps(context) {
   const { query } = context;
 
   let queryKind = '';
-  let variables = 'rdfgdf';
+  let variables = '';
 
   if (query.slug === undefined) {
     queryKind = LabelersGET;

@@ -7,7 +7,7 @@ import OngoingTasks from '../_components/OngoingTasks';
 import sehanClient from '../../../components/apollo-client-sehan';
 import CompleteTasks from '../_components/CompleteTasks';
 
-const GET = gql`
+const TASK_LIST_GET = gql`
   query {
     tasks {
       name
@@ -16,10 +16,18 @@ const GET = gql`
   }
 `;
 
+const LABELER_INFO_GET = gql`
+  query ($labeler: String) {
+    labelerDetail(labeler: $labeler) {
+      _id
+      tasks
+    }
+  }
+`;
+
 function labelerDetail(props) {
   const router = useRouter();
   const labelerId = router.query.labelerId;
-  console.log(router);
   const [selectedTask, setSelectedTask] = useState('');
 
   return (
@@ -60,8 +68,9 @@ export async function getServerSideProps() {
       data: { data: { tasks: 'tmp' } },
     },
   };
+
   // const { data } = await sehanClient.query({
-  //   query: GET,
+  //   query: TASK_LIST_GET,
   // });
 
   // return {
