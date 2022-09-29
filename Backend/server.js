@@ -9,15 +9,8 @@ const http = require("http");
 const morgan = require("morgan");
 require("dotenv").config();
 
-const { typeDefs } = require("./labeling/schema");
+const { typeDefs } = require("./labeling/schemas");
 const { resolvers } = require("./labeling/resolvers");
-const { DB } = require("./models/db");
-
-(async function () {
-  // const db = new DB();
-  // const doc = db.connectDB('task');
-  global.coll = new DB();
-})();
 
 async function startApolloServer(typeDefs, resolvers) {
   const app = express();
