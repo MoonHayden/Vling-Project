@@ -1,5 +1,7 @@
 import styled from 'styled-components';
+import Link from 'next/link';
 import { useQuery, useMutation, gql } from '@apollo/client';
+import sehanClient from '../../components/apollo-client-sehan';
 
 const TASK_DETAIL = gql`
   query getTaskDetail($name: String!) {
@@ -16,7 +18,7 @@ const TASK_DETAIL = gql`
 `;
 
 const DELETE_TASK = gql`
-  mutation Mutation($name: String) {
+  mutation deleteTask($name: String) {
     deleteTask(name: $name) {
       id
       name
@@ -28,6 +30,25 @@ const DELETE_TASK = gql`
   }
 `;
 
+/*
+const DELETE_LABELER = gql`
+  mutation deleteLabeler {
+
+  }
+`;
+*/
+
+/*
+const COMPLETE_TASK = gql`
+  mutation completeTask {
+    completeTask {
+      id
+      value
+    }
+  }
+`;
+*/
+
 const LABELER_LIST = gql`
   query getLabelerList {
     labelings {
@@ -38,20 +59,25 @@ const LABELER_LIST = gql`
   }
 `;
 
-export default function TaskDetail({ taskId }) {
+export default function TaskDetail({ taskId, data }) {
   const { data: taskDetail } = useQuery(TASK_DETAIL, {
     variables: { name: '영상목록' + taskId },
   });
 
-  const { data: labelers } = useQuery(LABELER_LIST);
-  console.log(labelers);
+  // const { data: labelers } = sehanClient.query(LABELER_LIST);
 
   const [deleteTask] = useMutation(DELETE_TASK, {
     variables: { name: '영상목록' + taskId },
   });
 
+  /*
+  const [completeTask] = useMutation(COMPLETE_TASK, {
+    variables: { value: true },
+  });
+  */
+
   if (taskDetail === undefined) return;
-  console.log(taskDetail.taskDetail[0].labelers.length);
+  console.log(typeof Math.round(taskDetail.taskDetail[0].rate));
 
   return (
     <>
@@ -64,74 +90,100 @@ export default function TaskDetail({ taskId }) {
               Exp.Date: {taskDetail.taskDetail[0].exp_date}
             </ExpireDate>
           </TaskInfo>
-          <DeleteBtn onClick={deleteTask}>Task 삭제</DeleteBtn>
+          <ButtonsWrap>
+            <Link href="/tasks">
+              <GoBackBtn>뒤로가기</GoBackBtn>
+            </Link>
+            <DeleteBtn onClick={deleteTask}>Task 삭제</DeleteBtn>
+            <CompleteBtn
+              // onClick={completeTask}
+              disabled={
+                Math.round(taskDetail.taskDetail[0].rate) == 100 &&
+                taskDetail.taskDetail[0].status === false
+                  ? false
+                  : true
+              }
+            >
+              Task 완료
+            </CompleteBtn>
+          </ButtonsWrap>
         </DetailTop>
         <LabelersInfoWrap>
-          <CurrentLabelers>
-            <ol>
+          <CurrentLabelersWrap>
+            <CurrentLabelersTitle>
               Current Labelers ({taskDetail.taskDetail[0].labelers.length}):
+            </CurrentLabelersTitle>
+            <CurrentLabelers>
               {taskDetail?.taskDetail?.[0]?.labelers?.map((labeler, index) => (
-                <li key={index}>{labeler}</li>
+                <CurrentListWrap key={index}>
+                  <LabelerListNav>
+                    <LabelerName>{labeler}</LabelerName>
+                    <LabelerName>wonho@email.com</LabelerName>
+                    <AddButton>삭제</AddButton>
+                  </LabelerListNav>
+                </CurrentListWrap>
               ))}
-            </ol>
-          </CurrentLabelers>
-          <LabelerListWrap>
+            </CurrentLabelers>
+          </CurrentLabelersWrap>
+          <ListWrap>
             <LabelerListNav>
               <NavName>Name:</NavName>
               <NavName>Email:</NavName>
               <NavName>Add:</NavName>
             </LabelerListNav>
-            <LabelerWrap>
-              <LabelerName>Wonho</LabelerName>
-              <LabelerName>wonho@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>JoonKi</LabelerName>
-              <LabelerName>joonki@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>Bosung</LabelerName>
-              <LabelerName>bosung@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>Sehan</LabelerName>
-              <LabelerName>sehan@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>Yerin</LabelerName>
-              <LabelerName>yerin@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>Wonho</LabelerName>
-              <LabelerName>wonho@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>JoonKi</LabelerName>
-              <LabelerName>joonki@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>Bosung</LabelerName>
-              <LabelerName>bosung@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>Sehan</LabelerName>
-              <LabelerName>sehan@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-            <LabelerWrap>
-              <LabelerName>Yerin</LabelerName>
-              <LabelerName>yerin@email.com</LabelerName>
-              <AddButton>추가</AddButton>
-            </LabelerWrap>
-          </LabelerListWrap>
+            <LabelerListWrap>
+              <LabelerWrap>
+                <LabelerName>Wonho</LabelerName>
+                <LabelerName>wonho@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>JoonKi</LabelerName>
+                <LabelerName>joonki@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>Bosung</LabelerName>
+                <LabelerName>bosung@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>Sehan</LabelerName>
+                <LabelerName>sehan@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>Yerin</LabelerName>
+                <LabelerName>yerin@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>Wonho</LabelerName>
+                <LabelerName>wonho@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>JoonKi</LabelerName>
+                <LabelerName>joonki@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>Bosung</LabelerName>
+                <LabelerName>bosung@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>Sehan</LabelerName>
+                <LabelerName>sehan@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+              <LabelerWrap>
+                <LabelerName>Yerin</LabelerName>
+                <LabelerName>yerin@email.com</LabelerName>
+                <AddButton>추가</AddButton>
+              </LabelerWrap>
+            </LabelerListWrap>
+          </ListWrap>
         </LabelersInfoWrap>
         <ProgressInfo>
           <RateNumber>{Math.round(taskDetail.taskDetail[0].rate)}%</RateNumber>
@@ -187,9 +239,24 @@ const TaskCategory = styled(ExpireDate)`
   color: #353b48;
 `;
 
-const DeleteBtn = styled.button`
+const ButtonsWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const GoBackBtn = styled.button`
   margin-right: 5px;
   cursor: pointer;
+`;
+
+const DeleteBtn = styled(GoBackBtn)`
+  margin-top: 3px;
+`;
+
+const CompleteBtn = styled.button`
+  margin-right: 5px;
+  margin-top: 3px;
+  cursor: ${props => (props.disabled ? 'null' : 'pointer')};
 `;
 
 const LabelersInfoWrap = styled.div`
@@ -197,19 +264,33 @@ const LabelersInfoWrap = styled.div`
   height: 70%;
   display: grid;
   grid-template-columns: 50% 50%;
-  grid-column-gap: 5px;
+  grid-column-gap: 20px;
 `;
+
+const CurrentLabelersWrap = styled.div``;
 
 const CurrentLabelers = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  height: 70%;
+  overflow-y: scroll;
 `;
 
-const LabelerListWrap = styled.div`
+const CurrentLabelersTitle = styled.h1`
+  margin-bottom: 30px;
+  font-size: 18px;
+  font-weight: bold;
+`;
+
+const CurrentListWrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+`;
+
+const LabelerListWrap = styled(CurrentListWrap)`
+  height: 70%;
   background-color: #dcdde1;
   overflow-y: scroll;
 `;
@@ -223,6 +304,8 @@ const LabelerListNav = styled.div`
   padding: 1rem;
   border-bottom: 1px solid #fff;
 `;
+
+const ListWrap = styled.div``;
 
 const NavName = styled.p`
   font-weight: bold;
@@ -270,6 +353,7 @@ const RateBar = styled.div`
 `;
 
 export function getServerSideProps({ query: { taskId } }) {
+  // const { data } = sehanClient.query({ query: LABELER_LIST });
   return {
     props: { taskId },
   };
