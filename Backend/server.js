@@ -4,19 +4,19 @@ const {
   ApolloServerPluginLandingPageLocalDefault,
 } = require("apollo-server-core");
 
+const express = require("express");
+const http = require("http");
+const morgan = require("morgan");
+require("dotenv").config();
+
 const { typeDefs } = require("./labeling/schema");
 const { resolvers } = require("./labeling/resolvers");
 const { DB } = require("./models/db");
 
-const express = require("express");
-const http = require("http");
-const morgan = require("morgan");
-
-require("dotenv").config();
-
 (async function () {
-  const db = new DB();
-  global.coll = await db.connectDB();
+  // const db = new DB();
+  // const doc = db.connectDB('task');
+  global.coll = new DB();
 })();
 
 async function startApolloServer(typeDefs, resolvers) {

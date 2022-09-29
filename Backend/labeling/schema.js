@@ -1,25 +1,28 @@
 const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
-  type GetAllLabelers {
+  type Labelers {
     _id: ID
     labeler: String
     value: String
   }
 
-  type SearchLabelers {
+  type Labeler {
     _id: ID
     labeler: String
-    value: String
+  }
+
+  type Test {
+    labeler: String
   }
 
   type Query {
-    getAllLabelers: [GetAllLabelers]
-    searchLabelers(labeler: String): [SearchLabelers]
+    getAllLabelers: [Labelers]
+    searchLabelers(labeler: String): [Labelers]
   }
 
   type Mutation {
-    deleteLabelers(labeler: String): String
+    deleteLabelers(labeler: String): [Test]
   }
 `;
 

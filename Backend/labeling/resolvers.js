@@ -1,25 +1,26 @@
-const { Collection } = require("mongo");
+// const { Collection } = require("mongo");
 const MongoDb = require("mongodb");
 const { DB } = require("../models/db");
 
-const GetAllLabelers = async (_, args, context, info) => {
-  const result = await coll.find({}).toArray();
+const Labelers = async (_, args, context, info) => {
+  const check = await coll.connectDB("labeling");
+  const result = await check.find({}).toArray();
   return result;
 };
 
-const SearchLabelers = async (_, args, context, info) => {
+const Labeler = async (_, args, context, info) => {
+  const check = await coll.connectDB("labeling");
   const labeler = args.labeler;
-  const result = await coll.find({ labeler }).toArray();
+  const result = await check.find({ labeler }).toArray();
   return result;
 };
 
-const DeleteLabelers = async (_, { labeler }) => {
+const DeleteLabelers = async (_, labeler) => {
   try {
-    console.log("labeler: ", labeler);
-    const result = await coll.deleteOne({ labeler }).toArray();
-    console.log("pong!");
-    console.log("result: ", result);
-    return result;
+    const check = await coll.connectDB("labeling");
+    const result = await check.deleteMany(labeler);
+    console.log(result);
+    return [labeler];
   } catch (err) {
     `Delete Labelers Error: ${err}`;
   }
@@ -27,8 +28,8 @@ const DeleteLabelers = async (_, { labeler }) => {
 
 const resolvers = {
   Query: {
-    getAllLabelers: GetAllLabelers,
-    searchLabelers: SearchLabelers,
+    getAllLabelers: Labelers,
+    searchLabelers: Labeler,
   },
   Mutation: {
     deleteLabelers: DeleteLabelers,

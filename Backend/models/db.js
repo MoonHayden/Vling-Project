@@ -7,13 +7,13 @@ class DB {
     this.dbName = "bzztest";
   }
 
-  async connectDB() {
+  async connectDB(doc) {
     const client = new MongoClient(this.url);
     await client.connect();
     console.log("✅ DB Connected!");
     const db = client.db(this.dbName);
-    const collection = db.collection("labeling");
-    return collection;
+    const labeling = db.collection(doc);
+    return labeling;
   }
 }
 
