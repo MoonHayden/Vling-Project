@@ -6,7 +6,6 @@ import CheckBox from './CheckBox';
 const LabelerInfo = ({
   labeler,
   value,
-  _id,
   clickedDeleteBtn,
   selectedLabeler,
   setSelectedLabeler,
@@ -21,7 +20,6 @@ const LabelerInfo = ({
       });
     } else {
       const url = `/labeler/detail/${labeler}`;
-      const as = `/labeler/detail`;
       router.push(url);
     }
   }

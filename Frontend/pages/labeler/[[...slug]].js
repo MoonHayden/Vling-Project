@@ -9,20 +9,30 @@ import client from '../../components/apollo-client';
 
 const LabelerGET = gql`
   query ($labeler: String) {
-    searchLabelers(labeler: $labeler) {
+    labeling(labeler: $labeler) {
       _id
       labeler
       value
     }
+    # searchLabelers(labeler: $labeler) {
+    #   _id
+    #   labeler
+    #   value
+    # }
   }
 `;
 const LabelersGET = gql`
   query {
-    getAllLabelers {
+    labelings {
       _id
       labeler
       value
     }
+    # getAllLabelers {
+    #   _id
+    #   labeler
+    #   value
+    # }
   }
 `;
 
@@ -32,7 +42,7 @@ function labelersPage(props) {
   const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
 
   const filteredData =
-    props.labelersData.searchLabelers || props.labelersData.getAllLabelers;
+    props.labelersData.labeling || props.labelersData.labelings;
 
   return (
     <Wrap>
@@ -45,7 +55,7 @@ function labelersPage(props) {
           setClickedDeleteBtn={setClickedDeleteBtn}
         />
       </Menus>
-      <LabelTitle>이메일</LabelTitle>
+      <LabelTitle />
       <LabelerList
         labeling={filteredData}
         clickedDeleteBtn={clickedDeleteBtn}
@@ -87,6 +97,11 @@ const Wrap = styled.div`
   height: 100%;
   padding: 1rem;
   font-size: 25px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
 `;
 
 const Menus = styled.div`

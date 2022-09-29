@@ -21,10 +21,11 @@ const Wrap = styled.div`
   height: 3rem;
   align-items: center;
   justify-content: space-between;
+  padding: 0 3rem 0 2rem;
 `;
 
 const SubWrap = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 30%;
+  width: 37%;
 `;

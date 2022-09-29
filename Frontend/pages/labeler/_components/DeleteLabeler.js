@@ -19,7 +19,6 @@ const DeleteLabeler = ({
   const deleteHandler = () => {
     if (isSelected) {
       setIsModalOpen(true);
-      // alert(filteredLabeler);
     } else {
       setClickedDeleteBtn(!clickedDeleteBtn);
     }

@@ -4,8 +4,8 @@ import styled, { css } from 'styled-components';
 
 const Nav = () => {
   const router = useRouter();
+  const isVisible = router.pathname !== '/' && router.pathname !== '/login';
 
-  const isVisible = router.pathname !== '/';
   const pagePath = router.pathname.split('/')[1];
 
   const pageMove = pageName => {
@@ -31,6 +31,7 @@ const Nav = () => {
 };
 
 export default Nav;
+
 const MenuWrap = styled.div`
   display: flex;
   width: 60%;

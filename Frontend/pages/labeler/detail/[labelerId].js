@@ -6,6 +6,7 @@ import { gql } from '@apollo/client';
 import OngoingTasks from '../_components/OngoingTasks';
 import sehanClient from '../../../components/apollo-client-sehan';
 import CompleteTasks from '../_components/CompleteTasks';
+import DeleteModal from './_components/DeleteModal';
 
 const TASK_LIST_GET = gql`
   query {
@@ -29,34 +30,42 @@ function labelerDetail(props) {
   const router = useRouter();
   const labelerId = router.query.labelerId;
   const [selectedTask, setSelectedTask] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <Wrap>
-      <TitleWrap>
-        <Email>Email: {labelerId}</Email>
-        <DeleteBtn>라벨러 삭제</DeleteBtn>
-      </TitleWrap>
-      <TaskContainer>
-        <SubWrap>
-          <OngoingTasks />
-          <CompleteTasks />
-        </SubWrap>
-        <TaskListBox>
-          <ListBoxTitle>
-            <BoldText>테스크 리스트</BoldText>
-            <SelectedText>{selectedTask}</SelectedText>
-            <button>할당</button>
-          </ListBoxTitle>
-          <TotalTasks>
-            <TaskList
-              taskData={props.data.tasks}
-              selectedTask={selectedTask}
-              setSelectedTask={setSelectedTask}
-            />
-          </TotalTasks>
-        </TaskListBox>
-      </TaskContainer>
-    </Wrap>
+    <>
+      <Wrap>
+        <TitleWrap>
+          <Email>Email: {labelerId}</Email>
+          <DeleteBtn onClick={() => setIsModalOpen(true)}>
+            라벨러 삭제
+          </DeleteBtn>
+        </TitleWrap>
+        <TaskContainer>
+          <SubWrap>
+            <OngoingTasks />
+            <CompleteTasks />
+          </SubWrap>
+          <TaskListBox>
+            <ListBoxTitle>
+              <BoldText>테스크 리스트</BoldText>
+              <SelectedText>{selectedTask}</SelectedText>
+              <button>할당</button>
+            </ListBoxTitle>
+            <TotalTasks>
+              <TaskList
+                taskData={props.data.tasks}
+                selectedTask={selectedTask}
+                setSelectedTask={setSelectedTask}
+              />
+            </TotalTasks>
+          </TaskListBox>
+        </TaskContainer>
+      </Wrap>
+      <ModalWrap isModalOpen={isModalOpen}>
+        <DeleteModal setIsModalOpen={setIsModalOpen} />
+      </ModalWrap>
+    </>
   );
 }
 
@@ -141,4 +150,12 @@ const SubWrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+`;
+
+const ModalWrap = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: ${({ isModalOpen }) => (isModalOpen ? 'block' : 'none')};
 `;
