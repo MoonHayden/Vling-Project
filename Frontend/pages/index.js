@@ -1,6 +1,12 @@
-import Head from 'next/head';
-import Image from 'next/image';
+import styled from 'styled-components';
 
 export default function Home() {
-  return <h1>s</h1>;
+  return (
+    <Wrap>
+      <button>라벨러 관리</button>
+      <button>테스크 관리</button>
+    </Wrap>
+  );
 }
+
+const Wrap = styled.div``;

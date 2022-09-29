@@ -1,12 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { useRouter } from 'next/router';
 const Search = () => {
+  const router = useRouter();
+
   function SearchLabeler(event) {
     event.preventDefault();
     const value = event.target['name'].value;
-    alert(value + '를 검색했습니다.');
+    const url = `/labeler/search/${value}`;
+    router.push(url);
   }
+
   return (
     <Wrap onSubmit={SearchLabeler}>
       <Input type="text" name="name" />

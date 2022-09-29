@@ -4,7 +4,7 @@ import TaskInfo from './TaskInfo';
 const TaskList = ({ taskData, selectedTask, setSelectedTask }) => {
   return (
     <>
-      {taskData.map(task => {
+      {tasks.map(task => {
         return (
           <TaskInfo
             key={task.id}

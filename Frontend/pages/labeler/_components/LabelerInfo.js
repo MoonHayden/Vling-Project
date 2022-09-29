@@ -6,7 +6,6 @@ import CheckBox from './CheckBox';
 const LabelerInfo = ({
   labeler,
   value,
-  _id,
   clickedDeleteBtn,
   selectedLabeler,
   setSelectedLabeler,
@@ -20,8 +19,8 @@ const LabelerInfo = ({
         [labeler]: !selectedLabeler[labeler],
       });
     } else {
-      const path = `/labeler/${labeler}`;
-      router.push(path);
+      const url = `/labeler/detail/${labeler}`;
+      router.push(url);
     }
   }
 

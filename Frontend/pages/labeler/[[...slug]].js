@@ -2,17 +2,48 @@ import styled from 'styled-components';
 import LabelerList from './_components/LabelerList';
 import LabelTitle from './_components/LabelTitle';
 import { gql } from '@apollo/client';
-import { LABELER_LIST } from '../../data/LABELER_LIST';
 import Search from './_components/Search';
 import { useState } from 'react';
 import DeleteLabeler from './_components/DeleteLabeler';
 import client from '../../components/apollo-client';
 
+const LabelerGET = gql`
+  query ($labeler: String) {
+    labeling(labeler: $labeler) {
+      _id
+      labeler
+      value
+    }
+    # searchLabelers(labeler: $labeler) {
+    #   _id
+    #   labeler
+    #   value
+    # }
+  }
+`;
+const LabelersGET = gql`
+  query {
+    labelings {
+      _id
+      labeler
+      value
+    }
+    # getAllLabelers {
+    #   _id
+    #   labeler
+    #   value
+    # }
+  }
+`;
+
 function labelersPage(props) {
+  console.log(props);
   const [selectedLabeler, setSelectedLabeler] = useState({});
   const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
+
   const filteredData =
     props.labelersData.labeling || props.labelersData.labelings;
+
   return (
     <Wrap>
       <Menus>
@@ -24,7 +55,7 @@ function labelersPage(props) {
           setClickedDeleteBtn={setClickedDeleteBtn}
         />
       </Menus>
-      <LabelTitle>이메일</LabelTitle>
+      <LabelTitle />
       <LabelerList
         labeling={filteredData}
         clickedDeleteBtn={clickedDeleteBtn}
@@ -36,23 +67,22 @@ function labelersPage(props) {
 }
 export default labelersPage;
 
-//////////////////////// graphQL /////////////////////////
 export async function getServerSideProps(context) {
   const { query } = context;
-  const { search } = context;
 
-  let a = 'ff';
+  let queryKind = '';
+  let variables = '';
 
-  if (query.page !== undefined) {
-    a = LabelersGET;
-  } else if (query.search !== undefined) {
-    a = LabelersGET;
-  } else {
-    a = LabelersGET;
+  if (query.slug === undefined) {
+    queryKind = LabelersGET;
+  } else if (query.slug[0] === 'search') {
+    queryKind = LabelerGET;
+    variables = query.slug[1];
   }
 
   const { data } = await client.query({
-    query: LabelerGET,
+    query: queryKind,
+    variables: { labeler: variables },
   });
 
   return {
@@ -60,42 +90,18 @@ export async function getServerSideProps(context) {
       labelersData: data,
     },
   };
-
-  const LabelerGET = gql`
-    query {
-      labeling(labeler: "ethanzzang@email.com") {
-        _id
-        labeler
-        value
-      }
-    }
-  `;
 }
-
-const LabelersGET = gql`
-  query {
-    labelings {
-      _id
-      labeler
-      value
-    }
-  }
-`;
-
-// // 테스트용
-// return {
-//   props: {
-//     labelersData: LABELER_LIST,
-//   },
-// };
-
-//////////////////////// 스타일컴포넌트 /////////////////////////
 
 const Wrap = styled.div`
   width: 100%;
   height: 100%;
   padding: 1rem;
   font-size: 25px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
 `;
 
 const Menus = styled.div`
