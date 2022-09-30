@@ -36,7 +36,7 @@ export default function CategoriesScreen({navigation}) {
       <View>
         <Button
           title={categoryTitle}
-          onPress={() => navigation.navigate([{name: 'MainScreen'}])}
+          onPress={() => navigation.navigate('Categorization')}
           style={styles.item}
         />
         <Progress.Bar

@@ -82,7 +82,7 @@ export default function Login({navigation}) {
     <View style={styles.login}>
       <Image
         style={styles.logo}
-        source={require('/Users/haydenmoon/Desktop/vling/src/asset/images/logo.png')}
+        source={require('/Users/haydenmoon/Desktop/labeling/vling/src/asset/images/logo.png')}
       />
       <View>
         {!user.idToken ? (
