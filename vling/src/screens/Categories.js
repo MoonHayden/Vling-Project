@@ -5,10 +5,9 @@ import {
   StyleSheet,
   View,
   Text,
-  Button,
   FlatList,
   SafeAreaView,
-  StatusBar,
+  TouchableOpacity,
 } from 'react-native';
 
 const TASKS = gql`
@@ -32,29 +31,45 @@ export default function CategoriesScreen({navigation}) {
 
   const renderItem = ({item}) => {
     const categoryTitle = `Category ${item.name}`;
+    const id = item.id;
+
+    console.log(id);
+    // <Screen name="CategorizationScreen" component={CategorizationScreen} />;
     return (
-      <View>
-        <Button
+      <View style={styles.wrap}>
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.5}
+          onPress={() =>
+            navigation.navigate('CategorizationScreen', {id: {id}})
+          }>
+          <Text style={{fontWeight: 'bold', color: '#2323dd'}}>
+            {categoryTitle}
+          </Text>
+        </TouchableOpacity>
+        {/* <Button
           title={categoryTitle}
           onPress={() => navigation.navigate('Categorization')}
-          style={styles.item}
-        />
+          padding={10}
+        /> */}
         <Progress.Bar
           progress={item.rate / 100}
           width={null}
-          height={8}
+          height={10}
+          marginTop={10}
           color={'#FF0044'}
-          padding={(10, 0, 5, 0)}
         />
-
-        <Text style={styles.title}>{item.rate} %</Text>
+        <View style={{alignItems: 'center'}}>
+          <Text style={{fontWeight: 'bold', color: '#2b2525'}}>
+            진행률 {item.rate} %
+          </Text>
+        </View>
       </View>
     );
   };
 
-  console.log(tasks);
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.flat}>
       <FlatList
         data={tasks}
         renderItem={renderItem}
@@ -65,17 +80,25 @@ export default function CategoriesScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-  },
-  item: {
-    flex: 1,
-  },
-  title: {
-    flex: 1,
-    fontSize: 15,
+  button: {
+    display: 'flex',
+    height: 37,
     justifyContent: 'center',
-    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e8e8ce',
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+  wrap: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: '#6250ed',
+    marginTop: 20,
   },
 });
+// marginTop: StatusBar.currentHeight || 0,
+// flat: {
+//   justifyContent: 'center',
+//   alignContent: 'center',
+// },

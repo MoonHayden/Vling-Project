@@ -7,7 +7,7 @@ import Login from './src/screens/Login';
 import MainScreen from './src/screens/MainScreen';
 
 const client = new ApolloClient({
-  uri: 'http://192.168.0.221:4000/bzznbyd',
+  uri: 'http://172.17.36.57:4000/bzznbyd',
   cache: new InMemoryCache(),
 });
 
