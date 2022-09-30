@@ -1,16 +1,42 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
+import { gql, useMutation } from '@apollo/client';
+
+const LABELER_DELETE = gql`
+  mutation ($labeler: String) {
+    deleteLabelers(labeler: $labeler) {
+      labeler
+    }
+  }
+`;
+const LabelersGET = gql`
+  query {
+    getAllLabelers {
+      _id
+      labeler
+      value
+    }
+  }
+`;
 
 const DeleteModal = ({
   filteredLabeler,
   setIsModalOpen,
   setClickedDeleteBtn,
   setSelectedLabeler,
+  GET_ALL_LABELERS,
 }) => {
   const router = useRouter();
+  const [deleteLabelers] = useMutation(LABELER_DELETE, {
+    variables: { labeler: filteredLabeler[0] },
+    refetchQueries: [
+      { query: GET_ALL_LABELERS, variables: {}, awaitRefetchQueries: true },
+    ],
+  });
 
   const deleteHandler = () => {
+    deleteLabelers();
     setIsModalOpen(false);
     setClickedDeleteBtn(false);
     setSelectedLabeler({});
@@ -27,8 +53,8 @@ const DeleteModal = ({
       <Text>삭제할 라벨러</Text>
       <SubWrap>
         <ul>
-          {filteredLabeler.map(labeler => {
-            return <li>{labeler}</li>;
+          {filteredLabeler.map((labeler, idx) => {
+            return <li key={idx}>{labeler}</li>;
           })}
         </ul>
       </SubWrap>

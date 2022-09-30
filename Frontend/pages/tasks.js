@@ -17,7 +17,6 @@ const TASKS = gql`
 
 export default function Tasks() {
   const { data } = useQuery(TASKS);
-  console.log(data);
   return (
     <>
       <InnerWrap data={data}>

@@ -1,24 +1,42 @@
 import styled, { css } from 'styled-components';
 import Image from 'next/image';
 import logo from '../../public/images/vling_logo.png';
-
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 function loginPage() {
+  const route = useRouter();
   const [userId, setUserId] = useState({
     id: '',
     password: '',
   });
-
-  const loginValid = () => {
-    alert(userId);
-  };
 
   const idUpdate = e => {
     setUserId({ ...userId, [e.target.name]: e.target.value });
   };
 
   const isBtnActive = userId['id'].length > 0 && userId['password'].length > 0;
+
+  const loginValid = e => {
+    e.preventDefault();
+    fetch('주소', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: userId.id,
+        password: userId.password,
+      }),
+    })
+      .then(res => res.json())
+      .then(validData => {
+        if (validData.message === 'SUCCESS_LOGIN') {
+          localStorage.setItem('token', validData.token);
+          route.push('/');
+        } else if (validData.message === 'UNABLE_LOGIN') {
+          alert('비밀번호가 틀렸습니다!');
+        }
+      });
+  };
 
   return (
     <Wrap>

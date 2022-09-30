@@ -44,14 +44,12 @@ export default function TaskDetail({ taskId }) {
   });
 
   const { data: labelers } = useQuery(LABELER_LIST);
-  console.log(labelers);
 
   const [deleteTask] = useMutation(DELETE_TASK, {
     variables: { name: '영상목록' + taskId },
   });
 
   if (taskDetail === undefined) return;
-  console.log(taskDetail.taskDetail[0].labelers.length);
 
   return (
     <>

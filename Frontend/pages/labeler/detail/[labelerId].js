@@ -1,12 +1,13 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import TaskList from '../_components/TaskList';
-import { useState } from 'react';
+import TaskList from './_components/TotalTasks';
+import { useEffect, useState } from 'react';
 import { gql } from '@apollo/client';
-import OngoingTasks from '../_components/OngoingTasks';
+import OngoingTasks from './_components/OngoingTasks';
 import sehanClient from '../../../components/apollo-client-sehan';
-import CompleteTasks from '../_components/CompleteTasks';
+import CompleteTasks from './_components/CompleteTasks';
 import DeleteModal from './_components/DeleteModal';
+import client from '../../../components/apollo-client';
 
 const TASK_LIST_GET = gql`
   query {
@@ -17,11 +18,29 @@ const TASK_LIST_GET = gql`
   }
 `;
 
-const LABELER_INFO_GET = gql`
-  query ($labeler: String) {
-    labelerDetail(labeler: $labeler) {
+const ONGOING_TASK_LIST = gql`
+  query Query($labeler: String) {
+    searchLabelers(labeler: $labeler) {
+      task {
+        name
+      }
+    }
+  }
+`;
+
+const TOTAL_TASK_LIST = gql`
+  query Query {
+    getAllTasks {
       _id
-      tasks
+      name
+      attendents
+      kind
+      labelers {
+        labeler
+      }
+      status
+      expiration_date
+      rate
     }
   }
 `;
@@ -29,8 +48,17 @@ const LABELER_INFO_GET = gql`
 function labelerDetail(props) {
   const router = useRouter();
   const labelerId = router.query.labelerId;
-  const [selectedTask, setSelectedTask] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ongoingTasks, setOngoingTasks] = useState();
+  const [totalTasks, setTotalTasks] = useState();
+  const goToTaskDetail = taskName => {
+    router.push(`/task/${taskName}`);
+  };
+
+  useEffect(() => {
+    setOngoingTasks(props.data.searchLabelers[0].task);
+    setTotalTasks(props.total_tasks.getAllTasks);
+  }, []);
 
   return (
     <>
@@ -43,27 +71,31 @@ function labelerDetail(props) {
         </TitleWrap>
         <TaskContainer>
           <SubWrap>
-            <OngoingTasks />
-            <CompleteTasks />
+            <OngoingTasks
+              labelerId={labelerId}
+              goToTaskDetail={goToTaskDetail}
+              ongoingTasks={ongoingTasks}
+              setOngoingTasks={setOngoingTasks}
+            />
+            <CompleteTasks goToTaskDetail={goToTaskDetail} />
           </SubWrap>
           <TaskListBox>
             <ListBoxTitle>
               <BoldText>테스크 리스트</BoldText>
-              <SelectedText>{selectedTask}</SelectedText>
-              <button>할당</button>
             </ListBoxTitle>
             <TotalTasks>
               <TaskList
-                taskData={props.data.tasks}
-                selectedTask={selectedTask}
-                setSelectedTask={setSelectedTask}
+                setOngoingTasks={setOngoingTasks}
+                ongoingTasks={ongoingTasks}
+                // taskData={props.data.tasks}
+                totalTasks={totalTasks}
               />
             </TotalTasks>
           </TaskListBox>
         </TaskContainer>
       </Wrap>
       <ModalWrap isModalOpen={isModalOpen}>
-        <DeleteModal setIsModalOpen={setIsModalOpen} />
+        <DeleteModal labelerId={labelerId} setIsModalOpen={setIsModalOpen} />
       </ModalWrap>
     </>
   );
@@ -71,22 +103,35 @@ function labelerDetail(props) {
 
 export default labelerDetail;
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      data: { data: { tasks: 'tmp' } },
-    },
-  };
+export async function getServerSideProps(context) {
+  // return {
+  //   props: {
+  //     data: { data: { tasks: 'tmp' } },
+  //   },
+  // };
+
+  const { query } = context;
+  const ongoing_tasks = await client.query({
+    query: ONGOING_TASK_LIST,
+    variables: { labeler: query.labelerId },
+    fetchPolicy: 'no-cache',
+  });
+
+  const totalTasks = await client.query({
+    query: TOTAL_TASK_LIST,
+    fetchPolicy: 'no-cache',
+  });
 
   // const { data } = await sehanClient.query({
   //   query: TASK_LIST_GET,
   // });
 
-  // return {
-  //   props: {
-  //     data: 'data',
-  //   },
-  // };
+  return {
+    props: {
+      data: ongoing_tasks.data,
+      total_tasks: totalTasks.data,
+    },
+  };
 }
 
 const BoldText = styled.div`
