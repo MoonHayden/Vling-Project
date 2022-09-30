@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useQuery, gql } from '@apollo/client';
 
 export default function TaskContainer({ task }) {
   const { id, name, numVideos, labeler, status, rate } = task;
@@ -50,8 +49,8 @@ const StatusWrap = styled.div`
 `;
 
 const Status = styled.div`
-  width: 15px;
-  height: 15px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background-color: ${props => (props.status ? '#4cd137' : '#fbc531')};
 `;
