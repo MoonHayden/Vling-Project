@@ -4,19 +4,17 @@ const typeDefs = gql`
   type Labelers {
     _id: ID
     labeler: String
-    task: [Task]
     value: String
   }
 
   type Task {
-    _id: ID
     name: String
     kind: String
     attendents: Int
     labelers: [Labelers]
-    expiration_date: String
     status: String
     rate: String
+    expiration_date: String
   }
 
   type Labeler {
@@ -30,18 +28,33 @@ const typeDefs = gql`
     labeler: String
   }
 
+  input addTaskInput {
+    name: String
+    kind: String
+    labelers: [addLabelerInput]
+    status: Boolean = false
+    rate: Float = 0.00
+    numVideos: Int!
+  }
+
+  input addLabelerInput {
+    labeler: String
+    value: Boolean = false
+  }
+
   type Query {
     getAllLabelers: [Labelers]
     searchLabelers(labeler: String): [Labelers]
     getLabelersTasks(labeler: String): [Labeler]
     getAllTasks: [Task]
+    getTaskDetail(name: String): Task
   }
 
   type Mutation {
     deleteLabelers(labeler: String): [DeletedLabeler]
-    updateTaskLabeler(_id: ID, labeler: String): Task
     addTaskToLabeler(labeler: String): [Labeler]
-    deleteTaskOfLabeler(name: String, labeler: String): Boolean
+    deleteTaskOfLabeler(name: String, labeler: String): [Labeler]
+    addTask(input: addTaskInput!): Task
   }
 `;
 

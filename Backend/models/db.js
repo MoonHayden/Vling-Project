@@ -1,20 +1,21 @@
 const { MongoClient } = require("mongodb");
+const { DB_URL, DB_NAME } = require("../.env");
 
 class DB {
   constructor() {
-    this.url =
-      "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.0";
-    this.dbName = "bzztest";
+    this.url = process.env.DB_URL;
+    this.dbName = process.env.DB_NAME;
   }
 
   async connectDB(doc) {
+    console.log("doc: ", doc);
     const client = new MongoClient(this.url);
     await client.connect();
     console.log("✅ DB Connected!");
     const db = client.db(this.dbName);
-    const labeling = db.collection(doc);
-    return labeling;
+    const collection = db.collection(doc);
+    return collection;
   }
 }
 
-module.exports = { DB };
+module.exports = DB;
