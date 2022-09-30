@@ -64,7 +64,7 @@ export default function TaskDetail({ taskId, data }) {
     variables: { name: '영상목록' + taskId },
   });
 
-  // const { data: labelers } = sehanClient.query(LABELER_LIST);
+  const { data: labelers } = useQuery(LABELER_LIST);
 
   const [deleteTask] = useMutation(DELETE_TASK, {
     variables: { name: '영상목록' + taskId },
@@ -77,7 +77,6 @@ export default function TaskDetail({ taskId, data }) {
   */
 
   if (taskDetail === undefined) return;
-  console.log(typeof Math.round(taskDetail.taskDetail[0].rate));
 
   return (
     <>

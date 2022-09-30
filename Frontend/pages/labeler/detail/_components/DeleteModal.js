@@ -1,13 +1,40 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
+import { useMutation, gql } from '@apollo/client';
+import { GET_ALL_LABELERS } from '../../[[...slug]]';
 
-const DeleteModal = ({ setIsModalOpen }) => {
+const LABELER_DELETE = gql`
+  mutation ($labeler: String) {
+    deleteLabelers(labeler: $labeler) {
+      labeler
+    }
+  }
+`;
+
+const LabelersGET = gql`
+  query {
+    getAllLabelers {
+      _id
+      labeler
+      value
+    }
+  }
+`;
+
+const DeleteModal = ({ setIsModalOpen, labelerId }) => {
   const router = useRouter();
 
+  const [deleteLabelers] = useMutation(LABELER_DELETE, {
+    variables: { labeler: labelerId },
+    refetchQueries: () => [GET_ALL_LABELERS],
+    fetchPolicy: 'no-cache',
+  });
+
   const deleteHandler = () => {
+    deleteLabelers();
     setIsModalOpen(false);
-    router.push('/labeler');
+    router.replace('/labeler');
   };
 
   const modalCancle = () => {

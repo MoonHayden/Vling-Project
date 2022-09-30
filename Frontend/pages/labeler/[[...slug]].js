@@ -9,40 +9,39 @@ import client from '../../components/apollo-client';
 
 const LabelerGET = gql`
   query ($labeler: String) {
-    labeling(labeler: $labeler) {
-      _id
-      labeler
-      value
-    }
-    # searchLabelers(labeler: $labeler) {
+    # labeling(labeler: $labeler) {
     #   _id
     #   labeler
     #   value
     # }
+    searchLabelers(labeler: $labeler) {
+      _id
+      labeler
+      value
+    }
   }
 `;
-const LabelersGET = gql`
+export const GET_ALL_LABELERS = gql`
   query {
-    labelings {
-      _id
-      labeler
-      value
-    }
-    # getAllLabelers {
+    # labelings {
     #   _id
     #   labeler
     #   value
     # }
+    getAllLabelers {
+      _id
+      labeler
+      value
+    }
   }
 `;
 
 function labelersPage(props) {
-  console.log(props);
   const [selectedLabeler, setSelectedLabeler] = useState({});
   const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
 
   const filteredData =
-    props.labelersData.labeling || props.labelersData.labelings;
+    props.labelersData.searchLabelers || props.labelersData.getAllLabelers;
 
   return (
     <Wrap>
@@ -53,6 +52,7 @@ function labelersPage(props) {
           setSelectedLabeler={setSelectedLabeler}
           clickedDeleteBtn={clickedDeleteBtn}
           setClickedDeleteBtn={setClickedDeleteBtn}
+          GET_ALL_LABELERS={GET_ALL_LABELERS}
         />
       </Menus>
       <LabelTitle />
@@ -74,7 +74,7 @@ export async function getServerSideProps(context) {
   let variables = '';
 
   if (query.slug === undefined) {
-    queryKind = LabelersGET;
+    queryKind = GET_ALL_LABELERS;
   } else if (query.slug[0] === 'search') {
     queryKind = LabelerGET;
     variables = query.slug[1];
@@ -83,6 +83,7 @@ export async function getServerSideProps(context) {
   const { data } = await client.query({
     query: queryKind,
     variables: { labeler: variables },
+    fetchPolicy: 'no-cache',
   });
 
   return {

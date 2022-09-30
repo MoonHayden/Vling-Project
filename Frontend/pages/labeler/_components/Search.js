@@ -7,8 +7,11 @@ const Search = () => {
   function SearchLabeler(event) {
     event.preventDefault();
     const value = event.target['name'].value;
-    const url = `/labeler/search/${value}`;
-    router.push(url);
+    if (value === '') {
+      router.push('/labeler');
+    } else {
+      router.push(`/labeler/search/${value}`);
+    }
   }
 
   return (
