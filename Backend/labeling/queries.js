@@ -91,8 +91,8 @@ const GetTaskDetail = async (_, args, context, info) => {
 module.exports = {
   Labelers,
   Labeler,
-  DeleteLabelers,
   Tasks,
+  DeleteLabelers,
   DeleteTaskOfLabeler,
   AddTask,
   GetTaskDetail,

@@ -3,8 +3,8 @@ const { DB_URL, DB_NAME } = require("../.env");
 
 class DB {
   constructor() {
-    this.url = process.env.DB_URL;
-    this.dbName = process.env.DB_NAME;
+    this.url = "mongodb+srv://root:inflearn@cluster0.nlz10iu.mongodb.net/test";
+    this.dbName = "bzztest";
   }
 
   async connectDB(doc) {
