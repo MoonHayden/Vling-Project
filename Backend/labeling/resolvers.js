@@ -1,27 +1,53 @@
+// const { GraphQLScalarType, Kind } = require('graphql');
+
 const {
   Labelers,
-  Labeler,
+  // Labeler,
   Tasks,
   DeleteLabelers,
   DeleteTaskOfLabeler,
   AddTask,
   GetTaskDetail,
+  DeleteTask,
+  UpdateTask,
 } = require("./queries");
 
 const resolvers = {
   Query: {
     getAllLabelers: Labelers,
-    searchLabelers: Labeler,
-    getLabelersTasks: Labeler,
+    searchLabelers: Labelers,
+    getLabelersTasks: Labelers,
+    
     getAllTasks: Tasks,
     getTaskDetail: GetTaskDetail,
   },
+
   Mutation: {
     deleteLabelers: DeleteLabelers,
     deleteTaskOfLabeler: DeleteTaskOfLabeler,
-    addTask: AddTask,
     // addTaskToLabeler: AddTaskToLabeler,
+    
+    addTask: AddTask,
+    deleteTask: DeleteTask,
+    updateTask: UpdateTask,
   },
+
+  // Date: new GraphQLScalarType({
+  //   name: 'Date',
+  //   description: 'Custom date scalar',
+  //   parseValue(value) {
+  //     return value;
+  //   },
+  //   serialize(value) {
+  //     return new Date(Number(value));
+  //   },
+  //   parseLiteral(ast) {
+  //     if (ast.kind === Kind.INT) {
+  //       return new Date(ast.value);
+  //     }
+  //     return null;
+  //   }
+  // })
 };
 
 module.exports = { resolvers };
