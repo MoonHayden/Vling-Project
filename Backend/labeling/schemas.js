@@ -3,7 +3,7 @@ const { gql } = require("apollo-server-express");
 const typeDefs = gql`
   type Labelers {
     _id: ID
-    labeler: String
+    tasks: [Task]
     value: String
   }
 
