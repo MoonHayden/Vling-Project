@@ -10,6 +10,7 @@ const {
   GetTaskDetail,
   DeleteTask,
   UpdateTask,
+  GetTasksByLabeler,
 } = require("./queries");
 
 const resolvers = {
@@ -20,6 +21,7 @@ const resolvers = {
     
     getAllTasks: Tasks,
     getTaskDetail: GetTaskDetail,
+    getTasksByLabeler: GetTasksByLabeler,
   },
 
   Mutation: {

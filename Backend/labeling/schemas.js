@@ -1,7 +1,7 @@
 const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
-  # scalar Date
+  scalar Date
   
   # type Labeler {
   #   labeler: String
@@ -25,7 +25,7 @@ const typeDefs = gql`
     labelers: [Labeler]
     status: Boolean
     rate: Float
-    expiration_date: String
+    expiration_date: Date
   }
 
   input addLabelerInput {
@@ -40,6 +40,7 @@ const typeDefs = gql`
 
     getAllTasks: [Task]
     getTaskDetail(name: String): Task
+    getTasksByLabeler(labeler: String): [Task]
   }
 
   type Mutation {
@@ -54,16 +55,18 @@ const typeDefs = gql`
       status: Boolean = false,
       rate: Float = 0.00,
       numVideos: Int
-      expiration_date: String
+      expiration_date: Date
     ): Task
+
     deleteTask(name: String): Task
+    
     updateTask(
       name: String,
       newName: String,
       kind: String,
       labelers: [addLabelerInput],
       status: Boolean = false,
-      expiration_date: String): Task
+      expiration_date: Date): Task
   }
 `;
 

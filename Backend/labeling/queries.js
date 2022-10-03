@@ -96,6 +96,17 @@ const GetTaskDetail = async (_, args, context, info) => {
   return result;
 };
 
+const GetTasksByLabeler = async (_, args, context, info) => {
+
+  const taskColl = await db.connectDB("tasks");
+
+  const result = await taskColl.find({labelers: {$elemMatch: {labeler: args.labeler}}}).toArray();
+
+  console.log(result);
+  
+  return result;
+};
+
 const DeleteTask = async (_, args, context, info) => {
 
   const taskColl = await db.connectDB("tasks");
@@ -139,4 +150,5 @@ module.exports = {
   GetTaskDetail,
   DeleteTask,
   UpdateTask,
+  GetTasksByLabeler,
 };
