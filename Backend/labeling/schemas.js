@@ -55,7 +55,7 @@ const typeDefs = gql`
   type Query {
     getAllLabelers: [Labelers]
     searchLabelers(labeler: String): [Labelers]
-    getLabelersTasks(labeler: String): [Labeler]
+    getLabelersTasks(labeler: String): [Task]
     getAllTasks: [Task]
     getTaskDetail(name: String): Task
   }
@@ -64,7 +64,7 @@ const typeDefs = gql`
     deleteLabelers(labeler: String): [DeletedLabeler]
     deleteTaskOfLabeler(name: String, labeler: String): [Labeler]
     addTask(input: addTaskInput!): Task
-    addTaskToLabeler(name: String, labeler: String): [Labeler]
+    addTaskToLabeler(name: String, labeler: String): Task
   }
 `;
 

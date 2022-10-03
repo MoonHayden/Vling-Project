@@ -1,6 +1,7 @@
 const {
   Labelers,
   Labeler,
+  GetLabelersTasks,
   Tasks,
   AddTaskToLabeler,
   DeleteLabelers,
@@ -13,7 +14,7 @@ const resolvers = {
   Query: {
     getAllLabelers: Labelers,
     searchLabelers: Labeler,
-    getLabelersTasks: Labeler,
+    getLabelersTasks: GetLabelersTasks,
     getAllTasks: Tasks,
     getTaskDetail: GetTaskDetail,
   },

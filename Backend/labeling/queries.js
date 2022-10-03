@@ -21,6 +21,18 @@ const Labeler = async (_, args, context, info) => {
   return result;
 };
 
+const GetLabelersTasks = async (_, args, context, info) => {
+  const taskColl = await db.connectDB("tasks");
+
+  const result = await taskColl
+    .find({ labelers: { $elemMatch: { labeler: args.labeler } } })
+    .toArray();
+
+  console.log("result: ", result);
+
+  return result;
+};
+
 const Tasks = async () => {
   const taskColl = await db.connectDB("tasks");
 
@@ -30,7 +42,7 @@ const Tasks = async () => {
 };
 
 const AddTaskToLabeler = async (_, args, context, info) => {
-  const labelingColl = await db.connectDB("labeling");
+  const taskColl = await db.connectDB("tasks");
 
   const task = args.name;
   console.log("task: ", task);
@@ -45,8 +57,8 @@ const AddTaskToLabeler = async (_, args, context, info) => {
     name: task,
   };
 
-  const result = await labelingColl.updateOne(labelerValue, {
-    $push: { task: taskValue },
+  const result = await taskColl.updateOne(taskValue, {
+    $push: { labelers: labelerValue },
   });
 
   console.log("result", result);
@@ -67,7 +79,7 @@ const DeleteLabelers = async (_, labeler) => {
 };
 
 const DeleteTaskOfLabeler = async (_, args, context, info) => {
-  const labelingColl = await db.connectDB("labeling");
+  const taskColl = await db.connectDB("tasks");
 
   const task = args.name;
   console.log("task: ", task);
@@ -82,8 +94,8 @@ const DeleteTaskOfLabeler = async (_, args, context, info) => {
     name: task,
   };
 
-  const result = await labelingColl.updateOne(labelerValue, {
-    $pull: { task: taskValue },
+  const result = await taskColl.updateOne(taskValue, {
+    $pull: { labelers: labelerValue },
   });
   console.log("result", result);
   console.log("labelerValue2: ", labelerValue);
@@ -112,6 +124,7 @@ const GetTaskDetail = async (_, args, context, info) => {
 module.exports = {
   Labelers,
   Labeler,
+  GetLabelersTasks,
   Tasks,
   AddTaskToLabeler,
   DeleteLabelers,
