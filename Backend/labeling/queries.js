@@ -73,15 +73,15 @@ const AddTask = async (_, args, context, info) => {
 
   const taskColl = await db.connectDB("tasks");
 
-  const result = await taskColl.findOne({name: args.name})
-  
+  const result = await taskColl.findOne({ name: args.name })
+
   console.log(result);
 
-  if(result === null) {
+  if (result === null) {
     await taskColl.insertOne(args);
-    return result;
+    return args;
   } else {
-    return console.log("Duplicate Name!");
+    throw new Error("Duplicate Name!");
   };
 };
 
@@ -89,7 +89,7 @@ const GetTaskDetail = async (_, args, context, info) => {
 
   const taskColl = await db.connectDB("tasks");
 
-  const result = await taskColl.findOne({name: args.name});
+  const result = await taskColl.findOne({ name: args.name });
 
   console.log(args);
 
@@ -97,10 +97,10 @@ const GetTaskDetail = async (_, args, context, info) => {
 };
 
 const DeleteTask = async (_, args, context, info) => {
-  
+
   const taskColl = await db.connectDB("tasks");
 
-  await taskColl.deleteOne({name: args.name});
+  await taskColl.deleteOne({ name: args.name });
 
   console.log(args);
 
@@ -111,14 +111,22 @@ const UpdateTask = async (_, args, context, info) => {
 
   const taskColl = await db.connectDB("tasks");
 
-  await taskColl.updateOne({ name: args.name },
-    {
-      $set: {
-        status: args.status
-      }
-    });
+  const check = await args.newName;
 
-    return args;
+  if (!check) {
+    await taskColl.updateOne({ name: args.name },
+      {
+        $set: args
+      })
+    console.log("args:", args)
+    return await taskColl.findOne({ name: args.name });
+  } else {
+    await taskColl.updateOne({ name: args.name },
+      {
+        $set: { name: check }
+      })
+    return await taskColl.findOne({ name: check });
+  };
 };
 
 module.exports = {

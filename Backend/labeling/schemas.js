@@ -57,7 +57,13 @@ const typeDefs = gql`
       expiration_date: String
     ): Task
     deleteTask(name: String): Task
-    updateTask(name: String, status: Boolean): Task
+    updateTask(
+      name: String,
+      newName: String,
+      kind: String,
+      labelers: [addLabelerInput],
+      status: Boolean = false,
+      expiration_date: String): Task
   }
 `;
 
