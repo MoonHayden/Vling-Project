@@ -25,11 +25,8 @@ const Tasks = async () => {
   const taskColl = await db.connectDB("tasks");
 
   const result = await taskColl.find().toArray();
-  let tasks = result.map((el) => {
-    return el.input;
-  });
-  console.log(tasks);
-  return tasks;
+  console.log(result);
+  return result;
 };
 
 const AddTaskToLabeler = async (_, args, context, info) => {
