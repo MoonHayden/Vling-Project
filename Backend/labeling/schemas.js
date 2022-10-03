@@ -30,7 +30,7 @@ const typeDefs = gql`
   type Labeler {
     _id: ID
     labeler: String
-    tasks: [Task]
+    task: [Task]
     value: String
   }
 
