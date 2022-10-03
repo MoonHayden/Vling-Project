@@ -12,27 +12,15 @@ const LABELER_DELETE = gql`
   }
 `;
 
-const LabelersGET = gql`
-  query {
-    getAllLabelers {
-      _id
-      labeler
-      value
-    }
-  }
-`;
-
 const DeleteModal = ({ setIsModalOpen, labelerId }) => {
   const router = useRouter();
 
   const [deleteLabelers] = useMutation(LABELER_DELETE, {
     variables: { labeler: labelerId },
-    refetchQueries: () => [GET_ALL_LABELERS],
-    fetchPolicy: 'no-cache',
   });
 
-  const deleteHandler = () => {
-    deleteLabelers();
+  const deleteHandler = async () => {
+    await deleteLabelers();
     setIsModalOpen(false);
     router.replace('/labeler');
   };
