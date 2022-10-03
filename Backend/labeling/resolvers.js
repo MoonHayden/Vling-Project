@@ -2,6 +2,7 @@ const {
   Labelers,
   Labeler,
   Tasks,
+  AddTaskToLabeler,
   DeleteLabelers,
   DeleteTaskOfLabeler,
   AddTask,
@@ -20,7 +21,7 @@ const resolvers = {
     deleteLabelers: DeleteLabelers,
     deleteTaskOfLabeler: DeleteTaskOfLabeler,
     addTask: AddTask,
-    // addTaskToLabeler: AddTaskToLabeler,
+    addTaskToLabeler: AddTaskToLabeler,
   },
 };
 

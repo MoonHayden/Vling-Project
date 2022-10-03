@@ -17,6 +17,16 @@ const typeDefs = gql`
     expiration_date: String
   }
 
+  type Video {
+    _id: ID
+    task_id: ID
+    labelers: [Labeler]
+    status: String
+    record_info: String
+    confirm: String
+    category: String
+  }
+
   type Labeler {
     _id: ID
     labeler: String
@@ -52,9 +62,9 @@ const typeDefs = gql`
 
   type Mutation {
     deleteLabelers(labeler: String): [DeletedLabeler]
-    addTaskToLabeler(labeler: String): [Labeler]
     deleteTaskOfLabeler(name: String, labeler: String): [Labeler]
     addTask(input: addTaskInput!): Task
+    addTaskToLabeler(name: String, labeler: String): [Labeler]
   }
 `;
 
