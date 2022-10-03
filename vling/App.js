@@ -7,15 +7,14 @@ import Login from './src/screens/Login';
 import MainScreen from './src/screens/MainScreen';
 
 const client = new ApolloClient({
-  uri: 'http://172.17.36.57:4000/bzznbyd',
+  uri: 'http://www2.wecode.buzzntrend.com:4000/graphql',
   cache: new InMemoryCache(),
 });
-
 const Stack = createStackNavigator();
 
 export default function App() {
   useEffect(() => {
-    LottieSplashScreen.hide(); // here
+    LottieSplashScreen.hide();
   }, []);
   return (
     <ApolloProvider client={client}>

@@ -11,47 +11,44 @@ import {
 } from 'react-native';
 
 const TASKS = gql`
-  query getTask {
-    tasks {
-      id
+  query GetAllTasks {
+    getAllTasks {
       name
-      numVideos
-      labeler
+      kind
+      attendents
+      status
       rate
+      expiration_date
     }
   }
 `;
+
+// console.log(TASKS);
 
 export default function CategoriesScreen({navigation}) {
   const {data} = useQuery(TASKS);
   if (data === undefined) {
     return;
   }
-  const {tasks} = data;
+
+  console.log(data);
 
   const renderItem = ({item}) => {
     const categoryTitle = `Category ${item.name}`;
-    const id = item.id;
+    const key = item.id;
 
-    console.log(id);
-    // <Screen name="CategorizationScreen" component={CategorizationScreen} />;
     return (
       <View style={styles.wrap}>
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.5}
           onPress={() =>
-            navigation.navigate('CategorizationScreen', {id: {id}})
+            navigation.navigate('CategorizationScreen', `id: ${key}`)
           }>
           <Text style={{fontWeight: 'bold', color: '#2323dd'}}>
             {categoryTitle}
           </Text>
         </TouchableOpacity>
-        {/* <Button
-          title={categoryTitle}
-          onPress={() => navigation.navigate('Categorization')}
-          padding={10}
-        /> */}
         <Progress.Bar
           progress={item.rate / 100}
           width={null}
@@ -71,7 +68,7 @@ export default function CategoriesScreen({navigation}) {
   return (
     <SafeAreaView style={styles.flat}>
       <FlatList
-        data={tasks}
+        data={data}
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
