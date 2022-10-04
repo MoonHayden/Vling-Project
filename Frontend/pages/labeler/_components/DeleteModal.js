@@ -2,20 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { gql, useMutation } from '@apollo/client';
-
+import { GET_ALL_LABELERS } from '../[[...slug]]';
+import { normalizeReadFieldOptions } from '@apollo/client/cache/inmemory/policies';
 const LABELER_DELETE = gql`
   mutation ($labeler: String) {
     deleteLabelers(labeler: $labeler) {
       labeler
-    }
-  }
-`;
-const LabelersGET = gql`
-  query {
-    getAllLabelers {
-      _id
-      labeler
-      value
     }
   }
 `;
@@ -25,22 +17,45 @@ const DeleteModal = ({
   setIsModalOpen,
   setClickedDeleteBtn,
   setSelectedLabeler,
-  GET_ALL_LABELERS,
+  labelers,
+  setLabelers,
 }) => {
   const router = useRouter();
-  const [deleteLabelers] = useMutation(LABELER_DELETE, {
-    variables: { labeler: filteredLabeler[0] },
-    refetchQueries: [
-      { query: GET_ALL_LABELERS, variables: {}, awaitRefetchQueries: true },
-    ],
-  });
+  const [deleteLabelers] = useMutation(
+    LABELER_DELETE
+    // update(cache, { data: { deleteLabelers } }) {
+    //   cache.modify({
+    //     id: cache.identify(data),
+    //     fields: {
+    //       labelers(exsitingLabelers = []) {
+    //         return exsitingLabelers.filter(
+    //           labelerRef => idToRemove !== normalizeReadFieldOptions('')
+    //         );
+    //       },
+    //     },
+    //   });
+    // },
+  );
 
-  const deleteHandler = () => {
-    deleteLabelers();
+  const deleteHandler = async () => {
+    try {
+      await deleteLabelers({
+        variables: { labeler: filteredLabeler[0] },
+      });
+      setClickedDeleteBtn(false);
+      setSelectedLabeler({});
+      setLabelers(calcul());
+    } catch (e) {
+      alert(e);
+    }
     setIsModalOpen(false);
-    setClickedDeleteBtn(false);
-    setSelectedLabeler({});
-    router.replace(router.asPath);
+    router.replace('/labeler');
+  };
+
+  const calcul = () => {
+    return labelers.filter(
+      labeler => !filteredLabeler.includes(labeler.labeler)
+    );
   };
 
   const modalCancle = () => {

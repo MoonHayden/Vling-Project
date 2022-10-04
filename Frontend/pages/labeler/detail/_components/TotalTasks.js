@@ -6,18 +6,23 @@ const TotalTasks = ({
   ongoingTasks,
   setOngoingTasks,
   totalTasks,
+  goToTaskDetail,
+  labelerId,
 }) => {
   if (totalTasks === undefined) return;
-
   return (
     <>
-      {totalTasks.map(task => {
+      {totalTasks.map((task, idx) => {
+        console.log(task);
         return (
           <TotalTask
+            labelerId={labelerId}
+            key={idx}
+            goToTaskDetail={goToTaskDetail}
             setOngoingTasks={setOngoingTasks}
             ongoingTasks={ongoingTasks}
-            key={task._id}
             name={task.name}
+            category={task.kind}
             expirationDate={task.expiration_date}
           />
         );

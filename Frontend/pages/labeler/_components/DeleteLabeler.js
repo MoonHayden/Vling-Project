@@ -8,7 +8,8 @@ const DeleteLabeler = ({
   setSelectedLabeler,
   clickedDeleteBtn,
   setClickedDeleteBtn,
-  GET_ALL_LABELERS,
+  labelers,
+  setLabelers,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const filteredLabeler = Object.keys(selectedLabeler).filter(
@@ -42,7 +43,8 @@ const DeleteLabeler = ({
       </Wrap>
       <ModalWrap isModalOpen={isModalOpen}>
         <DeleteModal
-          GET_ALL_LABELERS={GET_ALL_LABELERS}
+          labelers={labelers}
+          setLabelers={setLabelers}
           filteredLabeler={filteredLabeler}
           setSelectedLabeler={setSelectedLabeler}
           setIsModalOpen={setIsModalOpen}
@@ -56,7 +58,6 @@ const DeleteLabeler = ({
 export default DeleteLabeler;
 
 const Wrap = styled.div`
-  margin-left: 7rem;
   display: flex;
   align-items: center;
 `;

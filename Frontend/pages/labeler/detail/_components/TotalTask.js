@@ -1,24 +1,51 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { useMutation, gql } from '@apollo/client';
 
-const TotalTask = ({ name, ongoingTasks, setOngoingTasks, expirationDate }) => {
+export const TASK_OF_LABELER_ADD = gql`
+  mutation AddTaskToLabeler($name: String, $labeler: String) {
+    addTaskToLabeler(name: $name, labeler: $labeler) {
+      name
+    }
+  }
+`;
+
+const TotalTask = ({
+  name,
+  category,
+  ongoingTasks,
+  setOngoingTasks,
+  expirationDate,
+  goToTaskDetail,
+  labelerId,
+}) => {
   if (ongoingTasks === undefined) return;
+  const [addTaskToLabeler] = useMutation(TASK_OF_LABELER_ADD);
 
   const isOverlap = ongoingTasks.find(task => task.name === name);
 
-  const createOngoingTask = clickedTask => {
-    setOngoingTasks([{ name: clickedTask }, ...ongoingTasks]);
+  const addOngoinTask = async clickedTask => {
+    await addTaskToLabeler({
+      variables: { name: clickedTask, labeler: labelerId },
+    });
+    setOngoingTasks([
+      { name: clickedTask, expiration_date: expirationDate, kind: category },
+      ...ongoingTasks,
+    ]);
   };
   return (
     <Wrap isOverlap={isOverlap}>
-      <Task isOverlap={isOverlap}>{name}</Task>
-      <Date isOverlap={isOverlap}>{expirationDate}</Date>
+      <Task onClick={() => goToTaskDetail(name)} isOverlap={isOverlap}>
+        {name}
+      </Task>
+      <Text isOverlap={isOverlap}>{category}</Text> 
+      <Text isOverlap={isOverlap}>{expirationDate}</Text>
       {isOverlap ? (
         <div>
           <CompleteText>할당완료</CompleteText>
         </div>
       ) : (
-        <button onClick={() => createOngoingTask(name)}>할당</button>
+        <button onClick={() => addOngoinTask(name)}>할당</button>
       )}
     </Wrap>
   );
@@ -55,7 +82,7 @@ const CompleteText = styled.div`
   font-size: 0.6rem;
 `;
 
-const Date = styled.div`
-  font-size: 0.8rem;
+const Text = styled.div`
+  font-size: 0.7rem;
   opacity: ${({ isOverlap }) => isOverlap && '0.5'};
 `;

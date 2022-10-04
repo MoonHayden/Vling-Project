@@ -9,7 +9,7 @@ const Nav = () => {
   const pagePath = router.pathname.split('/')[1];
 
   const pageMove = pageName => {
-    router.push(`/${pageName}`);
+    router.replace(`/${pageName}`, `/${pageName}`);
   };
 
   return (

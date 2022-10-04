@@ -2,7 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { useMutation, gql } from '@apollo/client';
 import { useRouter } from 'next/router';
-const TASK_OF_LABELER_DELETE = gql`
+import { ONGOING_TASK_LIST } from '../[labelerId]';
+
+export const TASK_OF_LABELER_DELETE = gql`
   mutation DeleteTaskOfLabeler($name: String, $labeler: String) {
     deleteTaskOfLabeler(name: $name, labeler: $labeler) {
       labeler
@@ -10,32 +12,37 @@ const TASK_OF_LABELER_DELETE = gql`
   }
 `;
 
-const OngoingTasks = ({ ongoingTasks, goToTaskDetail, setOngoingTasks }) => {
-  const router = useRouter();
+const OngoingTasks = ({
+  ongoingTasks,
+  goToTaskDetail,
+  setOngoingTasks,
+  labelerId,
+}) => {
+  const [deleteTaskOfLabeler] = useMutation(TASK_OF_LABELER_DELETE);
 
-  const [deleteTask] = useMutation(TASK_OF_LABELER_DELETE);
-
-  const deleteOngoingTask = clickedTask => {
-    deleteTask({
-      variables: { name: clickedTask, labeler: 'ethanzzang@email.com' },
+  const deleteOngoingTask = async clickedTask => {
+    await deleteTaskOfLabeler({
+      variables: { name: clickedTask, labeler: labelerId },
     });
     const changedTask = ongoingTasks.filter(task => {
       return task.name !== clickedTask;
     });
-
     setOngoingTasks(changedTask);
   };
 
   if (ongoingTasks === undefined) return;
+  console.log(ongoingTasks);
   return (
     <Wrap>
       <BoldText>진행중인 테스크</BoldText>
       <TaskWrap>
         {ongoingTasks.map((task, idx) => {
+          console.log(task);
           return (
             <TaskBox key={idx}>
-              <Task onClick={() => goToTaskDetail()}>{task.name}</Task>
-              <Date>2023/01/14</Date>
+              <Task onClick={() => goToTaskDetail(task.name)}>{task.name}</Task>
+              <Text>{task.kind}</Text>
+              <Text>{task.expiration_date}</Text>
               <DeleteBtn onClick={() => deleteOngoingTask(task.name)}>
                 삭제
               </DeleteBtn>
@@ -86,8 +93,6 @@ const DeleteBtn = styled.button`
   cursor: pointer;
 `;
 
-const Date = styled.div`
-  font-size: 0.8rem;
+const Text = styled.div`
+  font-size: 0.7rem;
 `;
-
-const ONGOING_TASK_LIST = ['Task1', 'Task2', 'Task3', 'Task11'];

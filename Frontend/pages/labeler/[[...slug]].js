@@ -3,17 +3,12 @@ import LabelerList from './_components/LabelerList';
 import LabelTitle from './_components/LabelTitle';
 import { gql } from '@apollo/client';
 import Search from './_components/Search';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DeleteLabeler from './_components/DeleteLabeler';
 import client from '../../components/apollo-client';
 
 const LabelerGET = gql`
   query ($labeler: String) {
-    # labeling(labeler: $labeler) {
-    #   _id
-    #   labeler
-    #   value
-    # }
     searchLabelers(labeler: $labeler) {
       _id
       labeler
@@ -23,11 +18,6 @@ const LabelerGET = gql`
 `;
 export const GET_ALL_LABELERS = gql`
   query {
-    # labelings {
-    #   _id
-    #   labeler
-    #   value
-    # }
     getAllLabelers {
       _id
       labeler
@@ -39,9 +29,15 @@ export const GET_ALL_LABELERS = gql`
 function labelersPage(props) {
   const [selectedLabeler, setSelectedLabeler] = useState({});
   const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
-
+  const [labelers, setLabelers] = useState();
   const filteredData =
     props.labelersData.searchLabelers || props.labelersData.getAllLabelers;
+
+  useEffect(() => {
+    setLabelers(filteredData);
+  }, [filteredData]);
+
+  if (labelers === undefined) return;
 
   return (
     <Wrap>
@@ -52,12 +48,13 @@ function labelersPage(props) {
           setSelectedLabeler={setSelectedLabeler}
           clickedDeleteBtn={clickedDeleteBtn}
           setClickedDeleteBtn={setClickedDeleteBtn}
-          GET_ALL_LABELERS={GET_ALL_LABELERS}
+          labelers={labelers}
+          setLabelers={setLabelers}
         />
       </Menus>
       <LabelTitle />
       <LabelerList
-        labeling={filteredData}
+        labeling={labelers}
         clickedDeleteBtn={clickedDeleteBtn}
         selectedLabeler={selectedLabeler}
         setSelectedLabeler={setSelectedLabeler}
@@ -83,8 +80,10 @@ export async function getServerSideProps(context) {
   const { data } = await client.query({
     query: queryKind,
     variables: { labeler: variables },
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'network-only',
   });
+
+  console.log(data);
 
   return {
     props: {
@@ -98,16 +97,11 @@ const Wrap = styled.div`
   height: 100%;
   padding: 1rem;
   font-size: 25px;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(5px);
 `;
 
 const Menus = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   height: 1.5rem;
 `;

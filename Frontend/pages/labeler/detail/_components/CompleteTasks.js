@@ -1,16 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const CompleteTasks = () => {
+const CompleteTasks = ({ goToTaskDetail }) => {
   return (
     <Wrap>
       <BoldText>완료한 테스크</BoldText>
       <Tasks>
         {TASK_LIST.map((task, idx) => {
           return (
-            <TaskBox>
-              <Task key={idx}>{task.name}</Task>
-              <Rate>정답률:{task.correctRate}</Rate>
+            <TaskBox key={idx}>
+              <Task onClick={() => goToTaskDetail(task.name)}>{task.name}</Task>
+              <Text>카테고리</Text>
+              <Text>정답률:{task.correctRate}</Text>
             </TaskBox>
           );
         })}
@@ -52,9 +53,9 @@ const Task = styled.li`
 `;
 
 const TASK_LIST = [
-  { name: 'task42', correctRate: '21%' },
-  { name: 'task48', correctRate: '59%' },
-  { name: 'task95', correctRate: '48%' },
+  { id: 1, name: 'task42', correctRate: '21%' },
+  { id: 2, name: 'task48', correctRate: '59%' },
+  { id: 3, name: 'task95', correctRate: '48%' },
 ];
 
 const TaskBox = styled.div`
@@ -62,6 +63,6 @@ const TaskBox = styled.div`
   justify-content: space-between;
 `;
 
-const Rate = styled.div`
-  font-size: 0.8rem;
+const Text = styled.div`
+  font-size: 0.7rem;
 `;
