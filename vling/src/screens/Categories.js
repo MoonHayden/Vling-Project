@@ -35,7 +35,7 @@ export default function CategoriesScreen({navigation}) {
   const DATA = data.getAllTasks;
 
   const renderItem = ({item}) => {
-    const categoryTitle = `Category 분류 ${item.name}`;
+    const categoryTitle = item.name;
 
     return (
       <View style={styles.wrap}>
