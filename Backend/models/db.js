@@ -12,7 +12,7 @@ class DB {
     console.log("doc: ", doc);
     if (!this.cache) {
       this.cache = await this.createDBClient();
-      console.log(":흰색_확인_표시: DB Connected!");
+      console.log("✅ DB Connected!");
       let a = await this.createDBClient();
       const db = await a.db(this.dbName);
       const collection = await db.collection(doc);
