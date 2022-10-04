@@ -3,7 +3,12 @@ import { useEffect, useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 
 const ADD_TASK = gql`
-  mutation {
+  mutation (
+    $name: String
+    $kind: String
+    $labelers: [addLabelerInput]
+    $numVideos: Int!
+  ) {
     addTask(
       name: $name
       kind: $kind
