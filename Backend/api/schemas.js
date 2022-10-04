@@ -1,6 +1,23 @@
 const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
+  type Labelers {
+    _id: ID
+    labeler: String
+    value: String
+  }
+
+  type Task {
+    _id: ID
+    name: String
+    kind: String
+    attendents: Int
+    labelers: [Labeler]
+    status: Boolean
+    rate: Float
+    expiration_date: Date
+  }
+
   scalar Date
   
   type DeletedLabeler {
@@ -10,6 +27,15 @@ const typeDefs = gql`
   type Labeler {
     _id: ID
     labeler: String
+    task: [Task]
+    value: String
+  }
+
+  type DeletedLabeler {
+    labeler: String
+  }
+
+  input addLabelerInput {
     value: Boolean
   }
 
@@ -31,10 +57,9 @@ const typeDefs = gql`
   }
 
   type Query {
-    getAllLabelers: [Labeler]
-    searchLabelers(labeler: String): [Labeler]
-    getLabelersTasks(labeler: String): [Labeler]
-
+    getAllLabelers: [Labelers]
+    searchLabelers(labeler: String): [Labelers]
+    getLabelersTasks(labeler: String): [Task]
     getAllTasks: [Task]
     getTaskDetail(_id: ID, name: String): Task
     getTasksByLabeler(labeler: String): [Task]
@@ -42,8 +67,8 @@ const typeDefs = gql`
 
   type Mutation {
     deleteLabelers(labeler: String): [DeletedLabeler]
-    addTaskToLabeler(labeler: String): [Labeler]
     deleteTaskOfLabeler(name: String, labeler: String): [Labeler]
+    addTaskToLabeler(name: String, labeler: String): Task
     
     addTask(
       name: String,

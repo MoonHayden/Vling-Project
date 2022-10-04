@@ -1,6 +1,7 @@
 const _mongodb = require("mongodb");
 const { DB_URL, DB_NAME } = require("../.env");
 const _asyncMutex = require("async-mutex");
+
 class DB {
   constructor() {
     this.url = process.env.DB_URL;
