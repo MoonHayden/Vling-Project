@@ -37,16 +37,16 @@ export default function CategoriesScreen({navigation}) {
   const renderItem = ({item}) => {
     const categoryTitle = `Category 분류 ${item.name}`;
 
-    // const name = item.name;
-    console.log(item.name);
-
     return (
       <View style={styles.wrap}>
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.5}
           onPress={() =>
-            navigation.navigate('Categorization', {name: item.name})
+            navigation.navigate('Categorization', {
+              name: item.name,
+              status: item.status,
+            })
           }>
           <Text style={{fontWeight: 'bold', color: '#2323dd'}}>
             {categoryTitle}

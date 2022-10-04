@@ -2,11 +2,10 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 export default function Categorization({route}) {
-  console.log(route.params.name);
-
   return (
     <View style={styles.Categorization}>
       <Text>name: {route.params.name}</Text>
+      <Text>{route.params.status}</Text>
     </View>
   );
 }
