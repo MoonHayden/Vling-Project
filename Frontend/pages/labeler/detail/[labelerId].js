@@ -7,7 +7,6 @@ import OngoingTasks from './_components/OngoingTasks';
 import CompleteTasks from './_components/CompleteTasks';
 import DeleteModal from './_components/DeleteModal';
 import client from '../../../components/apollo-client';
-import { TASK_OF_LABELER_DELETE } from './_components/OngoingTasks';
 import back from '../../../public/images/back.png';
 import Image from 'next/image';
 
@@ -125,6 +124,8 @@ export async function getServerSideProps(context) {
     query: TOTAL_TASK_LIST,
     fetchPolicy: 'network-only',
   });
+
+  console.log(getLabelersTasks.getLabelersTasks);
   return {
     props: {
       ongoingTasks: getLabelersTasks.getLabelersTasks,

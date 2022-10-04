@@ -13,7 +13,6 @@ const TotalTasks = ({
   return (
     <>
       {totalTasks.map((task, idx) => {
-        console.log(task);
         return (
           <TotalTask
             labelerId={labelerId}

@@ -38,7 +38,7 @@ const TotalTask = ({
       <Task onClick={() => goToTaskDetail(name)} isOverlap={isOverlap}>
         {name}
       </Task>
-      <Text isOverlap={isOverlap}>{category}</Text> 
+      <Text isOverlap={isOverlap}>{category}</Text>
       <Text isOverlap={isOverlap}>{expirationDate}</Text>
       {isOverlap ? (
         <div>
@@ -66,6 +66,7 @@ const Task = styled.li`
   display: flex;
   align-items: center;
   height: 2rem;
+  width: 5rem;
   padding-left: 0.4rem;
   cursor: pointer;
   :hover {

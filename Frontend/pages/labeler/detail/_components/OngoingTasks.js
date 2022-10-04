@@ -31,7 +31,7 @@ const OngoingTasks = ({
   };
 
   if (ongoingTasks === undefined) return;
-  console.log(ongoingTasks);
+
   return (
     <Wrap>
       <BoldText>진행중인 테스크</BoldText>
@@ -83,6 +83,7 @@ const TaskBox = styled.li`
 `;
 
 const Task = styled.span`
+  width: 5rem;
   cursor: pointer;
   :hover {
     color: red;

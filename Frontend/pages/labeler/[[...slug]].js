@@ -83,8 +83,6 @@ export async function getServerSideProps(context) {
     fetchPolicy: 'network-only',
   });
 
-  console.log(data);
-
   return {
     props: {
       labelersData: data,
