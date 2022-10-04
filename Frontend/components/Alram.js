@@ -1,15 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
 import admin from '../public/images/admin.png';
+import adminAlarm from '../public/images/adminAlarm.png';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { MESSAGE_LIST } from '../data/MESSAGE_LIST';
+import { useEffect } from 'react';
 
-const DDD = () => {
+const Alram = () => {
   const router = useRouter();
   const isVisible = router.pathname !== '/' && router.pathname !== '/login';
   const [isMessageBoxOpen, setIsMessageBoxOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    setMessages(MESSAGE_LIST);
+  }, []);
 
   const boxHandler = () => {
     isMessageBoxOpen === true
@@ -17,31 +24,42 @@ const DDD = () => {
       : setIsMessageBoxOpen(true);
   };
 
-  const goToLink = url => {
+  const messageHandler = message => {
     setIsMessageBoxOpen(false);
-    router.push(url);
+    setMessages(messages.filter(item => item.id !== message.id));
+    router.push(message.url);
   };
+
+  const isHaveAlarm = messages?.length > 0;
+  const adminSrc = isHaveAlarm ? adminAlarm : admin;
+  console.log(isHaveAlarm);
   return (
     <Wrap isVisible={isVisible}>
       <SubWrap>
         <ImageWrap onClick={() => boxHandler()}>
-          <Image src={admin} alt="admin" width={40} height={40} />
+          <Image src={adminSrc} alt="admin" width={40} height={40} />
         </ImageWrap>
         <MessageBox isMessageBoxOpen={isMessageBoxOpen}>
-          {MESSAGE_LIST.map(message => {
-            return (
-              <Message onClick={() => goToLink(message.url)}>
-                {message.content}
-              </Message>
-            );
-          })}
+          <>
+            {isHaveAlarm ? (
+              messages.map(message => {
+                return (
+                  <Message onClick={() => messageHandler(message)}>
+                    {message.content}
+                  </Message>
+                );
+              })
+            ) : (
+              <Message>알람이 없습니다!</Message>
+            )}
+          </>
         </MessageBox>
       </SubWrap>
     </Wrap>
   );
 };
 
-export default DDD;
+export default Alram;
 
 const Wrap = styled.div`
   width: 60%;
@@ -61,7 +79,7 @@ const ImageWrap = styled.div`
 
 const MessageBox = styled.div`
   width: 200px;
-  height: 300px;
+  /* height: 300px; */
   margin-top: 25px;
   background: #dfcaea;
   position: absolute;
@@ -95,5 +113,11 @@ const Message = styled.div`
 
   :hover {
     color: red;
+  }
+
+  :last-of-type {
+    border-bottom: 0px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
   }
 `;
