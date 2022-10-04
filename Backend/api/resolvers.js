@@ -2,12 +2,9 @@ const {
   Labelers,
   Labeler,
   GetLabelersTasks,
-  Tasks,
   AddTaskToLabeler,
   DeleteLabelers,
   DeleteTaskOfLabeler,
-  AddTask,
-  GetTaskDetail,
 } = require("./labeling/queries");
 
 const resolvers = {
@@ -15,13 +12,10 @@ const resolvers = {
     getAllLabelers: Labelers,
     searchLabelers: Labeler,
     getLabelersTasks: GetLabelersTasks,
-    getAllTasks: Tasks,
-    getTaskDetail: GetTaskDetail,
   },
   Mutation: {
     deleteLabelers: DeleteLabelers,
     deleteTaskOfLabeler: DeleteTaskOfLabeler,
-    addTask: AddTask,
     addTaskToLabeler: AddTaskToLabeler,
   },
 };

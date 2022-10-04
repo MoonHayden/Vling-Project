@@ -33,14 +33,6 @@ const GetLabelersTasks = async (_, args, context, info) => {
   return result;
 };
 
-const Tasks = async () => {
-  const taskColl = await db.connectDB("tasks");
-
-  const result = await taskColl.find().toArray();
-  console.log(result);
-  return result;
-};
-
 const AddTaskToLabeler = async (_, args, context, info) => {
   const taskColl = await db.connectDB("tasks");
 
@@ -103,32 +95,11 @@ const DeleteTaskOfLabeler = async (_, args, context, info) => {
   return [labelerValue];
 };
 
-const AddTask = async (_, args, context, info) => {
-  const taskColl = await db.connectDB("tasks");
-
-  console.log(args);
-  // await db.collection("tasks").insertOne(args);
-  await taskColl.insertOne(args);
-  return args.input;
-};
-
-const GetTaskDetail = async (_, args, context, info) => {
-  const taskColl = await db.connectDB("tasks");
-
-  console.log("args: ", args);
-  const result = await taskColl.findOne({ name: args.name });
-  console.log("aa: ", { name: args.name });
-  return result;
-};
-
 module.exports = {
   Labelers,
   Labeler,
   GetLabelersTasks,
-  Tasks,
   AddTaskToLabeler,
   DeleteLabelers,
   DeleteTaskOfLabeler,
-  AddTask,
-  GetTaskDetail,
 };

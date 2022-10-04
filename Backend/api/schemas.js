@@ -57,13 +57,11 @@ const typeDefs = gql`
     searchLabelers(labeler: String): [Labelers]
     getLabelersTasks(labeler: String): [Task]
     getAllTasks: [Task]
-    getTaskDetail(name: String): Task
   }
 
   type Mutation {
     deleteLabelers(labeler: String): [DeletedLabeler]
     deleteTaskOfLabeler(name: String, labeler: String): [Labeler]
-    addTask(input: addTaskInput!): Task
     addTaskToLabeler(name: String, labeler: String): Task
   }
 `;
