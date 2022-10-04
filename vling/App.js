@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from './src/screens/Login';
 import MainScreen from './src/screens/MainScreen';
+import Categorization from './src/screens/Categorization';
 
 const client = new ApolloClient({
   uri: 'http://www2.wecode.buzzntrend.com:4000/graphql',
@@ -26,6 +27,7 @@ export default function App() {
             options={{headerShown: false}}
             component={MainScreen}
           />
+          <Stack.Screen name="Categorization" component={Categorization} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>

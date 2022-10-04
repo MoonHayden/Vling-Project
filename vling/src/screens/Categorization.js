@@ -1,10 +1,12 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
-export default function CategorizationScreen({route}) {
+export default function Categorization({route}) {
+  console.log(route.params.name);
+
   return (
     <View style={styles.Categorization}>
-      <Text>id: {route.parems.id}</Text>
+      <Text>name: {route.params.name}</Text>
     </View>
   );
 }

@@ -16,6 +16,9 @@ const TASKS = gql`
       name
       kind
       attendents
+      labelers {
+        labeler
+      }
       status
       rate
       expiration_date
@@ -23,19 +26,19 @@ const TASKS = gql`
   }
 `;
 
-// console.log(TASKS);
-
 export default function CategoriesScreen({navigation}) {
   const {data} = useQuery(TASKS);
   if (data === undefined) {
     return;
   }
 
-  console.log(data);
+  const DATA = data.getAllTasks;
 
   const renderItem = ({item}) => {
-    const categoryTitle = `Category ${item.name}`;
-    const key = item.id;
+    const categoryTitle = `Category 분류 ${item.name}`;
+
+    // const name = item.name;
+    console.log(item.name);
 
     return (
       <View style={styles.wrap}>
@@ -43,7 +46,7 @@ export default function CategoriesScreen({navigation}) {
           style={styles.button}
           activeOpacity={0.5}
           onPress={() =>
-            navigation.navigate('CategorizationScreen', `id: ${key}`)
+            navigation.navigate('Categorization', {name: item.name})
           }>
           <Text style={{fontWeight: 'bold', color: '#2323dd'}}>
             {categoryTitle}
@@ -68,7 +71,7 @@ export default function CategoriesScreen({navigation}) {
   return (
     <SafeAreaView style={styles.flat}>
       <FlatList
-        data={data}
+        data={DATA}
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
@@ -99,3 +102,5 @@ const styles = StyleSheet.create({
 //   justifyContent: 'center',
 //   alignContent: 'center',
 // },
+
+//key value = name

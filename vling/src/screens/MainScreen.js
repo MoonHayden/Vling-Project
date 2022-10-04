@@ -1,15 +1,15 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
+// import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoriesScreen from './Categories';
 import MypageScreen from './Mypage';
 import NERScreen from './NER';
 import EmotionScreen from './Emotion';
-import CategorizationScreen from './CategorizationScreen';
+// import Categorization from './Categorization';
 
 const Tab = createBottomTabNavigator();
-const CategoriesDetail = createStackNavigator();
+// const Stack = createStackNavigator();
 
 export default function MainScreen() {
   return (
@@ -38,32 +38,14 @@ export default function MainScreen() {
       }}>
       <Tab.Screen name="Mypage" component={MypageScreen} />
       <Tab.Screen name="Categories" component={CategoriesScreen} />
-      {/* <CategoriesDetail.Screen
-        name="CategorizationScreen"
-        component={CategorizationScreen}
-      /> */}
       <Tab.Screen name="Emotion" component={EmotionScreen} />
       <Tab.Screen name="NER" component={NERScreen} />
+      {/* <Stack.Screen name="Categorization" component={Categorization} /> */}
     </Tab.Navigator>
-    // {/* <CategoriesDetail.Navigator>
-    //   <CategoriesDetail.Screen
-    //     name="Categories"
-    //     component={CategoriesScreen}
-    //   />
-    //   <CategoriesDetail.Screen
-    //     name="CategorizationScreen"
-    //     component={CategorizationScreen}
-    //   />
-    // </CategoriesDetail.Navigator> */}
+
+    // <Stack.Screen name="Categories" component={CategoriesScreen} />
   );
 }
-
-// {
-//   <Stack.Screen
-// name="CategorizationScreen"
-// component={CategoriesScreen}
-// />
-// }
 
 // 백
 
