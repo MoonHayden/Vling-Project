@@ -1,11 +1,13 @@
 import React from 'react';
+// import {useQuery, gql} from '@apollo/client';
 import {StyleSheet, Text, View} from 'react-native';
 
 export default function Categorization({route}) {
+  console.log(route.params.status);
   return (
     <View style={styles.Categorization}>
       <Text>name: {route.params.name}</Text>
-      <Text>{route.params.status}</Text>
+      <Text>status: {route.params.status}</Text>
     </View>
   );
 }

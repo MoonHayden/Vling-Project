@@ -36,7 +36,7 @@ export default function CategoriesScreen({navigation}) {
 
   const renderItem = ({item}) => {
     const categoryTitle = item.name;
-
+    console.log(item);
     return (
       <View style={styles.wrap}>
         <TouchableOpacity
