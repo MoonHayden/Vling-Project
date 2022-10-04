@@ -32,7 +32,6 @@ const Alram = () => {
 
   const isHaveAlarm = messages?.length > 0;
   const adminSrc = isHaveAlarm ? adminAlarm : admin;
-  console.log(isHaveAlarm);
   return (
     <Wrap isVisible={isVisible}>
       <SubWrap>
@@ -42,9 +41,9 @@ const Alram = () => {
         <MessageBox isMessageBoxOpen={isMessageBoxOpen}>
           <>
             {isHaveAlarm ? (
-              messages.map(message => {
+              messages.map((message, idx) => {
                 return (
-                  <Message onClick={() => messageHandler(message)}>
+                  <Message key={idx} onClick={() => messageHandler(message)}>
                     {message.content}
                   </Message>
                 );
@@ -89,7 +88,7 @@ const MessageBox = styled.div`
   right: -80px;
   padding: 1rem;
   z-index: 100;
-
+  box-shadow: 0 5px 18px -7px rgba(0, 0, 0, 1);
   ::after {
     content: '';
     position: absolute;

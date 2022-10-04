@@ -30,6 +30,8 @@ function labelersPage(props) {
   const [selectedLabeler, setSelectedLabeler] = useState({});
   const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
   const [labelers, setLabelers] = useState();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const filteredData =
     props.labelersData.searchLabelers || props.labelersData.getAllLabelers;
 
@@ -40,26 +42,31 @@ function labelersPage(props) {
   if (labelers === undefined) return;
 
   return (
-    <Wrap>
-      <Menus>
-        <Search />
-        <DeleteLabeler
+    <>
+      {isModalOpen && <BlurWrap onClick={() => setIsModalOpen(false)} />}
+      <Wrap>
+        <Menus>
+          <Search />
+          <DeleteLabeler
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            selectedLabeler={selectedLabeler}
+            setSelectedLabeler={setSelectedLabeler}
+            clickedDeleteBtn={clickedDeleteBtn}
+            setClickedDeleteBtn={setClickedDeleteBtn}
+            labelers={labelers}
+            setLabelers={setLabelers}
+          />
+        </Menus>
+        <LabelTitle />
+        <LabelerList
+          labeling={labelers}
+          clickedDeleteBtn={clickedDeleteBtn}
           selectedLabeler={selectedLabeler}
           setSelectedLabeler={setSelectedLabeler}
-          clickedDeleteBtn={clickedDeleteBtn}
-          setClickedDeleteBtn={setClickedDeleteBtn}
-          labelers={labelers}
-          setLabelers={setLabelers}
         />
-      </Menus>
-      <LabelTitle />
-      <LabelerList
-        labeling={labelers}
-        clickedDeleteBtn={clickedDeleteBtn}
-        selectedLabeler={selectedLabeler}
-        setSelectedLabeler={setSelectedLabeler}
-      />
-    </Wrap>
+      </Wrap>
+    </>
   );
 }
 export default labelersPage;
@@ -102,4 +109,13 @@ const Menus = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 1.5rem;
+`;
+
+const BlurWrap = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 2000;
 `;

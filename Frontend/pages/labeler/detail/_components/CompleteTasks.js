@@ -34,15 +34,14 @@ const BoldText = styled.div`
 const Tasks = styled.ul`
   margin-top: 1rem;
   background-color: white;
-  width: 17rem;
+  width: 100%;
   height: 80%;
   padding: 1rem;
   overflow: auto;
 `;
 
 const Task = styled.li`
-  font-size: 1rem;
-  margin-bottom: 0.8rem;
+  font-size: 0.8rem;
   width: fit-content;
 
   cursor: pointer;
@@ -61,6 +60,13 @@ const TASK_LIST = [
 const TaskBox = styled.div`
   display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid gray;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+
+  :last-of-type {
+    border: 0px;
+  }
 `;
 
 const Text = styled.div`

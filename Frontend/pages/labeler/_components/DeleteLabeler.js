@@ -4,14 +4,15 @@ import DeleteModal from './DeleteModal';
 import { useState } from 'react';
 
 const DeleteLabeler = ({
+  labelers,
+  setLabelers,
+  isModalOpen,
+  setIsModalOpen,
   selectedLabeler,
   setSelectedLabeler,
   clickedDeleteBtn,
   setClickedDeleteBtn,
-  labelers,
-  setLabelers,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const filteredLabeler = Object.keys(selectedLabeler).filter(
     key => selectedLabeler[key] === true
   );
@@ -74,6 +75,7 @@ const DeleteBtn = styled.button`
 `;
 
 const ModalWrap = styled.div`
+  z-index: 3000;
   position: absolute;
   left: 50%;
   top: 50%;

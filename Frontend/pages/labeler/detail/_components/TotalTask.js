@@ -58,6 +58,8 @@ const Wrap = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.3rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid gray;
 
   opacity: ${({ isOverlap }) => isOverlap && '0.9'};
 `;
@@ -68,6 +70,7 @@ const Task = styled.li`
   height: 2rem;
   width: 5rem;
   padding-left: 0.4rem;
+  font-size: 0.8rem;
   cursor: pointer;
   :hover {
     color: red;
@@ -85,5 +88,6 @@ const CompleteText = styled.div`
 
 const Text = styled.div`
   font-size: 0.7rem;
+  width: 3rem;
   opacity: ${({ isOverlap }) => isOverlap && '0.5'};
 `;

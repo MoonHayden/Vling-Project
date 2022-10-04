@@ -37,7 +37,6 @@ const OngoingTasks = ({
       <BoldText>진행중인 테스크</BoldText>
       <TaskWrap>
         {ongoingTasks.map((task, idx) => {
-          console.log(task);
           return (
             <TaskBox key={idx}>
               <Task onClick={() => goToTaskDetail(task.name)}>{task.name}</Task>
@@ -75,15 +74,22 @@ const TaskWrap = styled.ul`
 
 const TaskBox = styled.li`
   font-size: 1rem;
-  margin-bottom: 0.5rem;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid gray;
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.4rem;
+
+  :last-of-type {
+    border: 0px;
+  }
 `;
 
 const Task = styled.span`
   width: 5rem;
+  font-size: 0.8rem;
   cursor: pointer;
   :hover {
     color: red;
@@ -96,4 +102,5 @@ const DeleteBtn = styled.button`
 
 const Text = styled.div`
   font-size: 0.7rem;
+  width: 3rem;
 `;
