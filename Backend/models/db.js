@@ -1,24 +1,32 @@
-const { MongoClient } = require("mongodb");
+const _mongodb = require("mongodb");
 const { DB_URL, DB_NAME } = require("../.env");
-
+const _asyncMutex = require("async-mutex");
 class DB {
   constructor() {
-    this.url = "mongodb+srv://wecode_3:9qfVKZjgF9DgfPqg@wecode3.v22m4ud.mongodb.net/test";
-    this.dbName = "bzznbyd";
-    // this.url = process.env.DB_URL;
-    // this.dbName = process.env.DB_NAME;
+    this.url = process.env.DB_URL;
+    this.dbName = process.env.DB_NAME;
+    this.cache;
   }
-
   async connectDB(doc) {
     console.log("doc: ", doc);
-    const client = new MongoClient(this.url);
-    await client.connect();
-    console.log("✅ DB Connected!");
-    const db = client.db(this.dbName);
-    const collection = db.collection(doc);
-    return collection;
+    if (!this.cache) {
+      this.cache = await this.createDBClient();
+      console.log(":흰색_확인_표시: DB Connected!");
+      let a = await this.createDBClient();
+      const db = await a.db(this.dbName);
+      const collection = await db.collection(doc);
+      return collection;
+    } else {
+      const db = await this.cache.db(this.dbName);
+      const collection = await db.collection(doc);
+      return collection;
+    }
+  }
+  async createDBClient() {
+    return await _mongodb.MongoClient.connect(this.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
   }
 }
-
 module.exports = DB;
-
