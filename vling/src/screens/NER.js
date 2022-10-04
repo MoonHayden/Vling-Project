@@ -5,7 +5,7 @@ import {StyleSheet} from 'react-native';
 export default function NERScreen() {
   return (
     <View style={styles.NER}>
-      <Text>NER</Text>
+      <Text>NER Coming Soon...</Text>
     </View>
   );
 }

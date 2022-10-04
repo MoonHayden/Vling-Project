@@ -1,12 +1,15 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+// import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoriesScreen from './Categories';
 import MypageScreen from './Mypage';
 import NERScreen from './NER';
 import EmotionScreen from './Emotion';
+// import Categorization from './Categorization';
 
 const Tab = createBottomTabNavigator();
+// const Stack = createStackNavigator();
 
 export default function MainScreen() {
   return (
@@ -37,6 +40,9 @@ export default function MainScreen() {
       <Tab.Screen name="Categories" component={CategoriesScreen} />
       <Tab.Screen name="Emotion" component={EmotionScreen} />
       <Tab.Screen name="NER" component={NERScreen} />
+      {/* <Stack.Screen name="Categorization" component={Categorization} /> */}
     </Tab.Navigator>
+
+    // <Stack.Screen name="Categories" component={CategoriesScreen} />
   );
 }

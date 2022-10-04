@@ -1,10 +1,11 @@
 import React from 'react';
-import StyleSheet, {Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
-export default function Categorization() {
+export default function Categorization({route}) {
   return (
-    <View name="Categorization" style={styles.Categorization}>
-      <Text>Categorization</Text>
+    <View style={styles.Categorization}>
+      <Text>name: {route.params.name}</Text>
+      <Text>{route.params.status}</Text>
     </View>
   );
 }

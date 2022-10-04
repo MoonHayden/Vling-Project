@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Image, Button, StyleSheet, Text} from 'react-native';
+import {View, Image, StyleSheet, Text} from 'react-native';
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -81,8 +81,7 @@ export default function Login({navigation}) {
   return (
     <View style={styles.login}>
       <Image
-        style={styles.logo}
-        source={require('/Users/haydenmoon/Desktop/vling/src/asset/images/logo.png')}
+        source={require('/Users/haydenmoon/Desktop/labeling/vling/src/asset/images/logo.png')}
       />
       <View>
         {!user.idToken ? (
@@ -93,19 +92,25 @@ export default function Login({navigation}) {
           </TouchableOpacity>
         )}
       </View>
-      <Button
-        title="Google Social Login"
-        onPress={() => navigation.reset({routes: [{name: 'MainScreen'}]})}
-      />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.reset({routes: [{name: 'MainScreen'}]})}>
+        <Text style={{fontWeight: 'bold'}}>Login</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  Google: {width: 250, height: 50},
-  logo: {
-    fontSize: 20,
+  button: {
+    width: 250,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
   },
+  Google: {width: 250, height: 50},
   login: {
     flex: 1,
     justifyContent: 'center',

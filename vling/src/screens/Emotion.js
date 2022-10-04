@@ -5,7 +5,7 @@ import {StyleSheet} from 'react-native';
 export default function EmotionScreen() {
   return (
     <View style={styles.emotion}>
-      <Text>Emotion</Text>
+      <Text>Emotion Coming Soon...</Text>
     </View>
   );
 }
