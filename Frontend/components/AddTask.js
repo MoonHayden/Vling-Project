@@ -2,29 +2,37 @@ import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 
-const LABELER_LIST = gql`
-  query {
-    getAllLabelers {
-      _id
-      labeler
-      value
+const ADD_TASK = gql`
+  mutation {
+    addTask(
+      name: $name
+      kind: $kind
+      labelers: $labelers
+      numVideos: $numVideos
+    ) {
+      name
+      kind
+      attendants
+      labelers {
+        labeler
+        value
+      }
+      expiration_date
     }
   }
 `;
 
-export default function AddTask() {
+export default function AddTask({ allLabelers }) {
   const [showLabelerList, setShowLabelerList] = useState(false);
   const [taskName, setTaskName] = useState('');
   const [taskKind, setTaskKind] = useState('');
   const [expDate, setExpDate] = useState('');
   const [labelerList, setLabelerList] = useState([]);
-  const [labelerListAll, setLabelerListAll] = useState([
-    { __typename: '', _id: '', labeler: '', value: '' },
-  ]);
+  const [labelerListAll, setLabelerListAll] = useState([]);
 
   const onClickShowList = () => {
     setShowLabelerList(true);
-    setLabelerListAll(data.getAllLabelers);
+    setLabelerListAll(allLabelers.data.getAllLabelers);
   };
 
   const handleTaskNameInput = e => {
@@ -42,7 +50,7 @@ export default function AddTask() {
   };
 
   const handleAddLabeler = e => {
-    setLabelerList([...labelerList, { name: e.target.value, value: false }]);
+    setLabelerList([...labelerList, { labeler: e.target.value }]);
     setLabelerListAll(
       labelerListAll.filter(labeler => labeler.labeler !== e.target.value)
     );
@@ -50,25 +58,58 @@ export default function AddTask() {
 
   const handleDeleteLabeler = e => {
     setLabelerList(
-      labelerList.filter(labeler => labeler.name !== e.target.value)
+      labelerList.filter(labeler => labeler.labeler !== e.target.value)
     );
     labelerListAll.push({ labeler: e.target.value });
     setLabelerListAll(labelerListAll);
   };
 
-  const onSubmitAddTask = () => {};
-
-  const { data } = useQuery(LABELER_LIST);
-  if (data === undefined) return;
-
   const taskInfo = {
-    task: {
-      name: taskName,
-      kind: taskKind,
-      exp_date: expDate,
-      labelers: labelerList,
-    },
+    name: taskName,
+    kind: taskKind,
+    labelers: labelerList,
+    numVideos: 1,
   };
+
+  const [addTask] = useMutation(
+    ADD_TASK,
+    /*
+    {
+      update(cache, { data: { addTask } }) {
+        const allTasks = cache.readQuery({ query: TASKS });
+        cache.writeQuery({
+          query: TASKS,
+          data: { getAllTasks: [addTask, ...allTasks.getAllTasks] },
+        });
+      },
+    },
+    */
+    {
+      variables: {
+        name: taskName,
+        kind: taskKind,
+        labelers: labelerList,
+        numVideos: 1,
+      },
+    }
+  );
+
+  /*
+  const [addTask] = useMutation(ADD_TASK, {
+    variables: {
+      input: {
+        name: taskName,
+        kind: taskKind,
+        labelers: labelerList,
+        numVideos: 1,
+      },
+    },
+  });
+*/
+
+  console.log(taskName);
+  console.log(taskKind);
+  console.log(labelerList);
 
   return (
     <>
@@ -81,6 +122,7 @@ export default function AddTask() {
           <TaskNameWrap>
             <TaskName>Task Name:</TaskName>
             <TaskNameInput
+              value={taskName}
               placeholder="예: 영상목록1"
               onChange={handleTaskNameInput}
             ></TaskNameInput>
@@ -101,6 +143,7 @@ export default function AddTask() {
             <TaskNameInput
               placeholder="예: YYYY / MM / DD"
               onChange={handleExpDateInput}
+              value={expDate}
             ></TaskNameInput>
           </TaskNameWrap>
           <LabelersInfoWrap>
@@ -114,26 +157,38 @@ export default function AddTask() {
           <AddedLabelers>
             {labelerList.map((labeler, index) => (
               <LabelerWrap key={index}>
-                <LabelerName>{labeler.name}</LabelerName>
-                <AddButton onClick={handleDeleteLabeler} value={labeler.name}>
+                <LabelerName>{labeler.labeler}</LabelerName>
+                <AddButton
+                  onClick={handleDeleteLabeler}
+                  value={labeler.labeler}
+                >
                   삭제
                 </AddButton>
               </LabelerWrap>
             ))}
           </AddedLabelers>
         </TaskInfoWrap>
-        {showLabelerList && (
-          <LabelersListWrap>
-            {labelerListAll.map(labeler => (
-              <LabelerWrap key={labeler._id}>
-                <LabelerName>{labeler.labeler}</LabelerName>
-                <AddButton onClick={handleAddLabeler} value={labeler.labeler}>
-                  추가
-                </AddButton>
-              </LabelerWrap>
-            ))}
-          </LabelersListWrap>
-        )}
+        <LabelerListAllWrap>
+          <NavTop>
+            <AllLabelers>
+              Labelers ({showLabelerList && labelerListAll.length}):
+            </AllLabelers>
+
+            <SubmitButton onClick={addTask}>task 등록</SubmitButton>
+          </NavTop>
+          {showLabelerList && (
+            <LabelersListWrap>
+              {labelerListAll.map(labeler => (
+                <LabelerWrap key={labeler._id}>
+                  <LabelerName>{labeler.labeler}</LabelerName>
+                  <AddButton onClick={handleAddLabeler} value={labeler.labeler}>
+                    추가
+                  </AddButton>
+                </LabelerWrap>
+              ))}
+            </LabelersListWrap>
+          )}
+        </LabelerListAllWrap>
       </TaskAddWrap>
     </>
   );
@@ -231,3 +286,22 @@ const LabelerWrap = styled.div`
 const LabelerName = styled.p``;
 
 const AddButton = styled.button``;
+
+const LabelerListAllWrap = styled.div`
+  height: 600px;
+`;
+
+const NavTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+`;
+
+const AllLabelers = styled.h1`
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 5rem;
+`;
+
+const SubmitButton = styled.button``;
