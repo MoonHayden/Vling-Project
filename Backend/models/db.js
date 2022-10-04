@@ -8,14 +8,11 @@ class DB {
     this.dbName = process.env.DB_NAME;
     this.cache;
   }
-
   async connectDB(doc) {
     console.log("doc: ", doc);
-
     if (!this.cache) {
-      console.log("ASdasd");
       this.cache = await this.createDBClient();
-      console.log("✅ DB Connected!");
+      console.log(":흰색_확인_표시: DB Connected!");
       let a = await this.createDBClient();
       const db = await a.db(this.dbName);
       const collection = await db.collection(doc);
@@ -26,7 +23,6 @@ class DB {
       return collection;
     }
   }
-
   async createDBClient() {
     return await _mongodb.MongoClient.connect(this.url, {
       useNewUrlParser: true,
@@ -34,5 +30,4 @@ class DB {
     });
   }
 }
-
 module.exports = DB;

@@ -32,12 +32,8 @@ async function startApolloServer(typeDefs, resolvers) {
   server.applyMiddleware({
     app,
     cors: true,
-    onHealthCheck: () =>
-      new Promise((resolve, reject) => {
-        console.log("health check should failed but this is never called");
-        reject("booooo");
-      }),
   });
+  
   await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
   console.log(
     `✅ Server ready at http://localhost:4000${server.graphqlPath} 🚀`

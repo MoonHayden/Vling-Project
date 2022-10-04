@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-import NavBar from './NavBar';
+import Nav from './Nav';
 
 export default function Layout({ children }) {
   return (
     <>
       <MainWrap>
-        <SubWrap></SubWrap>
+        <Nav />
+        <SubWrap>{children}</SubWrap>
       </MainWrap>
     </>
   );
@@ -18,6 +19,7 @@ const MainWrap = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  justify-content: center;
   background-color: #ede7f6;
 `;
 
