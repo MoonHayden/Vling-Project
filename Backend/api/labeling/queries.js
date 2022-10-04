@@ -1,4 +1,4 @@
-const DB = require("../models/db");
+const DB = require("../../models/db");
 
 const db = new DB();
 

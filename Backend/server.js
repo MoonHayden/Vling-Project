@@ -9,8 +9,8 @@ const http = require("http");
 const morgan = require("morgan");
 require("dotenv").config();
 
-const { typeDefs } = require("./labeling/schemas");
-const { resolvers } = require("./labeling/resolvers");
+const { typeDefs } = require("./api/schemas");
+const { resolvers } = require("./api/resolvers");
 
 async function startApolloServer(typeDefs, resolvers) {
   const app = express();
@@ -28,7 +28,6 @@ async function startApolloServer(typeDefs, resolvers) {
   await server.start();
 
   app.use(morgan("dev"));
-  // app.use(express.json());
 
   server.applyMiddleware({
     app,

@@ -8,7 +8,7 @@ const {
   DeleteTaskOfLabeler,
   AddTask,
   GetTaskDetail,
-} = require("./queries");
+} = require("./labeling/queries");
 
 const resolvers = {
   Query: {
