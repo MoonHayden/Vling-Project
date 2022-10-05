@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { useMutation, gql } from '@apollo/client';
-import { GET_ALL_LABELERS } from '../../[[...slug]]';
 
 const LABELER_DELETE = gql`
   mutation ($labeler: String) {
@@ -53,27 +52,12 @@ const Wrap = styled.div`
   padding: 2rem;
   border-radius: 15px;
   justify-content: space-between;
+  box-shadow: 0 5px 18px -7px rgba(0, 0, 0, 1);
 `;
 
 const Title = styled.div`
   color: white;
   font-size: 1.4rem;
-`;
-
-const Text = styled.div`
-  margin-top: 0.7rem;
-  font-size: 1.4rem;
-`;
-
-const SubWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: auto;
-  border: 1px solid red;
-  height: 9rem;
-  border-radius: 7px;
-  padding: 0.3rem;
 `;
 
 const BtnWrap = styled.div`
