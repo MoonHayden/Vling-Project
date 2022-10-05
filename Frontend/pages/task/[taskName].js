@@ -67,6 +67,7 @@ export default function TaskDetail({ params, allLabelers }) {
   });
 
   if (taskDetail === undefined) return;
+  console.log(allLabelers.data.getAllLabelers);
 
   return (
     <>
@@ -105,8 +106,9 @@ export default function TaskDetail({ params, allLabelers }) {
               {taskDetail?.getTaskDetail?.labelers?.map((labeler, index) => (
                 <CurrentListWrap key={index}>
                   <LabelerListNav>
-                    <LabelerName>{labeler.labeler}</LabelerName>
-                    <LabelerName>wonho@email.com</LabelerName>
+                    <Link href={`/labeler/detail/${labeler.labeler}`}>
+                      <LabelerName>{labeler.labeler}</LabelerName>
+                    </Link>
                     <AddButton>삭제</AddButton>
                   </LabelerListNav>
                 </CurrentListWrap>
@@ -120,56 +122,12 @@ export default function TaskDetail({ params, allLabelers }) {
               <NavName>Add:</NavName>
             </LabelerListNav>
             <LabelerListWrap>
-              <LabelerWrap>
-                <LabelerName>Wonho</LabelerName>
-                <LabelerName>wonho@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>JoonKi</LabelerName>
-                <LabelerName>joonki@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Bosung</LabelerName>
-                <LabelerName>bosung@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Sehan</LabelerName>
-                <LabelerName>sehan@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Yerin</LabelerName>
-                <LabelerName>yerin@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Wonho</LabelerName>
-                <LabelerName>wonho@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>JoonKi</LabelerName>
-                <LabelerName>joonki@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Bosung</LabelerName>
-                <LabelerName>bosung@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Sehan</LabelerName>
-                <LabelerName>sehan@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Yerin</LabelerName>
-                <LabelerName>yerin@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
+              {allLabelers.data.getAllLabelers.map(labeler => (
+                <LabelerWrap>
+                  <LabelerName>{labeler.labeler}</LabelerName>
+                  <AddButton>추가</AddButton>
+                </LabelerWrap>
+              ))}
             </LabelerListWrap>
           </ListWrap>
         </LabelersInfoWrap>
