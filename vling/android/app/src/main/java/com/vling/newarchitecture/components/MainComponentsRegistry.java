@@ -1,4 +1,4 @@
-package com.vling.newarchitecture.components;
+package com.vling.labeler.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

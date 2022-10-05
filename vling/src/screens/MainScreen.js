@@ -1,6 +1,5 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-// import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoriesScreen from './Categories';
 import MypageScreen from './Mypage';
@@ -31,11 +30,7 @@ export default function MainScreen() {
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
-      })}
-      tabBarOptions={{
-        activeTintColor: 'black',
-        inactiveTintColor: 'gray',
-      }}>
+      })}>
       <Tab.Screen name="Mypage" component={MypageScreen} />
       <Tab.Screen name="Categories" component={CategoriesScreen} />
       <Tab.Screen name="Emotion" component={EmotionScreen} />

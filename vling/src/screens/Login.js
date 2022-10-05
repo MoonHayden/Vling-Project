@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, Image, StyleSheet, Text} from 'react-native';
 import {
   GoogleSignin,
@@ -7,24 +7,21 @@ import {
 } from '@react-native-google-signin/google-signin';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
+GoogleSignin.configure({
+  webClientId:
+    '224145633081-g145bsnbpscdau8pdbrkp37gnk1lnvrk.apps.googleusercontent.com',
+  // offlineAccess: true,
+  forceCodeForRefreshToken: true,
+});
 export default function Login({navigation}) {
   const [user, setUser] = useState({});
-
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId:
-        '937607842726-j4s6oq4anspnfi1gr99mj1uckpub529j.apps.googleusercontent.com',
-      offlineAccess: true,
-      forceCodeForRefreshToken: true,
-    });
-    isSignedIn();
-  }, []);
 
   const signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log('due___', userInfo);
+      console.log(userInfo.user.email);
+      console.log(userInfo.user.id);
       setUser(userInfo);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -43,30 +40,30 @@ export default function Login({navigation}) {
     }
   };
 
-  const isSignedIn = async () => {
-    const isSignedIn = await GoogleSignin.isSignedIn();
-    if (!!isSignedIn) {
-      getCurrentUserInfo();
-    } else {
-      console.log('please login');
-    }
-  };
+  // const isSignedIn = async () => {
+  //   const isSignedIn = await GoogleSignin.isSignedIn();
+  //   if (!!isSignedIn) {
+  //     getCurrentUserInfo();
+  //   } else {
+  //     console.log('please login');
+  //   }
+  // };
 
-  const getCurrentUserInfo = async () => {
-    try {
-      const userInfo = await GoogleSignin.signInSilently();
-      console.log('edit___', user);
-      setUser(userInfo);
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-        alert('User has not signed in yet');
-        console.log('User has not signed in yet');
-      } else {
-        alert('Someting went wrong.');
-        console.log('Someting went wrong.');
-      }
-    }
-  };
+  // const getCurrentUserInfo = async () => {
+  //   try {
+  //     const userInfo = await GoogleSignin.signInSilently();
+  //     console.log('edit___', user);
+  //     setUser(userInfo);
+  //   } catch (error) {
+  //     if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+  //       alert('User has not signed in yet');
+  //       console.log('User has not signed in yet');
+  //     } else {
+  //       alert('Someting went wrong.');
+  //       console.log('Someting went wrong.');
+  //     }
+  //   }
+  // };
 
   const signOut = async () => {
     try {

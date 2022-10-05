@@ -3,6 +3,16 @@ import {Text, View} from 'react-native';
 import {StyleSheet} from 'react-native';
 
 export default function Mypage() {
+  const signOut = async () => {
+    try {
+      await GoogleSignin.revokeAccess();
+      await GoogleSignin.signOut();
+      setUser({});
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <View style={styles.mypage}>
       <Text style={styles.text}>Logout</Text>

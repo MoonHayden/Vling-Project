@@ -36,7 +36,7 @@ export default function CategoriesScreen({navigation}) {
 
   const renderItem = ({item}) => {
     const categoryTitle = item.name;
-    console.log(item);
+
     return (
       <View style={styles.wrap}>
         <TouchableOpacity
@@ -45,7 +45,7 @@ export default function CategoriesScreen({navigation}) {
           onPress={() =>
             navigation.navigate('Categorization', {
               name: item.name,
-              status: item.status,
+              kind: item.kind,
             })
           }>
           <Text style={{fontWeight: 'bold', color: '#2323dd'}}>
@@ -73,7 +73,7 @@ export default function CategoriesScreen({navigation}) {
       <FlatList
         data={DATA}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.name}
       />
     </SafeAreaView>
   );
