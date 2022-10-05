@@ -9,7 +9,6 @@ import DeleteModal from './_components/DeleteModal';
 import client from '../../../components/apollo-client';
 import back from '../../../public/images/back.png';
 import Image from 'next/image';
-import { useRef } from 'react';
 
 const TOTAL_TASK_LIST = gql`
   query GetAllTasks {
@@ -42,8 +41,6 @@ function labelerDetail(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ongoingTasks, setOngoingTasks] = useState();
   const [totalTasks, setTotalTasks] = useState();
-
-  const butn = useRef();
 
   const goToTaskDetail = taskName => {
     router.replace(`/task/${taskName}`);
@@ -107,7 +104,6 @@ function labelerDetail(props) {
       </Wrap>
       <ModalWrap isModalOpen={isModalOpen}>
         <DeleteModal
-          butn={butn}
           labelerId={labelerId}
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
@@ -221,7 +217,6 @@ const TopWrap = styled.div`
   align-items: center;
   height: 1.5rem;
   margin-bottom: 4rem;
-  /* justify-content: space-between; */
 `;
 
 const BlurWrap = styled.div`

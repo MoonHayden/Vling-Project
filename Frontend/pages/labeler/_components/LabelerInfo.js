@@ -33,12 +33,9 @@ const LabelerInfo = ({
           selectedLabeler={selectedLabeler}
           setSelectedLabeler={setSelectedLabeler}
         />
-        <Email>{labeler}</Email>
+        <div>{labeler}</div>
       </SubWrap>
-      <InfoWrap>
-        <div>3</div>
-        <div>{value}</div>
-      </InfoWrap>
+      <div>{value}</div>
     </Wrap>
   );
 };
@@ -56,14 +53,10 @@ const Wrap = styled.div`
   padding: 10px 40px 10px 6px;
 
   cursor: pointer;
-`;
 
-const Email = styled.div``;
-
-const InfoWrap = styled.div`
-  width: 30%;
-  display: flex;
-  justify-content: space-between;
+  :hover {
+    opacity: 0.85;
+  }
 `;
 
 const SubWrap = styled.div`

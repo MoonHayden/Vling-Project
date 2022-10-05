@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import DeleteModal from './DeleteModal';
-import { useState } from 'react';
 
 const DeleteLabeler = ({
   labelers,

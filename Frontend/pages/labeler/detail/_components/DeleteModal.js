@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { useMutation, gql } from '@apollo/client';
-import { useEffect, useRef } from 'react';
 
 const LABELER_DELETE = gql`
   mutation ($labeler: String) {
@@ -12,24 +11,8 @@ const LABELER_DELETE = gql`
   }
 `;
 
-const DeleteModal = ({ isModalOpen, setIsModalOpen, labelerId, butn }) => {
+const DeleteModal = ({ setIsModalOpen, labelerId }) => {
   const router = useRouter();
-  const modal = useRef();
-
-  useEffect(() => {
-    window.addEventListener('click', tt);
-
-    return () => {
-      window.removeEventListener('click', tt);
-    };
-  }, []);
-
-  const tt = ({ target }) => {
-    if (!modal.current.contains(target) || !butn.current.contains(target)) {
-      console.log('ss');
-      // setIsModalOpen(false);
-    }
-  };
 
   const [deleteLabelers] = useMutation(LABELER_DELETE, {
     variables: { labeler: labelerId },
@@ -46,7 +29,7 @@ const DeleteModal = ({ isModalOpen, setIsModalOpen, labelerId, butn }) => {
   };
 
   return (
-    <Wrap ref={modal}>
+    <Wrap>
       <Title>정말 삭제 하시겠습니까?</Title>
       <BtnWrap>
         <DeleteBtn onClick={() => deleteHandler()}>삭제하기</DeleteBtn>
@@ -75,22 +58,6 @@ const Wrap = styled.div`
 const Title = styled.div`
   color: white;
   font-size: 1.4rem;
-`;
-
-const Text = styled.div`
-  margin-top: 0.7rem;
-  font-size: 1.4rem;
-`;
-
-const SubWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: auto;
-  border: 1px solid red;
-  height: 9rem;
-  border-radius: 7px;
-  padding: 0.3rem;
 `;
 
 const BtnWrap = styled.div`

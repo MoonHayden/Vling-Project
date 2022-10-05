@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { TASK_LIST } from '../../../../data/TASK_LIST';
 
 const CompleteTasks = ({ goToTaskDetail }) => {
   return (
@@ -50,12 +51,6 @@ const Task = styled.li`
     color: red;
   }
 `;
-
-const TASK_LIST = [
-  { id: 1, name: 'task42', correctRate: '21%' },
-  { id: 2, name: 'task48', correctRate: '59%' },
-  { id: 3, name: 'task95', correctRate: '48%' },
-];
 
 const TaskBox = styled.div`
   display: flex;

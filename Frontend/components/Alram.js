@@ -18,6 +18,10 @@ const Alram = () => {
     setMessages(MESSAGE_LIST);
   }, []);
 
+  useEffect(() => {
+    setIsMessageBoxOpen(false);
+  }, [router]);
+
   const boxHandler = () => {
     isMessageBoxOpen === true
       ? setIsMessageBoxOpen(false)
@@ -78,7 +82,6 @@ const ImageWrap = styled.div`
 
 const MessageBox = styled.div`
   width: 200px;
-  /* height: 300px; */
   margin-top: 25px;
   background: #dfcaea;
   position: absolute;
@@ -87,7 +90,7 @@ const MessageBox = styled.div`
   top: 40px;
   right: -80px;
   padding: 1rem;
-  z-index: 100;
+  z-index: 3000;
   box-shadow: 0 5px 18px -7px rgba(0, 0, 0, 1);
   ::after {
     content: '';

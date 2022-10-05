@@ -51,7 +51,6 @@ const DeleteModal = ({
     <>
       <Wrap>
         <Title>정말 삭제 하시겠습니까?</Title>
-        {/* <Text>삭제할 라벨러</Text> */}
         <SubWrap>
           {filteredLabeler.map((labeler, idx) => {
             return <Labeler key={idx}>{labeler}</Labeler>;
@@ -87,18 +86,12 @@ const Title = styled.div`
   font-size: 1.4rem;
 `;
 
-const Text = styled.div`
-  font-size: 1.3rem;
-  color: #ccccff;
-`;
-
 const SubWrap = styled.ul`
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: auto;
   border: 1px solid #ccccff;
-  /* height: 8rem; */
   width: 20rem;
   max-height: 8rem;
   border-radius: 7px;
