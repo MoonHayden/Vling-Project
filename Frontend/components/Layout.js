@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import Nav from './Nav';
-
+import Alram from './Alram';
 export default function Layout({ children }) {
   return (
     <>
       <MainWrap>
+        <Alram />
         <Nav />
         <SubWrap>{children}</SubWrap>
       </MainWrap>

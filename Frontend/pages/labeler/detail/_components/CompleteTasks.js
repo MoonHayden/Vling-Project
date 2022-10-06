@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { TASK_LIST } from '../../../../data/TASK_LIST';
 
 const CompleteTasks = ({ goToTaskDetail }) => {
   return (
@@ -34,15 +35,14 @@ const BoldText = styled.div`
 const Tasks = styled.ul`
   margin-top: 1rem;
   background-color: white;
-  width: 17rem;
+  width: 100%;
   height: 80%;
   padding: 1rem;
   overflow: auto;
 `;
 
 const Task = styled.li`
-  font-size: 1rem;
-  margin-bottom: 0.8rem;
+  font-size: 0.8rem;
   width: fit-content;
 
   cursor: pointer;
@@ -52,15 +52,16 @@ const Task = styled.li`
   }
 `;
 
-const TASK_LIST = [
-  { id: 1, name: 'task42', correctRate: '21%' },
-  { id: 2, name: 'task48', correctRate: '59%' },
-  { id: 3, name: 'task95', correctRate: '48%' },
-];
-
 const TaskBox = styled.div`
   display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid gray;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+
+  :last-of-type {
+    border: 0px;
+  }
 `;
 
 const Text = styled.div`

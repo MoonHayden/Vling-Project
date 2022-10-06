@@ -17,18 +17,16 @@ const AddTask = async (_, args, context, info) => {
 
   const taskColl = await db.connectDB("tasks");
 
-  const result = await taskColl.findOne({ name: args.name })
-
-  console.log(result);
-
+  const result = await taskColl.findOne({ name: args.name });
+  
   if (result === null) {
-
+    
     await taskColl.insertOne(args);
-
+    
     return args;
-
+    
   } else {
-
+    
     throw new Error("Duplicate Name!");
   };
 };
@@ -38,7 +36,6 @@ const GetTaskDetail = async (_, args, context, info) => {
   const taskColl = await db.connectDB("tasks");
 
   const result = await taskColl.findOne({ name: args.name });
-  // const result = await taskColl.findOne({_id:ObjectId(`${args._id}`)});
 
   console.log(args);
 
@@ -49,10 +46,10 @@ const GetTasksByLabeler = async (_, args, context, info) => {
 
   const taskColl = await db.connectDB("tasks");
 
-  const result = await taskColl.find({labelers: {$elemMatch: {labeler: args.labeler}}}).toArray();
+  const result = await taskColl.find({ labelers: { $elemMatch: { labeler: args.labeler } } }).toArray();
 
   console.log(result);
-  
+
   return result;
 };
 
@@ -71,10 +68,12 @@ const UpdateTask = async (_, args, context, info) => {
 
   const taskColl = await db.connectDB("tasks");
 
+  // const result = await taskColl.updateOne({ _id: ObjectId(`${args._id}`) });
+
   const check = await args.newName;
 
   if (!check) {
-    
+
     await taskColl.updateOne({ name: args.name },
       {
         $set: args
