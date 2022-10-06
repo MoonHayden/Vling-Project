@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 export default function Authentication({ children }) {
   const router = useRouter();
   const [showChild, setShowChild] = useState(false);
+
   useEffect(() => {
     if (!localStorage.getItem('masterToken') && router.pathname !== '/login') {
       router.replace('/login');

@@ -1,16 +1,17 @@
 import React from 'react';
 import LabelerInfo from './LabelerInfo';
+
 import styled from 'styled-components';
 
 const LabelerList = ({
-  labeling,
-  SearchLabelers,
-  clickedDeleteBtn,
-  selectedLabeler,
-  setSelectedLabeler,
+  labelers,
+  searchLabelers,
+  isDeleteButtonClicked,
+  clickedLabelersForDelete,
+  setClickedLabelersForDelete,
 }) => {
   const filteredLabelers =
-    SearchLabelers.length === 0 ? labeling : SearchLabelers;
+    searchLabelers.length === 0 ? labelers : searchLabelers;
   return (
     <Wrap>
       {filteredLabelers.map(labeler => {
@@ -18,9 +19,9 @@ const LabelerList = ({
           <LabelerInfo
             key={labeler._id}
             {...labeler}
-            clickedDeleteBtn={clickedDeleteBtn}
-            selectedLabeler={selectedLabeler}
-            setSelectedLabeler={setSelectedLabeler}
+            isDeleteButtonClicked={isDeleteButtonClicked}
+            clickedLabelersForDelete={clickedLabelersForDelete}
+            setClickedLabelersForDelete={setClickedLabelersForDelete}
           />
         );
       })}

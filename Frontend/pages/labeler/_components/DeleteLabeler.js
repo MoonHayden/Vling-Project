@@ -7,23 +7,23 @@ const DeleteLabeler = ({
   setLabelers,
   isModalOpen,
   setIsModalOpen,
-  selectedLabeler,
-  setSelectedLabeler,
-  clickedDeleteBtn,
-  setClickedDeleteBtn,
+  clickedLabelersForDelete,
+  setClickedLabelersForDelete,
+  isDeleteButtonClicked,
+  setIsDeleteButtonClicked,
 }) => {
-  const filteredLabeler = Object.keys(selectedLabeler).filter(
-    key => selectedLabeler[key] === true
+  const filteredLabeler = Object.keys(clickedLabelersForDelete).filter(
+    key => clickedLabelersForDelete[key] === true
   );
   const selectedNum = filteredLabeler.length;
   const isSelected = selectedNum > 0;
 
   function buttonTitle() {
-    if (clickedDeleteBtn && !isSelected) {
+    if (isDeleteButtonClicked && !isSelected) {
       return '취소';
-    } else if (!clickedDeleteBtn) {
+    } else if (!isDeleteButtonClicked) {
       return '라벨러 삭제';
-    } else if (clickedDeleteBtn && isSelected) {
+    } else if (isDeleteButtonClicked && isSelected) {
       return `라벨러 삭제 (${selectedNum})`;
     }
   }
@@ -32,7 +32,7 @@ const DeleteLabeler = ({
     if (isSelected) {
       setIsModalOpen(true);
     } else {
-      setClickedDeleteBtn(!clickedDeleteBtn);
+      setIsDeleteButtonClicked(!isDeleteButtonClicked);
     }
   };
 
@@ -46,9 +46,9 @@ const DeleteLabeler = ({
           labelers={labelers}
           setLabelers={setLabelers}
           filteredLabeler={filteredLabeler}
-          setSelectedLabeler={setSelectedLabeler}
+          setClickedLabelersForDelete={setClickedLabelersForDelete}
           setIsModalOpen={setIsModalOpen}
-          setClickedDeleteBtn={setClickedDeleteBtn}
+          setIsDeleteButtonClicked={setIsDeleteButtonClicked}
         />
       </ModalWrap>
     </>

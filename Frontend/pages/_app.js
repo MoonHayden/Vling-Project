@@ -7,14 +7,14 @@ import Authentication from '../components/authentication';
 function MyApp({ Component, pageProps }) {
   return (
     <>
-      <ApolloProvider client={client}>
-        <Authentication>
+      <Authentication>
+        <ApolloProvider client={client}>
           <GlobalStyle />
           <Layout>
             <Component {...pageProps} />
           </Layout>
-        </Authentication>
-      </ApolloProvider>
+        </ApolloProvider>
+      </Authentication>
     </>
   );
 }

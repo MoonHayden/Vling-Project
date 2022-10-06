@@ -1,22 +1,23 @@
 import React from 'react';
-import styled from 'styled-components';
-import { useRouter } from 'next/router';
 import CheckBox from './CheckBox';
+import { useRouter } from 'next/router';
+
+import styled from 'styled-components';
 
 const LabelerInfo = ({
   labeler,
   value,
-  clickedDeleteBtn,
-  selectedLabeler,
-  setSelectedLabeler,
+  isDeleteButtonClicked,
+  clickedLabelersForDelete,
+  setClickedLabelersForDelete,
 }) => {
   const router = useRouter();
 
-  function eventHandler() {
-    if (clickedDeleteBtn) {
-      setSelectedLabeler({
-        ...selectedLabeler,
-        [labeler]: !selectedLabeler[labeler],
+  function labelerClickHandler() {
+    if (isDeleteButtonClicked) {
+      setClickedLabelersForDelete({
+        ...clickedLabelersForDelete,
+        [labeler]: !clickedLabelersForDelete[labeler],
       });
     } else {
       const url = `/labeler/detail/${labeler}`;
@@ -25,13 +26,13 @@ const LabelerInfo = ({
   }
 
   return (
-    <Wrap onClick={eventHandler}>
+    <Wrap onClick={labelerClickHandler}>
       <SubWrap>
         <CheckBox
           labeler={labeler}
-          clickedDeleteBtn={clickedDeleteBtn}
-          selectedLabeler={selectedLabeler}
-          setSelectedLabeler={setSelectedLabeler}
+          isDeleteButtonClicked={isDeleteButtonClicked}
+          clickedLabelersForDelete={clickedLabelersForDelete}
+          setClickedLabelersForDelete={setClickedLabelersForDelete}
         />
         <div>{labeler}</div>
       </SubWrap>

@@ -1,18 +1,27 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import { useRouter } from 'next/router';
-import back from '../../../public/images/back.png';
 import Image from 'next/image';
-const Search = ({ labelers, setSearchLabelers }) => {
-  const router = useRouter();
+import { useRouter } from 'next/router';
 
-  // const isSearchUrl = router.query.slug?.includes('search'); ////
+import styled, { css } from 'styled-components';
+import back from '../../../public/images/back.png';
+import reset from '../../../public/images/reset.png';
+
+const Search = ({ labelers, searchLabelers, setSearchLabelers }) => {
+  const router = useRouter();
+  const isAfterSearch = searchLabelers.length > 0;
 
   function SearchLabeler(event) {
     event.preventDefault();
+
     const value = event.target['name'].value;
+    const filteredLabelers = labelers.filter(labeler =>
+      labeler.labeler.includes(value)
+    );
+
     if (value === '') {
       setSearchLabelers([]);
+    } else if (filteredLabelers.length === 0) {
+      alert('찾으시는 라벨러가 없습니다!');
     } else {
       setSearchLabelers(
         labelers.filter(labeler => labeler.labeler.includes(value))
@@ -20,8 +29,12 @@ const Search = ({ labelers, setSearchLabelers }) => {
     }
   }
 
-  function backPage() {
-    isSearchUrl && router.push('/labeler');
+  function goTobackPage() {
+    router.push('/labeler');
+  }
+
+  function resetSearchDatas() {
+    setSearchLabelers([]);
   }
 
   return (
@@ -32,12 +45,19 @@ const Search = ({ labelers, setSearchLabelers }) => {
           alt="back"
           width={40}
           height={40}
-          onClick={() => backPage()}
+          onClick={() => goTobackPage()}
         />
       </ImageWrap>
       <Wrap onSubmit={SearchLabeler}>
+        <ResetButton
+          type="button"
+          onClick={() => resetSearchDatas()}
+          isAfterSearch={isAfterSearch}
+        >
+          <Image src={reset} alt="reset" width={12} height={12} />
+        </ResetButton>
         <Input type="text" name="name" />
-        <Btn type="submit">검색</Btn>
+        <SarchButton type="submit">검색</SarchButton>
       </Wrap>
     </>
   );
@@ -52,7 +72,7 @@ const Wrap = styled.form`
   padding: 1rem;
 `;
 
-const Btn = styled.button`
+const SarchButton = styled.button`
   height: 1.5rem;
 `;
 
@@ -70,4 +90,8 @@ const ImageWrap = styled.div`
       : css`
           opacity: 0.3;
         `}
+`;
+
+const ResetButton = styled.button`
+  visibility: ${({ isAfterSearch }) => (isAfterSearch ? 'visible' : 'hidden')};
 `;

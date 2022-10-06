@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import LabelerList from './_components/LabelerList';
-import LabelTitle from './_components/LabelTitle';
 import { gql } from '@apollo/client';
 import Search from './_components/Search';
 import { useEffect, useState } from 'react';
@@ -18,11 +17,11 @@ export const GET_ALL_LABELERS = gql`
 `;
 
 function labelersPage(props) {
-  const [selectedLabeler, setSelectedLabeler] = useState({});
-  const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
   const [labelers, setLabelers] = useState([]);
+  const [clickedLabelersForDelete, setClickedLabelersForDelete] = useState({});
+  const [isDeleteButtonClicked, setIsDeleteButtonClicked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [SearchLabelers, setSearchLabelers] = useState([]);
+  const [searchLabelers, setSearchLabelers] = useState([]);
 
   useEffect(() => {
     setLabelers(props.labelersData.getAllLabelers);
@@ -35,25 +34,32 @@ function labelersPage(props) {
       {isModalOpen && <BlurWrap onClick={() => setIsModalOpen(false)} />}
       <Wrap>
         <Menus>
-          <Search labelers={labelers} setSearchLabelers={setSearchLabelers} />
+          <Search
+            labelers={labelers}
+            searchLabelers={searchLabelers}
+            setSearchLabelers={setSearchLabelers}
+          />
           <DeleteLabeler
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
-            selectedLabeler={selectedLabeler}
-            setSelectedLabeler={setSelectedLabeler}
-            clickedDeleteBtn={clickedDeleteBtn}
-            setClickedDeleteBtn={setClickedDeleteBtn}
+            clickedLabelersForDelete={clickedLabelersForDelete}
+            setClickedLabelersForDelete={setClickedLabelersForDelete}
+            isDeleteButtonClicked={isDeleteButtonClicked}
+            setIsDeleteButtonClicked={setIsDeleteButtonClicked}
             labelers={labelers}
             setLabelers={setLabelers}
           />
         </Menus>
-        <LabelTitle />
+        <TitleBox>
+          <div>Email</div>
+          <div>Value</div>
+        </TitleBox>
         <LabelerList
-          labeling={labelers}
-          SearchLabelers={SearchLabelers}
-          clickedDeleteBtn={clickedDeleteBtn}
-          selectedLabeler={selectedLabeler}
-          setSelectedLabeler={setSelectedLabeler}
+          labelers={labelers}
+          searchLabelers={searchLabelers}
+          isDeleteButtonClicked={isDeleteButtonClicked}
+          clickedLabelersForDelete={clickedLabelersForDelete}
+          setClickedLabelersForDelete={setClickedLabelersForDelete}
         />
       </Wrap>
     </>
@@ -95,4 +101,14 @@ const BlurWrap = styled.div`
   height: 100%;
   background: rgba(0, 0, 0, 0.75);
   z-index: 2000;
+`;
+
+const TitleBox = styled.div`
+  display: flex;
+  width: 100%;
+  height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem 0 2rem;
+  margin-top: 0.5rem;
 `;

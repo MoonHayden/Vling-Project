@@ -14,8 +14,8 @@ const LABELER_DELETE = gql`
 const DeleteModal = ({
   filteredLabeler,
   setIsModalOpen,
-  setClickedDeleteBtn,
-  setSelectedLabeler,
+  setIsDeleteButtonClicked,
+  setClickedLabelersForDelete,
   labelers,
   setLabelers,
 }) => {
@@ -27,8 +27,8 @@ const DeleteModal = ({
       await deleteLabelers({
         variables: { labeler: filteredLabeler[0] },
       });
-      setClickedDeleteBtn(false);
-      setSelectedLabeler({});
+      setIsDeleteButtonClicked(false);
+      setClickedLabelersForDelete({});
       setLabelers(calcul());
     } catch (e) {
       alert(e);
