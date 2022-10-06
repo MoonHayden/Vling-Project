@@ -1,22 +1,40 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {Text, TouchableOpacity} from 'react-native';
 import {StyleSheet} from 'react-native';
 
-export default function Mypage() {
+export default function Mypage(navigation) {
+  // const checkSign = async () => {
+  //   const check = await GoogleSignin.isSignedIn();
+  //   const info = await GoogleSignin.getCurrentUser();
+  //   console.log('check', check);
+  //   console.log('info', info.user.id);
+  //   console.log('info', info.user.email);
+  //   // id, email, name
+  // };
+
   const signOut = async () => {
     try {
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
-      setUser({});
+      const LogOut = await GoogleSignin.revokeAccess();
+      const SignOut = await GoogleSignin.signOut();
+      console.log(LogOut);
+      console.log(SignOut);
+      const check = await GoogleSignin.isSignedIn();
+      console.log('check', check);
+      if (check) {
+        return navigation.reset({routes: [{name: 'Login'}]});
+      } else {
+        console.log('없엉');
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <View style={styles.mypage}>
-      <Text style={styles.text}>Logout</Text>
-    </View>
+    <TouchableOpacity style={styles.mypage} onPress={signOut}>
+      <Text style={styles.signout}>Signout</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -25,8 +43,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    // borderWidth: 1,
   },
-  text: {
+  signout: {
+    // flex: 1,
     color: 'blue',
+    borderWidth: 1,
+    height: 20,
+    width: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

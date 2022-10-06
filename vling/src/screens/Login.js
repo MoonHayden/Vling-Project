@@ -5,7 +5,6 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 GoogleSignin.configure({
   webClientId:
@@ -15,14 +14,19 @@ GoogleSignin.configure({
 });
 export default function Login({navigation}) {
   const [user, setUser] = useState({});
-
   const signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo.user.email);
-      console.log(userInfo.user.id);
-      setUser(userInfo);
+      // console.log(userInfo.user.email);
+      console.log('로그인 완료');
+      if (userInfo) {
+        console.log(userInfo);
+        setUser(userInfo);
+        return navigation.reset({routes: [{name: 'MainScreen'}]});
+      } else {
+        console.log('없엉');
+      }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -40,60 +44,27 @@ export default function Login({navigation}) {
     }
   };
 
-  // const isSignedIn = async () => {
-  //   const isSignedIn = await GoogleSignin.isSignedIn();
-  //   if (!!isSignedIn) {
-  //     getCurrentUserInfo();
-  //   } else {
-  //     console.log('please login');
-  //   }
-  // };
-
-  // const getCurrentUserInfo = async () => {
+  // const signOut = async () => {
   //   try {
-  //     const userInfo = await GoogleSignin.signInSilently();
-  //     console.log('edit___', user);
-  //     setUser(userInfo);
+  //     await GoogleSignin.revokeAccess();
+  //     await GoogleSignin.signOut();
+  //     setUser({});
   //   } catch (error) {
-  //     if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-  //       alert('User has not signed in yet');
-  //       console.log('User has not signed in yet');
-  //     } else {
-  //       alert('Someting went wrong.');
-  //       console.log('Someting went wrong.');
-  //     }
+  //     console.error(error);
   //   }
   // };
-
-  const signOut = async () => {
-    try {
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
-      setUser({});
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <View style={styles.login}>
       <Image
         source={require('/Users/haydenmoon/Desktop/labeling/vling/src/asset/images/logo.png')}
       />
+
       <View>
-        {!user.idToken ? (
+        {!user.idToken && (
           <GoogleSigninButton style={styles.Google} onPress={signIn} />
-        ) : (
-          <TouchableOpacity onPress={signOut}>
-            <Text>Signout</Text>
-          </TouchableOpacity>
         )}
       </View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.reset({routes: [{name: 'MainScreen'}]})}>
-        <Text style={{fontWeight: 'bold'}}>Login</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -116,3 +87,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF0044',
   },
 });
+
+// const isSignedIn = async () => {
+//   const isSignedIn = await GoogleSignin.isSignedIn();
+//   if (!!isSignedIn) {
+//     getCurrentUserInfo();
+//   } else {
+//     console.log('please login');
+//   }
+// };
+
+// const getCurrentUserInfo = async () => {
+//   try {
+//     const userInfo = await GoogleSignin.signInSilently();
+//     console.log('edit___', user);
+//     setUser(userInfo);
+//   } catch (error) {
+//     if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+//       alert('User has not signed in yet');
+//       console.log('User has not signed in yet');
+//     } else {
+//       alert('Someting went wrong.');
+//       console.log('Someting went wrong.');
+//     }
+//   }
+// };

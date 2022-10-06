@@ -1,89 +1,194 @@
-import React from 'react';
-import Video from 'react-native-video';
+import React, {useState} from 'react';
+import YouTube from 'react-native-youtube';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useQuery, gql} from '@apollo/client';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, FlatList, SafeAreaView} from 'react-native';
 
 const VIDEOS = gql`
-  query GetVideos($taskName: String) {
-    getVideos(taskName: $taskName) {
-      _id
+  query GetRandomVideo($taskName: String) {
+    getRandomVideo(taskName: $taskName) {
       videoId
       title
-      taskName
+      description
+      tags
     }
   }
 `;
+const LABEL = gql`
+  mutation AddCategoryValue($videoId: String, $label: String) {
+    addCategoryValue(videoId: $videoId, label: $label) {
+      name
+    }
+  }
+`;
+const categoryList = [
+  {category: 'ALL'},
+  {category: 'FASHION'},
+  {category: 'BEAUTY'},
+  {category: 'FOOD'},
+  {category: 'ENTN'},
+  {category: 'LIFE'},
+  {category: 'TRAVEL'},
+  {category: 'ASMR'},
+];
+
+const categoryList2 = [
+  {category: 'GAME'},
+  {category: 'PET'},
+  {category: 'TECH'},
+  {category: 'FILM'},
+  {category: 'CAR'},
+  {category: 'MUSIC'},
+  {category: 'SPORTS'},
+  {category: 'FUN'},
+];
+
+const categoryList3 = [
+  {category: 'POLITICS'},
+  {category: 'EDU'},
+  {category: 'SOCIETY'},
+  {category: 'KIDS'},
+  {category: 'ECONOMY'},
+  {category: 'INFO'},
+  {category: 'NEWS'},
+  {category: 'ETC'},
+];
 
 export default function Categorization({route}) {
+  const [category, setCategory] = useState({
+    videoId: '',
+    label: '',
+  });
   const {data} = useQuery(VIDEOS, {variables: {taskName: route.params.name}});
   if (data === undefined) {
     return;
   }
-  const DATA = data.getVideos[0];
-  const VideoUrl = 'youtube.com/watch?v=' + DATA.videoId;
-  console.log(VideoUrl);
-  return (
-    <View style={styles.container}>
-      <Video
-        source={{
-          uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-        }}
-        style={{width: 400, height: 300}}
-        controls={true}
-        ref={ref => {
-          this.player = ref;
-        }}
-      />
-      <View style={styles.Categorization}>
-        <Text>name: {route.params.name}</Text>
-        <Text>kind: {route.params.kind}</Text>
+
+  const DATA = data.getRandomVideo[0];
+  const VideoUrl = DATA.videoId;
+
+  console.log(category);
+
+  const renderItem = ({item}) => {
+    // console.log(item);
+    const categoryTag = item.category;
+
+    const handleInput = () => {
+      setCategory({label: categoryTag, videoId: VideoUrl});
+    };
+    // console.log(categoryTag);
+
+    return (
+      <View>
+        <TouchableOpacity>
+          <Text style={styles.button} onPress={handleInput}>
+            {categoryTag}
+          </Text>
+        </TouchableOpacity>
       </View>
-      <Text>ALL</Text>
-      <Text>FASHION</Text>
-      <Text>BEAUTY</Text>
-      <Text>FOOD</Text>
-      <Text>ENTN</Text>
-      <Text>LIFE</Text>
-      <Text>TRAVEL</Text>
-      <Text>ASMR</Text>
-      <Text>GAME</Text>
-      <Text>PET</Text>
-      <Text>TECH</Text>
-      <Text>FILM</Text>
-      <Text>CAR</Text>
-      <Text>MUSIC</Text>
-      <Text>SPORTS</Text>
-      <Text>FUN</Text>
-      <Text>POLITICS</Text>
-      <Text>EDU</Text>
-      <Text>SOCIETY</Text>
-      <Text>KIDS</Text>
-      <Text>ECONOMY</Text>
-      <Text>INFO</Text>
-      <Text>NEWS</Text>
-      <Text>ETC</Text>
-    </View>
+    );
+  };
+
+  const renderItem2 = ({item}) => {
+    // console.log(item);
+    const categoryTag = item.category;
+    const handleInput = () => {
+      setCategory({label: categoryTag, videoId: VideoUrl});
+    };
+    // console.log(categoryTag);
+    return (
+      <View>
+        <TouchableOpacity>
+          <Text style={styles.button} onPress={handleInput}>
+            {categoryTag}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  const renderItem3 = ({item}) => {
+    // console.log(item);
+    const categoryTag = item.category;
+    const handleInput = () => {
+      setCategory({label: categoryTag, videoId: VideoUrl});
+    };
+    // console.log(categoryTag);
+    return (
+      <View>
+        <TouchableOpacity>
+          <Text style={styles.button} onPress={handleInput}>
+            {categoryTag}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <YouTube
+        videoId={VideoUrl}
+        apiKey="AIzaSyBpEiykhELvQ6kySUMrIPcCYfd6WvnGxkU"
+        play={true}
+        fullscreen={false}
+        loop={false}
+        onReady={e => console.log('onReady')}
+        onChangeState={e => console.log('onChangeState:', e.state)}
+        onChangeQuality={e => console.log('onChangeQuality: ', e.quality)}
+        onError={e => console.log('onError: ', e.error)}
+        style={{width: '100%', height: 300}}
+      />
+      <View style={styles.Buttons}>
+        <FlatList
+          data={categoryList}
+          renderItem={renderItem}
+          keyExtractor={item => item.category}
+        />
+        <FlatList
+          data={categoryList2}
+          renderItem={renderItem2}
+          keyExtractor={item => item.category}
+        />
+
+        <FlatList
+          data={categoryList3}
+          renderItem={renderItem3}
+          keyExtractor={item => item.category}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'white',
   },
-  fullScreen: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  },
-  Categorization: {
-    flex: 1,
+  button: {
+    backgroundColor: '#e8e8ce',
     justifyContent: 'center',
     alignItems: 'center',
+    width: 100,
+    borderWidth: 1.5,
+    borderRadius: 10,
+    borderColor: '#FF0044',
+    marginTop: 10,
+    fontWeight: 'bold',
+    color: '#6250ed',
+  },
+  Buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  test: {
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  category: {
+    // backgroundColor: 'blue',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
 });
 
@@ -91,3 +196,108 @@ const styles = StyleSheet.create({
 //   {query: VIDEOS},
 //   {variables: {taskName: route.params.name}},
 // );
+// const handleInput = e => {
+//   setCategory({...category, label: e.nativeEvent.text});
+// };
+
+// console.log(category);
+// console.log(VideoUrl);
+// return (
+//   <View style={styles.container}>
+//     <YouTube
+//       videoId={VideoUrl}
+//       apiKey="AIzaSyBpEiykhELvQ6kySUMrIPcCYfd6WvnGxkU"
+//       play={true}
+//       fullscreen={false}
+//       loop={false}
+//       onReady={e => console.log('onReady')}
+//       onChangeState={e => console.log('onChangeState:', e.state)}
+//       onChangeQuality={e => console.log('onChangeQuality: ', e.quality)}
+//       onError={e => console.log('onError: ', e.error)}
+//       style={{width: '100%', height: 300}}
+//     />
+//     <View style={styles.Buttons}>
+//       {/* <Text>name: {route.params.name}</Text> */}
+//       {/* <Text>kind: {route.params.kind}</Text> */}
+//       <View style={styles.test}>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>{TEST[0]}</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>FASHION</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>BEAUTY</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>FOOD</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>ENTN</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>LIFE</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>TRAVEL</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>ASMR</Text>
+//         </TouchableOpacity>
+//       </View>
+//       <View>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>GAME</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>PET</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>TECH</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>FILM</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>CAR</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>MUSIC</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>SPORTS</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>FUN</Text>
+//         </TouchableOpacity>
+//       </View>
+//       <View>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>POLITICS</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>EDU</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>SOCIETY</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>KIDS</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>ECONOMY</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>INFO</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>NEWS</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.category}>
+//           <Text style={styles.button}>ETC</Text>
+//         </TouchableOpacity>
+//       </View>
+//     </View>
+//   </View>
+// );
+//빌드 APK 한번 해보기 배포하는 단계 경험하기

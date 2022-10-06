@@ -15,7 +15,6 @@ const TASKS = gql`
     getAllTasks {
       name
       kind
-      attendents
       labelers {
         labeler
       }
@@ -33,10 +32,11 @@ export default function CategoriesScreen({navigation}) {
   }
 
   const DATA = data.getAllTasks;
+  // console.log(data);
 
   const renderItem = ({item}) => {
     const categoryTitle = item.name;
-
+    // console.log(item);
     return (
       <View style={styles.wrap}>
         <TouchableOpacity
