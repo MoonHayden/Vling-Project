@@ -27,8 +27,6 @@ function labelersPage(props) {
     setLabelers(props.labelersData.getAllLabelers);
   }, [props.labelersData.getAllLabelers]);
 
-  let a = '';
-
   if (labelers === undefined) return;
 
   return (

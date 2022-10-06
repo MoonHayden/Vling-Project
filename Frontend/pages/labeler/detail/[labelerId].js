@@ -15,7 +15,6 @@ const TOTAL_TASK_LIST = gql`
     getAllTasks {
       name
       kind
-      attendents
       status
       rate
       expiration_date
