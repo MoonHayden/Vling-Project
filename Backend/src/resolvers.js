@@ -42,7 +42,7 @@ const resolvers = {
     deleteTask: DeleteTask,
     updateTask: UpdateTask,
     addCategoryValue: AddCategoryValue,
-
+    
     addMasterSignUp: MasterSignUp,
     masterLogIn: MasterLogIn,
   },

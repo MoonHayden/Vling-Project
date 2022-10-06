@@ -33,6 +33,6 @@ const AddCategoryValue = async (_, args, context, info) => {
 };
 
 module.exports = {
-    GetRandomVideo,
+  GetRandomVideo,
   AddCategoryValue,
 };
