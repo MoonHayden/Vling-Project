@@ -1,20 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
 import DeleteModal from './DeleteModal';
-import { useState } from 'react';
 
 const DeleteLabeler = ({
+  labelers,
+  setLabelers,
+  isModalOpen,
+  setIsModalOpen,
   selectedLabeler,
   setSelectedLabeler,
   clickedDeleteBtn,
   setClickedDeleteBtn,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const filteredLabeler = Object.keys(selectedLabeler).filter(
     key => selectedLabeler[key] === true
   );
   const selectedNum = filteredLabeler.length;
   const isSelected = selectedNum > 0;
+
+  function buttonTitle() {
+    if (clickedDeleteBtn && !isSelected) {
+      return '취소';
+    } else if (!clickedDeleteBtn) {
+      return '라벨러 삭제';
+    } else if (clickedDeleteBtn && isSelected) {
+      return `라벨러 삭제 (${selectedNum})`;
+    }
+  }
 
   const deleteHandler = () => {
     if (isSelected) {
@@ -27,11 +39,12 @@ const DeleteLabeler = ({
   return (
     <>
       <Wrap>
-        <Num isSelected={isSelected}>{selectedNum}</Num>
-        <DeleteBtn onClick={() => deleteHandler()}>라벨러 삭제</DeleteBtn>
+        <DeleteBtn onClick={() => deleteHandler()}>{buttonTitle()}</DeleteBtn>
       </Wrap>
       <ModalWrap isModalOpen={isModalOpen}>
         <DeleteModal
+          labelers={labelers}
+          setLabelers={setLabelers}
           filteredLabeler={filteredLabeler}
           setSelectedLabeler={setSelectedLabeler}
           setIsModalOpen={setIsModalOpen}
@@ -45,7 +58,6 @@ const DeleteLabeler = ({
 export default DeleteLabeler;
 
 const Wrap = styled.div`
-  margin-left: 7rem;
   display: flex;
   align-items: center;
 `;
@@ -57,9 +69,12 @@ const Num = styled.span`
 
 const DeleteBtn = styled.button`
   margin-left: 0.5rem;
+  width: 8rem;
+  cursor: pointer;
 `;
 
 const ModalWrap = styled.div`
+  z-index: 3000;
   position: absolute;
   left: 50%;
   top: 50%;

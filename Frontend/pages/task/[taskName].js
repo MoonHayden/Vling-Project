@@ -1,31 +1,37 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useQuery, useMutation, gql } from '@apollo/client';
-import sehanClient from '../../components/apollo-client-sehan';
+import client from '../../components/apollo-client';
 
 const TASK_DETAIL = gql`
-  query getTaskDetail($name: String!) {
-    taskDetail(name: $name) {
-      id
+  query ($name: String!) {
+    getTaskDetail(name: $name) {
       name
       kind
-      labelers
-      exp_date
+      labelers {
+        labeler
+        value
+      }
       status
       rate
+      expiration_date
+    }
+  }
+`;
+
+const LABELER_LIST = gql`
+  query {
+    getAllLabelers {
+      labeler
+      value
     }
   }
 `;
 
 const DELETE_TASK = gql`
-  mutation deleteTask($name: String) {
+  mutation ($name: String!) {
     deleteTask(name: $name) {
-      id
       name
-      numVideos
-      labeler
-      status
-      rate
     }
   }
 `;
@@ -38,56 +44,40 @@ const DELETE_LABELER = gql`
 `;
 */
 
-/*
 const COMPLETE_TASK = gql`
-  mutation completeTask {
+  mutation {
     completeTask {
       id
       value
     }
   }
 `;
-*/
 
-const LABELER_LIST = gql`
-  query getLabelerList {
-    labelings {
-      _id
-      labeler
-      value
-    }
-  }
-`;
-
-export default function TaskDetail({ taskId, data }) {
+export default function TaskDetail({ params, allLabelers }) {
   const { data: taskDetail } = useQuery(TASK_DETAIL, {
-    variables: { name: '영상목록' + taskId },
+    variables: { name: params.taskName },
   });
-
-  // const { data: labelers } = sehanClient.query(LABELER_LIST);
 
   const [deleteTask] = useMutation(DELETE_TASK, {
-    variables: { name: '영상목록' + taskId },
+    variables: { name: params.taskName },
   });
 
-  /*
   const [completeTask] = useMutation(COMPLETE_TASK, {
     variables: { value: true },
   });
-  */
 
   if (taskDetail === undefined) return;
-  console.log(typeof Math.round(taskDetail.taskDetail[0].rate));
+  console.log(allLabelers.data.getAllLabelers);
 
   return (
     <>
       <InnerWrap data={taskDetail}>
         <DetailTop>
           <TaskInfo>
-            <TaskName>{taskDetail.taskDetail[0].name}</TaskName>
-            <TaskCategory>Kind: {taskDetail.taskDetail[0].kind}</TaskCategory>
+            <TaskName>{taskDetail.getTaskDetail.name}</TaskName>
+            <TaskCategory>Kind: {taskDetail.getTaskDetail.kind}</TaskCategory>
             <ExpireDate>
-              Exp.Date: {taskDetail.taskDetail[0].exp_date}
+              Exp.Date: {taskDetail.getTaskDetail.exp_date}
             </ExpireDate>
           </TaskInfo>
           <ButtonsWrap>
@@ -96,10 +86,9 @@ export default function TaskDetail({ taskId, data }) {
             </Link>
             <DeleteBtn onClick={deleteTask}>Task 삭제</DeleteBtn>
             <CompleteBtn
-              // onClick={completeTask}
               disabled={
-                Math.round(taskDetail.taskDetail[0].rate) == 100 &&
-                taskDetail.taskDetail[0].status === false
+                Math.round(taskDetail.getTaskDetail.rate) == 100 &&
+                taskDetail.getTaskDetail.status === false
                   ? false
                   : true
               }
@@ -111,14 +100,15 @@ export default function TaskDetail({ taskId, data }) {
         <LabelersInfoWrap>
           <CurrentLabelersWrap>
             <CurrentLabelersTitle>
-              Current Labelers ({taskDetail.taskDetail[0].labelers.length}):
+              Current Labelers ({taskDetail.getTaskDetail.labelers.length}):
             </CurrentLabelersTitle>
             <CurrentLabelers>
-              {taskDetail?.taskDetail?.[0]?.labelers?.map((labeler, index) => (
+              {taskDetail?.getTaskDetail?.labelers?.map((labeler, index) => (
                 <CurrentListWrap key={index}>
                   <LabelerListNav>
-                    <LabelerName>{labeler}</LabelerName>
-                    <LabelerName>wonho@email.com</LabelerName>
+                    <Link href={`/labeler/detail/${labeler.labeler}`}>
+                      <LabelerName>{labeler.labeler}</LabelerName>
+                    </Link>
                     <AddButton>삭제</AddButton>
                   </LabelerListNav>
                 </CurrentListWrap>
@@ -132,66 +122,22 @@ export default function TaskDetail({ taskId, data }) {
               <NavName>Add:</NavName>
             </LabelerListNav>
             <LabelerListWrap>
-              <LabelerWrap>
-                <LabelerName>Wonho</LabelerName>
-                <LabelerName>wonho@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>JoonKi</LabelerName>
-                <LabelerName>joonki@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Bosung</LabelerName>
-                <LabelerName>bosung@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Sehan</LabelerName>
-                <LabelerName>sehan@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Yerin</LabelerName>
-                <LabelerName>yerin@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Wonho</LabelerName>
-                <LabelerName>wonho@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>JoonKi</LabelerName>
-                <LabelerName>joonki@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Bosung</LabelerName>
-                <LabelerName>bosung@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Sehan</LabelerName>
-                <LabelerName>sehan@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
-              <LabelerWrap>
-                <LabelerName>Yerin</LabelerName>
-                <LabelerName>yerin@email.com</LabelerName>
-                <AddButton>추가</AddButton>
-              </LabelerWrap>
+              {allLabelers.data.getAllLabelers.map(labeler => (
+                <LabelerWrap>
+                  <LabelerName>{labeler.labeler}</LabelerName>
+                  <AddButton>추가</AddButton>
+                </LabelerWrap>
+              ))}
             </LabelerListWrap>
           </ListWrap>
         </LabelersInfoWrap>
         <ProgressInfo>
-          <RateNumber>{Math.round(taskDetail.taskDetail[0].rate)}%</RateNumber>
+          <RateNumber>{Math.round(taskDetail.getTaskDetail.rate)}%</RateNumber>
           <ProgressWrap>
-            <FullBar status={taskDetail.taskDetail[0].status}></FullBar>
+            <FullBar status={taskDetail.getTaskDetail.status}></FullBar>
             <RateBar
-              status={taskDetail.taskDetail[0].status}
-              rate={taskDetail.taskDetail[0].rate}
+              status={taskDetail.getTaskDetail.status}
+              rate={taskDetail.getTaskDetail.rate}
             ></RateBar>
           </ProgressWrap>
         </ProgressInfo>
@@ -352,9 +298,16 @@ const RateBar = styled.div`
   background-color: ${props => (props.status ? '#4cd137' : '#fbc531')};
 `;
 
-export function getServerSideProps({ query: { taskId } }) {
-  // const { data } = sehanClient.query({ query: LABELER_LIST });
+export async function getServerSideProps({ params }) {
+  /*
+  const taskDetail = await client.query(
+    { query: TASK_DETAIL },
+    { variables: { name: params.taskName } }
+  );
+  */
+
+  const allLabelers = await client.query({ query: LABELER_LIST });
   return {
-    props: { taskId },
+    props: { params, allLabelers },
   };
 }
