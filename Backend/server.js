@@ -9,8 +9,8 @@ const http = require("http");
 const morgan = require("morgan");
 require("dotenv").config();
 
-const { typeDefs } = require("./api/schemas");
-const { resolvers } = require("./api/resolvers");
+const { typeDefs } = require("./src/schemas");
+const { resolvers } = require("./src/resolvers");
 
 async function startApolloServer(typeDefs, resolvers) {
   const app = express();

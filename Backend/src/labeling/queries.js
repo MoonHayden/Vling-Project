@@ -1,5 +1,4 @@
 const DB = require("../../models/db");
-
 const db = new DB();
 
 const Labelers = async (_, args, context, info) => {

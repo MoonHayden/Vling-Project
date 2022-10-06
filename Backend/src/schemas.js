@@ -7,48 +7,61 @@ const typeDefs = gql`
     value: String
   }
 
-  type DeletedLabeler {
-    labeler: String
-  }
-
-  type Labeler {
-    _id: ID
-    labeler: String
-    value: String
-  }
-
   type Task {
     _id: ID
     name: String
     kind: String
-    attendents: Int
     labelers: [Labeler]
     status: Boolean
     rate: Float
     expiration_date: Date
   }
 
-  input addLabelerInput {
+  scalar Date
+
+  type Labeler {
     _id: ID
+    idToken: String
     labeler: String
-    value: Boolean = false
+    name: String
+    userId: String
+    value: String
+    createdAt: Date
+  }
+
+  type DeletedLabeler {
+    labeler: String
+  }
+
+  type Video {
+    _id: ID
+    videoId: String
+    title: String
+    category: String
+    tags: String
+    tags_str: String
+    description: String
+    category_ori: String
+    category_label: String
+    category_predict: [Category]
+    taskName: String
+    labelers: [Labeler]
   }
 
   type Category {
     name: String
   }
 
-  scalar Date
-
-  type Task {
+  type Master {
     _id: ID
     name: String
-    kind: String
-    attendants: Int
-    labelers: [Labeler]
-    status: Boolean
-    rate: Float
-    expiration_date: Date
+    password: String
+  }
+
+  input addLabelerInput {
+    _id: ID
+    labeler: String
+    value: Boolean = false
   }
 
   type Query {
@@ -58,6 +71,10 @@ const typeDefs = gql`
 
     getAllTasks: [Task]
     getTaskDetail(_id: ID, name: String): Task
+
+    getRandomVideo(taskName: String): Video
+
+    masterLogIn: Master
   }
 
   type Mutation {
@@ -71,7 +88,6 @@ const typeDefs = gql`
       labelers: [addLabelerInput]
       status: Boolean = false
       rate: Float = 0.00
-      numVideos: Int
       expiration_date: Date
     ): Task
 
@@ -85,6 +101,11 @@ const typeDefs = gql`
       status: Boolean = false
       expiration_date: Date
     ): Task
+
+    addCategoryValue(videoId: String, category_predict: String): Category
+
+    addMasterSignUp(name: String, password: String): Master
+    masterLogIn(name: String, password: String): Master
   }
 `;
 

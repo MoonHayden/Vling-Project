@@ -15,6 +15,16 @@ const {
   UpdateTask,
 } = require("./tasks/queries");
 
+const { 
+  MasterSignUp, 
+  MasterLogIn 
+} = require("./master/queries");
+
+const { 
+  GetRandomVideo, 
+  AddCategoryValue 
+} = require("./videos/queries");
+
 const resolvers = {
   Query: {
     getAllLabelers: Labelers,
@@ -22,6 +32,7 @@ const resolvers = {
     getLabelersTasks: GetLabelersTasks,
     getAllTasks: Tasks,
     getTaskDetail: GetTaskDetail,
+    getRandomVideo: GetRandomVideo,
   },
   Mutation: {
     deleteLabelers: DeleteLabelers,
@@ -30,7 +41,10 @@ const resolvers = {
     addTask: AddTask,
     deleteTask: DeleteTask,
     updateTask: UpdateTask,
-  }
-}
+    addCategoryValue: AddCategoryValue,
+    addMasterSignUp: MasterSignUp,
+    masterLogIn: MasterLogIn,
+  },
+};
 
 module.exports = { resolvers };
