@@ -3,14 +3,15 @@ const {
   ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageLocalDefault,
 } = require("apollo-server-core");
-
 const express = require("express");
 const http = require("http");
 const morgan = require("morgan");
+const cors = require("cors");
 require("dotenv").config();
+const route = require('./util/uploadCSV');
 
-const { typeDefs } = require("./api/schemas");
-const { resolvers } = require("./api/resolvers");
+const { typeDefs } = require("./src/schemas");
+const { resolvers } = require("./src/resolvers");
 
 async function startApolloServer(typeDefs, resolvers) {
   const app = express();
@@ -25,14 +26,15 @@ async function startApolloServer(typeDefs, resolvers) {
       ApolloServerPluginDrainHttpServer({ httpServer }),
     ],
   });
+
   await server.start();
-
+  
+  app.use(cors());
   app.use(morgan("dev"));
-
-  server.applyMiddleware({
-    app,
-    cors: true,
-  });
+  app.use(express.json());
+  app.use(route);
+  
+  server.applyMiddleware({ app });
   
   await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
   console.log(
