@@ -11,16 +11,16 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     if (!localStorage.getItem('masterToken') && router.pathname !== '/login') {
-      router.push('/login');
-      setShowChild(true);
-    } else if (router.pathname !== '/login') {
-      setShowChild(true);
+      router.replace('/login');
+    } else if (
+      localStorage.getItem('masterToken') &&
+      router.pathname === '/login'
+    ) {
+      router.replace('/');
     } else {
       setShowChild(true);
     }
-  }, []);
-
-  if (showChild === false) return;
+  }, [router]);
 
   return (
     <>

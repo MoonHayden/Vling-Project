@@ -40,11 +40,10 @@ function loginPage() {
     if (result.data.masterLogIn == null) {
       setIsLoginFailed(true);
     } else {
-      localStorage.setItem('masterToken', 'test');
+      localStorage.setItem('masterToken', 'master');
+      router.push('/');
     }
   };
-
-
 
   return (
     <Wrap>
