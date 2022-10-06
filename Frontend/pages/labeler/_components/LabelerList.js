@@ -4,13 +4,16 @@ import styled from 'styled-components';
 
 const LabelerList = ({
   labeling,
+  SearchLabelers,
   clickedDeleteBtn,
   selectedLabeler,
   setSelectedLabeler,
 }) => {
+  const filteredLabelers =
+    SearchLabelers.length === 0 ? labeling : SearchLabelers;
   return (
     <Wrap>
-      {labeling.map(labeler => {
+      {filteredLabelers.map(labeler => {
         return (
           <LabelerInfo
             key={labeler._id}

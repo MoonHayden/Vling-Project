@@ -3,18 +3,20 @@ import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import back from '../../../public/images/back.png';
 import Image from 'next/image';
-const Search = () => {
+const Search = ({ labelers, setSearchLabelers }) => {
   const router = useRouter();
 
-  const isSearchUrl = router.query.slug?.includes('search'); ////
+  // const isSearchUrl = router.query.slug?.includes('search'); ////
 
   function SearchLabeler(event) {
     event.preventDefault();
     const value = event.target['name'].value;
     if (value === '') {
-      router.push('/labeler');
+      setSearchLabelers([]);
     } else {
-      router.push(`/labeler/search/${value}`);
+      setSearchLabelers(
+        labelers.filter(labeler => labeler.labeler.includes(value))
+      );
     }
   }
 
@@ -24,7 +26,7 @@ const Search = () => {
 
   return (
     <>
-      <ImageWrap isSearchUrl={isSearchUrl}>
+      <ImageWrap>
         <Image
           src={back}
           alt="back"

@@ -22,6 +22,7 @@ function labelersPage(props) {
   const [clickedDeleteBtn, setClickedDeleteBtn] = useState(false);
   const [labelers, setLabelers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [SearchLabelers, setSearchLabelers] = useState([]);
 
   useEffect(() => {
     setLabelers(props.labelersData.getAllLabelers);
@@ -34,7 +35,7 @@ function labelersPage(props) {
       {isModalOpen && <BlurWrap onClick={() => setIsModalOpen(false)} />}
       <Wrap>
         <Menus>
-          <Search />
+          <Search labelers={labelers} setSearchLabelers={setSearchLabelers} />
           <DeleteLabeler
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
@@ -49,6 +50,7 @@ function labelersPage(props) {
         <LabelTitle />
         <LabelerList
           labeling={labelers}
+          SearchLabelers={SearchLabelers}
           clickedDeleteBtn={clickedDeleteBtn}
           selectedLabeler={selectedLabeler}
           setSelectedLabeler={setSelectedLabeler}
