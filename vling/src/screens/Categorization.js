@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import YouTube from 'react-native-youtube';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useQuery, gql} from '@apollo/client';
+import {useQuery, gql, useMutation} from '@apollo/client';
 import {StyleSheet, Text, View, FlatList, SafeAreaView} from 'react-native';
 
 const VIDEOS = gql`
@@ -21,6 +21,7 @@ const LABEL = gql`
     }
   }
 `;
+
 const categoryList = [
   {category: 'ALL'},
   {category: 'FASHION'},
@@ -59,6 +60,9 @@ export default function Categorization({route}) {
     videoId: '',
     label: '',
   });
+
+  const [addLabel] = useMutation(LABEL);
+
   const {data} = useQuery(VIDEOS, {variables: {taskName: route.params.name}});
   if (data === undefined) {
     return;
@@ -74,7 +78,10 @@ export default function Categorization({route}) {
     const categoryTag = item.category;
 
     const handleInput = () => {
-      setCategory({label: categoryTag, videoId: VideoUrl});
+      setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
+      addLabel({
+        variables: {videoId: VideoUrl, label: categoryTag},
+      });
     };
     // console.log(categoryTag);
 
@@ -93,7 +100,10 @@ export default function Categorization({route}) {
     // console.log(item);
     const categoryTag = item.category;
     const handleInput = () => {
-      setCategory({label: categoryTag, videoId: VideoUrl});
+      setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
+      addLabel({
+        variables: {videoId: VideoUrl, label: categoryTag},
+      });
     };
     // console.log(categoryTag);
     return (
@@ -110,7 +120,10 @@ export default function Categorization({route}) {
     // console.log(item);
     const categoryTag = item.category;
     const handleInput = () => {
-      setCategory({label: categoryTag, videoId: VideoUrl});
+      setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
+      addLabel({
+        variables: {videoId: VideoUrl, label: categoryTag},
+      });
     };
     // console.log(categoryTag);
     return (
