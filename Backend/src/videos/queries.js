@@ -1,31 +1,38 @@
 const DB = require("../../models/db");
-
 const db = new DB();
 
-const GetVideos = async (_, args, context, info) => {
-    const videoColl = await db.connectDB("videos");
+const GetRandomVideo = async (_, args, context, info) => {
+  const videoColl = await db.connectDB("videos");
 
-    const result = await videoColl.find({ taskName: args.taskName }).toArray();
+  const taskName = args.taskName;
+  console.log("taskName: ", args.taskName);
 
-    console.log(result);
-
-    return result;
+  const result = videoColl.find({ taskName }).toArray();
+  console.log("result: ", result);
+  return result;
 };
 
-const GetRandVideo = async (_, args, context, info) => {
-    const videoColl = await db.connectDB("videos");
-    // let randVideo
-    const randVideo = videoColl.aggregate(
-        [ { $sample: { size: 1 } } ]
-     );
-    console.log(randVideo)
-    // do {
-    // }while(randVideo.labelers.find((el) => el == args.labeler) == undefined);
+const AddCategoryValue = async (_, args, context, info) => {
+  const videoColl = await db.connectDB("videos");
 
-    return args;
+  const videoValue = {
+    videoId: args.videoId,
+  };
+  console.log("videoValue: ", videoValue);
+
+  const categoryValue = {
+    category_predict: args.category_predict,
+  };
+  console.log("categoryValue: ", categoryValue);
+
+  const result = await videoColl.updateOne(videoValue, {
+    $push: { category_predict: categoryValue },
+  });
+
+  console.log("result: ", result);
 };
 
 module.exports = {
-    GetVideos,
-    GetRandVideo,
+    GetRandomVideo,
+  AddCategoryValue,
 };

@@ -1,14 +1,61 @@
 const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
+  type Labelers {
+    _id: ID
+    labeler: String
+    value: String
+  }
+
+  type Task {
+    _id: ID
+    name: String
+    kind: String
+    labelers: [Labeler]
+    status: Boolean
+    rate: Float
+    expiration_date: Date
+  }
+
+  scalar Date
+
+  type Labeler {
+    _id: ID
+    idToken: String
+    labeler: String
+    name: String
+    userId: String
+    value: String
+    createdAt: Date
+  }
+
   type DeletedLabeler {
     labeler: String
   }
 
-  type Labeler {
+  type Video {
     _id: ID
-    labeler: String
-    value: String
+    videoId: String
+    title: String
+    category: String
+    tags: String
+    tags_str: String
+    description: String
+    category_ori: String
+    category_label: String
+    category_predict: [Category]
+    taskName: String
+    labelers: [Labeler]
+  }
+
+  type Category {
+    name: String
+  }
+
+  type Master {
+    _id: ID
+    name: String
+    password: String
   }
 
   input addLabelerInput {
@@ -17,48 +64,17 @@ const typeDefs = gql`
     value: Boolean = false
   }
 
-  type Category {
-    name: String
-  }
-
-  scalar Date
-
-  type Task {
-    _id: ID
-    name: String
-    kind: String
-    attendants: Int
-    labelers: [Labeler]
-    status: Boolean
-    rate: Float
-    expiration_date: Date
-  }
-
-  type Video {
-  _id: ID
-  videoId: String
-  title: String
-  category: String
-  tags: String
-  tags_str: String
-  description: String
-  category_ori: String
-  category_label: String
-  category_predict: [Category]
-  labelers: [Labeler]
-  taskName: String
-  }
-
   type Query {
-    getAllLabelers: [Labeler]
-    searchLabelers(labeler: String): [Labeler]
+    getAllLabelers: [Labelers]
+    searchLabelers(labeler: String): [Labelers]
     getLabelersTasks(labeler: String): [Task]
 
     getAllTasks: [Task]
-    getTaskDetail(name: String): Task
+    getTaskDetail(_id: ID, name: String): Task
 
-    getVideos(taskName: String): [Video]
-    getRandVideo(labeler: String): Video
+    getRandomVideo(taskName: String): Video
+
+    masterLogIn: Master
   }
 
   type Mutation {
@@ -72,7 +88,6 @@ const typeDefs = gql`
       labelers: [addLabelerInput]
       status: Boolean = false
       rate: Float = 0.00
-      numVideos: Int
       expiration_date: Date
     ): Task
 
@@ -83,9 +98,14 @@ const typeDefs = gql`
       newName: String
       kind: String
       labelers: [addLabelerInput]
-      status: Boolean
+      status: Boolean = false
       expiration_date: Date
     ): Task
+
+    addCategoryValue(videoId: String, category_predict: String): Category
+
+    addMasterSignUp(name: String, password: String): Master
+    masterLogIn(name: String, password: String): Master
   }
 `;
 
