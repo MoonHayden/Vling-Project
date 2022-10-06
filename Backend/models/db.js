@@ -4,8 +4,11 @@ const _asyncMutex = require("async-mutex");
 
 class DB {
   constructor() {
-    this.url = process.env.DB_URL;
-    this.dbName = process.env.DB_NAME;
+    // this.url = process.env.DB_URL;
+    // this.dbName = process.env.DB_NAME;
+    this.url = "mongodb+srv://wecode_3:9qfVKZjgF9DgfPqg@wecode3.v22m4ud.mongodb.net/test";
+    this.dbName = "bzznbyd";
+    
     this.cache;
   }
   async connectDB(doc) {

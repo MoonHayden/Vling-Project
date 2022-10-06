@@ -50,3 +50,9 @@ Thumbs.db
 
 # DotEnv
 .env
+
+# Vscode
+.vscode
+
+# practice
+/util/csvTodb.js
