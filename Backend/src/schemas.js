@@ -1,12 +1,6 @@
 const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
-  type Labelers {
-    _id: ID
-    labeler: String
-    value: String
-  }
-
   type Task {
     _id: ID
     name: String
@@ -21,16 +15,16 @@ const typeDefs = gql`
 
   type Labeler {
     _id: ID
+    googleId: String
     idToken: String
-    labeler: String
+    email: String
     name: String
-    userId: String
     value: String
-    createdAt: Date
+    created_at: Date
   }
 
   type DeletedLabeler {
-    labeler: String
+    _id: ID
   }
 
   type Video {
@@ -45,7 +39,6 @@ const typeDefs = gql`
     category_label: String
     category_predict: [Category]
     taskName: String
-    labelers: [Labeler]
   }
 
   type Category {
@@ -65,22 +58,22 @@ const typeDefs = gql`
   }
 
   type Query {
-    getAllLabelers: [Labelers]
-    searchLabelers(labeler: String): [Labelers]
-    getLabelersTasks(labeler: String): [Task]
+    getAllLabelers: [Labeler]
+    searchLabeler(_id: ID): [Labeler]
+    getLabelersTasks(_id: ID): [Task]
 
     getAllTasks: [Task]
     getTaskDetail(_id: ID, name: String): Task
 
-    getRandomVideo(taskName: String): Video
+    getRandomVideo(taskName: String): [Video]
 
     masterLogIn: Master
   }
 
   type Mutation {
-    deleteLabelers(labeler: String): [DeletedLabeler]
-    addTaskToLabeler(name: String, labeler: String): Task
-    deleteTaskOfLabeler(name: String, labeler: String): [Labeler]
+    deleteLabelers(_id: ID): [DeletedLabeler]
+    addTaskToLabeler(email: String, _id: ID, name: String): Task
+    deleteTaskOfLabeler(email: String, _id: ID, name: String): [Labeler]
 
     addTask(
       name: String
@@ -102,10 +95,17 @@ const typeDefs = gql`
       expiration_date: Date
     ): Task
 
-    addCategoryValue(videoId: String, category_predict: String): Category
+    addCategoryValue(videoId: String, label: String): Category
 
     addMasterSignUp(name: String, password: String): Master
     masterLogIn(name: String, password: String): Master
+
+    labelerLogIn(
+      email: String
+      googleId: String
+      name: String
+      idToken: String
+    ): Labeler
   }
 `;
 

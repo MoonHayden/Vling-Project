@@ -1,7 +1,40 @@
 const DB = require("../../models/db");
+const ObjectId = require("mongodb").ObjectId;
 const db = new DB();
 
-const Labelers = async (_, args, context, info) => {
+const LabelerLogIn = async (_, args, context, info) => {
+  const labelerColl = await db.connectDB("labeling");
+
+  console.log("args: ", args);
+
+  const email = args.email;
+  const googleId = args.googleId;
+  const name = args.name;
+  const idToken = args.idToken;
+
+  const labelerCheck = {
+    googleId: googleId,
+  };
+
+  const isLabeler = await labelerColl.findOne(labelerCheck);
+
+  const createdAt = new Date().getTime();
+
+  const labelerValue = {
+    email: email,
+    googleId: googleId,
+    name: name,
+    idToken: idToken,
+    created_at: createdAt,
+  };
+
+  if (isLabeler) return labelerCheck;
+  if (!isLabeler) await labelerColl.insert(labelerValue);
+
+  return labelerValue;
+};
+
+const GetAllLabelers = async (_, args, context, info) => {
   const labelingColl = await db.connectDB("labeling");
 
   const result = await labelingColl.find({}).toArray();
@@ -9,12 +42,18 @@ const Labelers = async (_, args, context, info) => {
   return result;
 };
 
-const Labeler = async (_, args, context, info) => {
+const SearchLabeler = async (_, args, context, info) => {
   const labelingColl = await db.connectDB("labeling");
 
-  const labeler = args.labeler;
+  const id = args._id;
+  const _id = new ObjectId(id);
+
+  const labeler = {
+    _id: _id,
+  };
   console.log("labeler: ", labeler);
-  const result = await labelingColl.find({ labeler }).toArray();
+
+  const result = await labelingColl.find(labeler).toArray();
   console.log("result: ", result);
 
   return result;
@@ -23,8 +62,11 @@ const Labeler = async (_, args, context, info) => {
 const GetLabelersTasks = async (_, args, context, info) => {
   const taskColl = await db.connectDB("tasks");
 
+  const id = args._id;
+  const _id = new ObjectId(id);
+
   const result = await taskColl
-    .find({ labelers: { $elemMatch: { labeler: args.labeler } } })
+    .find({ labelers: { $elemMatch: { _id: _id } } })
     .toArray();
 
   console.log("result: ", result);
@@ -36,12 +78,14 @@ const AddTaskToLabeler = async (_, args, context, info) => {
   const taskColl = await db.connectDB("tasks");
 
   const task = args.name;
-  console.log("task: ", task);
-  const labeler = args.labeler;
-  console.log("labeler: ", labeler);
+
+  const email = args.email;
+  const id = args._id;
+  const _id = new ObjectId(id);
 
   const labelerValue = {
-    labeler: labeler,
+    email: email,
+    _id: _id,
   };
 
   const taskValue = {
@@ -54,16 +98,25 @@ const AddTaskToLabeler = async (_, args, context, info) => {
 
   console.log("result", result);
   console.log("labelerValue: ", labelerValue);
+
+  return taskValue;
 };
 
-const DeleteLabelers = async (_, labeler) => {
+const DeleteLabelers = async (_, args) => {
   try {
     const labelingColl = await db.connectDB("labeling");
-    console.log("labeler: ", labeler);
 
-    const result = await labelingColl.deleteMany(labeler);
-    console.log("labeler: ", [labeler]);
-    return [labeler];
+    const id = args._id;
+    const _id = new ObjectId(id);
+
+    const labelerValue = {
+      _id: _id,
+    };
+
+    const result = await labelingColl.deleteMany(labelerValue);
+    console.log("labeler: ", [labelerValue]);
+
+    return [labelerValue];
   } catch (err) {
     `Delete Labelers Error: ${err}`;
   }
@@ -73,30 +126,36 @@ const DeleteTaskOfLabeler = async (_, args, context, info) => {
   const taskColl = await db.connectDB("tasks");
 
   const task = args.name;
-  console.log("task: ", task);
-  const labeler = args.labeler;
-  console.log("labeler: ", labeler);
+
+  const email = args.email;
+  const id = args._id;
+  const _id = new ObjectId(id);
+
+  console.log("args: ", args);
 
   const labelerValue = {
-    labeler: labeler,
+    email: email,
+    _id: _id,
   };
+  console.log("labelerValue: ", labelerValue);
 
   const taskValue = {
     name: task,
   };
+  console.log("taskValue: ", taskValue);
 
   const result = await taskColl.updateOne(taskValue, {
     $pull: { labelers: labelerValue },
   });
   console.log("result", result);
-  console.log("labelerValue2: ", labelerValue);
 
   return [labelerValue];
 };
 
 module.exports = {
-  Labelers,
-  Labeler,
+  LabelerLogIn,
+  GetAllLabelers,
+  SearchLabeler,
   GetLabelersTasks,
   AddTaskToLabeler,
   DeleteLabelers,
