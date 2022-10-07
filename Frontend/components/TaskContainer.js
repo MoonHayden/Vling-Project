@@ -2,7 +2,6 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 export default function TaskContainer({ task }) {
-  console.log(task);
   const { name, attendents, status, rate } = task;
   return (
     <>

@@ -1,17 +1,27 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TaskContainer from '../components/TaskContainer';
 import AddTask from '../components/AddTask';
 import client from '../components/apollo-client';
+import addTask from '../components/AddTask';
 
-const TASKS = gql`
+export const TASKS = gql`
   query {
     getAllTasks {
+      _id
       name
       kind
-      attendents
+      labelers {
+        _id
+        googleId
+        idToken
+        email
+        name
+        value
+        created_at
+      }
       status
       rate
       expiration_date
@@ -22,8 +32,13 @@ const TASKS = gql`
 const LABELER_LIST = gql`
   query {
     getAllLabelers {
-      labeler
+      _id
+      googleId
+      idToken
+      email
+      name
       value
+      created_at
     }
   }
 `;
@@ -55,7 +70,7 @@ export default function Tasks({ allTasks, allLabelers }) {
         </TaskNav>
         {addTask === false &&
           allTasks?.data?.getAllTasks?.map(task => (
-            <TaskContainer task={task} />
+            <TaskContainer key={task._id} task={task} />
           ))}
         {addTask === true && <AddTask allLabelers={allLabelers} />}
       </InnerWrap>
@@ -87,9 +102,11 @@ const TaskNav = styled.div`
 const AddTaskBtn = styled.button``;
 
 export async function getServerSideProps() {
-  const allTasks = await client.query({ query: TASKS });
+  const allTasks = await client.query({
+    query: TASKS,
+    fetchPolicy: 'network-only',
+  });
   const allLabelers = await client.query({ query: LABELER_LIST });
-  console.log(allTasks);
   return {
     props: { allTasks, allLabelers },
   };
