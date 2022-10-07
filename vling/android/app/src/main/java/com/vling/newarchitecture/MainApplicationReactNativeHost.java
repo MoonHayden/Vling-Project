@@ -1,4 +1,4 @@
-package com.vling.newarchitecture;
+package com.vling.labeler.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.vling.BuildConfig;
-import com.vling.newarchitecture.components.MainComponentsRegistry;
-import com.vling.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.vling.labeler.BuildConfig;
+import com.vling.labeler.newarchitecture.components.MainComponentsRegistry;
+import com.vling.labeler.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

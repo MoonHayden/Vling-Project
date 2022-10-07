@@ -7,7 +7,6 @@ import OngoingTasks from './_components/OngoingTasks';
 import CompleteTasks from './_components/CompleteTasks';
 import DeleteModal from './_components/DeleteModal';
 import client from '../../../components/apollo-client';
-import { TASK_OF_LABELER_DELETE } from './_components/OngoingTasks';
 import back from '../../../public/images/back.png';
 import Image from 'next/image';
 
@@ -58,6 +57,7 @@ function labelerDetail(props) {
 
   return (
     <>
+      {isModalOpen && <BlurWrap onClick={() => setIsModalOpen(false)} />}
       <Wrap>
         <TopWrap>
           <ImageWrap>
@@ -95,7 +95,6 @@ function labelerDetail(props) {
                 goToTaskDetail={goToTaskDetail}
                 setOngoingTasks={setOngoingTasks}
                 ongoingTasks={ongoingTasks}
-                // taskData={props.data.tasks}
                 totalTasks={totalTasks}
                 labelerId={labelerId}
               />
@@ -104,7 +103,11 @@ function labelerDetail(props) {
         </TaskContainer>
       </Wrap>
       <ModalWrap isModalOpen={isModalOpen}>
-        <DeleteModal labelerId={labelerId} setIsModalOpen={setIsModalOpen} />
+        <DeleteModal
+          labelerId={labelerId}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
       </ModalWrap>
     </>
   );
@@ -125,6 +128,7 @@ export async function getServerSideProps(context) {
     query: TOTAL_TASK_LIST,
     fetchPolicy: 'network-only',
   });
+
   return {
     props: {
       ongoingTasks: getLabelersTasks.getLabelersTasks,
@@ -143,6 +147,7 @@ const Wrap = styled.div`
   height: 100%;
   padding: 1rem;
   position: relative;
+  z-index: 1000;
 `;
 
 const TitleWrap = styled.div`
@@ -180,14 +185,18 @@ const ListBoxTitle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 1000;
 `;
 
-const DeleteBtn = styled.button``;
+const DeleteBtn = styled.button`
+  width: 8rem;
+`;
 
 const SubWrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 40%;
 `;
 
 const ModalWrap = styled.div`
@@ -195,7 +204,8 @@ const ModalWrap = styled.div`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  display: ${({ isModalOpen }) => (isModalOpen ? 'block' : 'none')};
+  z-index: 3000;
+  visibility: ${({ isModalOpen }) => (isModalOpen ? 'visible' : 'hidden')};
 `;
 
 const ImageWrap = styled.span`
@@ -207,5 +217,13 @@ const TopWrap = styled.div`
   align-items: center;
   height: 1.5rem;
   margin-bottom: 4rem;
-  /* justify-content: space-between; */
+`;
+
+const BlurWrap = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 2000;
 `;

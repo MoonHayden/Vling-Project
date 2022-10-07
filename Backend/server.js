@@ -3,14 +3,15 @@ const {
   ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageLocalDefault,
 } = require("apollo-server-core");
-
 const express = require("express");
 const http = require("http");
 const morgan = require("morgan");
+const cors = require("cors");
 require("dotenv").config();
+const route = require('./util/uploadCSV');
 
-const { typeDefs } = require("./labeling/schemas");
-const { resolvers } = require("./labeling/resolvers");
+const { typeDefs } = require("./src/schemas");
+const { resolvers } = require("./src/resolvers");
 
 async function startApolloServer(typeDefs, resolvers) {
   const app = express();
@@ -25,20 +26,16 @@ async function startApolloServer(typeDefs, resolvers) {
       ApolloServerPluginDrainHttpServer({ httpServer }),
     ],
   });
+
   await server.start();
-
+  
+  app.use(cors());
   app.use(morgan("dev"));
-  // app.use(express.json());
-
-  server.applyMiddleware({
-    app,
-    cors: true,
-    onHealthCheck: () =>
-      new Promise((resolve, reject) => {
-        console.log("health check should failed but this is never called");
-        reject("booooo");
-      }),
-  });
+  app.use(express.json());
+  app.use(route);
+  
+  server.applyMiddleware({ app });
+  
   await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
   console.log(
     `✅ Server ready at http://localhost:4000${server.graphqlPath} 🚀`

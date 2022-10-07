@@ -2,7 +2,6 @@ import React from 'react';
 import TotalTask from './TotalTask';
 
 const TotalTasks = ({
-  taskData,
   ongoingTasks,
   setOngoingTasks,
   totalTasks,
@@ -13,7 +12,6 @@ const TotalTasks = ({
   return (
     <>
       {totalTasks.map((task, idx) => {
-        console.log(task);
         return (
           <TotalTask
             labelerId={labelerId}
@@ -32,12 +30,3 @@ const TotalTasks = ({
 };
 
 export default TotalTasks;
-
-const tasks = [
-  { id: 1, name: 'task1' },
-  { id: 2, name: 'task2' },
-  { id: 3, name: 'task3' },
-  { id: 4, name: 'task4' },
-  { id: 5, name: 'task5' },
-  { id: 6, name: 'task6' },
-];

@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { gql, useMutation } from '@apollo/client';
-import { GET_ALL_LABELERS } from '../[[...slug]]';
-import { normalizeReadFieldOptions } from '@apollo/client/cache/inmemory/policies';
+
 const LABELER_DELETE = gql`
   mutation ($labeler: String) {
     deleteLabelers(labeler: $labeler) {
@@ -21,21 +20,7 @@ const DeleteModal = ({
   setLabelers,
 }) => {
   const router = useRouter();
-  const [deleteLabelers] = useMutation(
-    LABELER_DELETE
-    // update(cache, { data: { deleteLabelers } }) {
-    //   cache.modify({
-    //     id: cache.identify(data),
-    //     fields: {
-    //       labelers(exsitingLabelers = []) {
-    //         return exsitingLabelers.filter(
-    //           labelerRef => idToRemove !== normalizeReadFieldOptions('')
-    //         );
-    //       },
-    //     },
-    //   });
-    // },
-  );
+  const [deleteLabelers] = useMutation(LABELER_DELETE);
 
   const deleteHandler = async () => {
     try {
@@ -63,21 +48,20 @@ const DeleteModal = ({
   };
 
   return (
-    <Wrap>
-      <Title>정말 삭제 하시겠습니까?</Title>
-      <Text>삭제할 라벨러</Text>
-      <SubWrap>
-        <ul>
+    <>
+      <Wrap>
+        <Title>정말 삭제 하시겠습니까?</Title>
+        <SubWrap>
           {filteredLabeler.map((labeler, idx) => {
-            return <li key={idx}>{labeler}</li>;
+            return <Labeler key={idx}>{labeler}</Labeler>;
           })}
-        </ul>
-      </SubWrap>
-      <BtnWrap>
-        <DeleteBtn onClick={() => deleteHandler()}>삭제하기</DeleteBtn>
-        <CancleBtn onClick={() => modalCancle()}>취소</CancleBtn>
-      </BtnWrap>
-    </Wrap>
+        </SubWrap>
+        <BtnWrap>
+          <DeleteBtn onClick={() => deleteHandler()}>삭제하기</DeleteBtn>
+          <CancleBtn onClick={() => modalCancle()}>취소</CancleBtn>
+        </BtnWrap>
+      </Wrap>
+    </>
   );
 };
 
@@ -94,6 +78,7 @@ const Wrap = styled.div`
   padding: 2rem;
   border-radius: 15px;
   justify-content: space-between;
+  box-shadow: 0 5px 18px -7px rgba(0, 0, 0, 1);
 `;
 
 const Title = styled.div`
@@ -101,21 +86,16 @@ const Title = styled.div`
   font-size: 1.4rem;
 `;
 
-const Text = styled.div`
-  margin-top: 0.7rem;
-  font-size: 1.3rem;
-  color: #ccccff;
-`;
-
-const SubWrap = styled.div`
+const SubWrap = styled.ul`
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: auto;
   border: 1px solid #ccccff;
-  height: 9rem;
+  width: 20rem;
+  max-height: 8rem;
   border-radius: 7px;
-  padding: 0.3rem;
+  padding: 1rem;
   color: #ccccff;
 `;
 
@@ -132,4 +112,8 @@ const DeleteBtn = styled.button`
 const CancleBtn = styled.button`
   height: 3rem;
   width: 7rem;
+`;
+
+const Labeler = styled.li`
+  margin-bottom: 0.5rem;
 `;

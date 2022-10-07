@@ -1,5 +1,4 @@
-const DB = require("../models/db");
-
+const DB = require("../../models/db");
 const db = new DB();
 
 const Labelers = async (_, args, context, info) => {
@@ -21,15 +20,40 @@ const Labeler = async (_, args, context, info) => {
   return result;
 };
 
-const Tasks = async () => {
+const GetLabelersTasks = async (_, args, context, info) => {
   const taskColl = await db.connectDB("tasks");
 
-  const result = await taskColl.find().toArray();
-  let tasks = result.map((el) => {
-    return el.input;
+  const result = await taskColl
+    .find({ labelers: { $elemMatch: { labeler: args.labeler } } })
+    .toArray();
+
+  console.log("result: ", result);
+
+  return result;
+};
+
+const AddTaskToLabeler = async (_, args, context, info) => {
+  const taskColl = await db.connectDB("tasks");
+
+  const task = args.name;
+  console.log("task: ", task);
+  const labeler = args.labeler;
+  console.log("labeler: ", labeler);
+
+  const labelerValue = {
+    labeler: labeler,
+  };
+
+  const taskValue = {
+    name: task,
+  };
+
+  const result = await taskColl.updateOne(taskValue, {
+    $push: { labelers: labelerValue },
   });
-  console.log(tasks);
-  return tasks;
+
+  console.log("result", result);
+  console.log("labelerValue: ", labelerValue);
 };
 
 const DeleteLabelers = async (_, labeler) => {
@@ -46,7 +70,7 @@ const DeleteLabelers = async (_, labeler) => {
 };
 
 const DeleteTaskOfLabeler = async (_, args, context, info) => {
-  const labelingColl = await db.connectDB("labeling");
+  const taskColl = await db.connectDB("tasks");
 
   const task = args.name;
   console.log("task: ", task);
@@ -61,8 +85,8 @@ const DeleteTaskOfLabeler = async (_, args, context, info) => {
     name: task,
   };
 
-  const result = await labelingColl.updateOne(labelerValue, {
-    $pull: { task: taskValue },
+  const result = await taskColl.updateOne(taskValue, {
+    $pull: { labelers: labelerValue },
   });
   console.log("result", result);
   console.log("labelerValue2: ", labelerValue);
@@ -70,30 +94,11 @@ const DeleteTaskOfLabeler = async (_, args, context, info) => {
   return [labelerValue];
 };
 
-const AddTask = async (_, args, context, info) => {
-  const taskColl = await db.connectDB("tasks");
-
-  console.log(args);
-  // await db.collection("tasks").insertOne(args);
-  await taskColl.insertOne(args);
-  return args.input;
-};
-
-const GetTaskDetail = async (_, args, context, info) => {
-  const taskColl = await db.connectDB("tasks");
-
-  console.log("args: ", args);
-  const result = await taskColl.findOne({ name: args.name });
-  console.log("aa: ", { name: args.name });
-  return result;
-};
-
 module.exports = {
   Labelers,
   Labeler,
-  Tasks,
+  GetLabelersTasks,
+  AddTaskToLabeler,
   DeleteLabelers,
   DeleteTaskOfLabeler,
-  AddTask,
-  GetTaskDetail,
 };
