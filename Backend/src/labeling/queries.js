@@ -1,7 +1,37 @@
 const DB = require("../../models/db");
 const db = new DB();
 
-const Labelers = async (_, args, context, info) => {
+const LabelerLogIn = async (_, args, context, info) => {
+  const labelerColl = await db.connectDB("labeling");
+
+  console.log("args: ", args);
+
+  const email = args.email;
+  const googleId = args.googleId;
+  const name = args.name;
+
+  const labelerCheck = {
+    googleId: googleId,
+  };
+
+  const isLabeler = await labelerColl.findOne(labelerCheck);
+
+  const createdAt = new Date().getTime();
+
+  const labelerValue = {
+    email: email,
+    googleId: googleId,
+    name: name,
+    created_at: createdAt,
+  };
+
+  if (isLabeler) return labelerCheck;
+  if (!isLabeler) await labelerColl.insert(labelerValue);
+
+  return labelerValue;
+};
+
+const GetAllLabelers = async (_, args, context, info) => {
   const labelingColl = await db.connectDB("labeling");
 
   const result = await labelingColl.find({}).toArray();
@@ -9,12 +39,17 @@ const Labelers = async (_, args, context, info) => {
   return result;
 };
 
-const Labeler = async (_, args, context, info) => {
+const SearchLabeler = async (_, args, context, info) => {
   const labelingColl = await db.connectDB("labeling");
 
-  const labeler = args.labeler;
+  const email = args.email;
+
+  const labeler = {
+    email: email,
+  };
   console.log("labeler: ", labeler);
-  const result = await labelingColl.find({ labeler }).toArray();
+
+  const result = await labelingColl.find(labeler).toArray();
   console.log("result: ", result);
 
   return result;
@@ -95,8 +130,9 @@ const DeleteTaskOfLabeler = async (_, args, context, info) => {
 };
 
 module.exports = {
-  Labelers,
-  Labeler,
+  LabelerLogIn,
+  GetAllLabelers,
+  SearchLabeler,
   GetLabelersTasks,
   AddTaskToLabeler,
   DeleteLabelers,

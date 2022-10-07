@@ -4,10 +4,16 @@ const db = new DB();
 const GetRandomVideo = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videos");
 
-  const taskName = args.taskName;
-  console.log("taskName: ", args.taskName);
+  // const taskName = args.taskName;
+  // console.log("taskName: ", args.taskName);
 
-  const result = videoColl.find({ taskName }).toArray();
+  const taskValue = {
+    taskName: args.taskName,
+  };
+  console.log("taskValue: ", taskValue);
+
+  const result = await videoColl.find(taskValue).toArray();
+  console.log("pong!");
   console.log("result: ", result);
   return result;
 };
@@ -15,18 +21,20 @@ const GetRandomVideo = async (_, args, context, info) => {
 const AddCategoryValue = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videos");
 
+  console.log("args: ", args);
+
   const videoValue = {
     videoId: args.videoId,
   };
   console.log("videoValue: ", videoValue);
 
   const categoryValue = {
-    category_predict: args.category_predict,
+    label: args.label,
   };
-  console.log("categoryValue: ", categoryValue);
+  console.log("label: ", args.label);
 
   const result = await videoColl.updateOne(videoValue, {
-    $push: { category_predict: categoryValue },
+    $push: { label: categoryValue },
   });
 
   console.log("result: ", result);

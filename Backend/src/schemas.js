@@ -1,11 +1,11 @@
 const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
-  type Labelers {
-    _id: ID
-    labeler: String
-    value: String
-  }
+  # type Labelers {
+  #   _id: ID
+  #   labeler: String
+  #   value: String
+  # }
 
   type Task {
     _id: ID
@@ -21,12 +21,12 @@ const typeDefs = gql`
 
   type Labeler {
     _id: ID
+    googleId: String
     idToken: String
-    labeler: String
+    email: String
     name: String
-    userId: String
     value: String
-    createdAt: Date
+    created_at: Date
   }
 
   type DeletedLabeler {
@@ -45,7 +45,6 @@ const typeDefs = gql`
     category_label: String
     category_predict: [Category]
     taskName: String
-    labelers: [Labeler]
   }
 
   type Category {
@@ -65,14 +64,14 @@ const typeDefs = gql`
   }
 
   type Query {
-    getAllLabelers: [Labelers]
-    searchLabelers(labeler: String): [Labelers]
+    getAllLabelers: [Labeler]
+    searchLabeler(email: String): [Labeler]
     getLabelersTasks(labeler: String): [Task]
 
     getAllTasks: [Task]
     getTaskDetail(_id: ID, name: String): Task
 
-    getRandomVideo(taskName: String): Video
+    getRandomVideo(taskName: String): [Video]
 
     masterLogIn: Master
   }
@@ -102,10 +101,12 @@ const typeDefs = gql`
       expiration_date: Date
     ): Task
 
-    addCategoryValue(videoId: String, category_predict: String): Category
+    addCategoryValue(videoId: String, label: String): Category
 
     addMasterSignUp(name: String, password: String): Master
     masterLogIn(name: String, password: String): Master
+
+    labelerLogIn(email: String, googleId: String, name: String): Labeler
   }
 `;
 

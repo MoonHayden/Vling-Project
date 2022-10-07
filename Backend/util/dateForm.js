@@ -13,6 +13,8 @@ const currentTime = () => {
 };
 
 const currentTimeISO = () => {
+  new Date();
+  Date.now();
   return currentTime().getTime();
 };
 
