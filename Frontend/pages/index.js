@@ -7,7 +7,7 @@ export default function Home() {
       <Logo src="./images/vling_logo.png" />
       <MainWrap>
         <SubWrap>
-          <Link href="/labelers">
+          <Link href="/labeler">
             <ButtonWrap>
               <Icon src="./images/main_labeler.png" />
               <Text>Labeler 관리</Text>

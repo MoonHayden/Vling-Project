@@ -1,16 +1,24 @@
 import styled from 'styled-components';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
+import DeleteModal from './DeleteModal';
 import client from '../../components/apollo-client';
 
 const TASK_DETAIL = gql`
   query ($name: String!) {
     getTaskDetail(name: $name) {
+      _id
       name
       kind
       labelers {
-        labeler
+        _id
+        googleId
+        idToken
+        email
+        name
         value
+        created_at
       }
       status
       rate
@@ -22,8 +30,13 @@ const TASK_DETAIL = gql`
 const LABELER_LIST = gql`
   query {
     getAllLabelers {
-      labeler
+      _id
+      googleId
+      idToken
+      email
+      name
       value
+      created_at
     }
   }
 `;
@@ -36,55 +49,196 @@ const DELETE_TASK = gql`
   }
 `;
 
-/*
-const DELETE_LABELER = gql`
-  mutation deleteLabeler {
-
+const ADD_LABELER = gql`
+  mutation ($email: String, $name: String, $id: ID) {
+    addTaskToLabeler(email: $email, name: $name, _id: $id) {
+      name
+    }
   }
 `;
-*/
 
-const COMPLETE_TASK = gql`
-  mutation {
-    completeTask {
-      id
-      value
+const DELETE_LABELER = gql`
+  mutation ($email: String, $name: String) {
+    deleteTaskOfLabeler(email: $email, name: $name) {
+      email
+    }
+  }
+`;
+
+const UPDATE_TASK = gql`
+  mutation (
+    $name: String
+    $kind: String
+    $labelers: [addLabelerInput]
+    $expirationDate: Date
+  ) {
+    updateTask(
+      name: $name
+      kind: $kind
+      labelers: $labelers
+      expiration_date: $expirationDate
+    ) {
+      name
+      kind
+      labelers {
+        _id
+        googleId
+        idToken
+        email
+        name
+        value
+        created_at
+      }
+      status
+      rate
+      expiration_date
     }
   }
 `;
 
 export default function TaskDetail({ params, allLabelers }) {
+  const [edit, setEdit] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [currLabelers, setCurrLabelers] = useState([]);
+  const [deleteModal, setDeleteModal] = useState(false);
+
   const { data: taskDetail } = useQuery(TASK_DETAIL, {
     variables: { name: params.taskName },
   });
 
-  const [deleteTask] = useMutation(DELETE_TASK, {
-    variables: { name: params.taskName },
-  });
+  const [deleteTask] = useMutation(
+    DELETE_TASK
+    /*
+    {
+      variables: { name: params.taskName },
+    }
+    {
+      update(cache, { data: { deleteTask } }) {
+        const allTasks = cache.readQuery({ query: TASKS });
+        cache.writeQuery({
+          query: TASKS,
+          data: { getAllTasks: [addTask, ...allTasks.data.getAllTasks] },
+        });
+      },
+    }
+    */
+  );
 
-  const [completeTask] = useMutation(COMPLETE_TASK, {
-    variables: { value: true },
-  });
+  const [updateTask] = useMutation(UPDATE_TASK);
+
+  const [deleteTaskOfLabeler] = useMutation(DELETE_LABELER);
+
+  const [addTaskToLabeler] = useMutation(ADD_LABELER);
 
   if (taskDetail === undefined) return;
-  console.log(allLabelers.data.getAllLabelers);
+
+  const handleEditClick = () => {
+    setEdit(!edit);
+  };
+
+  const handleEditNameInput = e => {
+    setEditName(e.target.value);
+  };
+
+  const handleEditSubmit = () => {
+    setEditName();
+  };
+
+  const handleCurrLabelers = () => {
+    setCurrLabelers(taskDetail.getTaskDetail.labelers);
+  };
+
+  const onDeleteClick = () => {
+    setDeleteModal(true);
+  };
+
+  const onDeleteLabeler = async e => {
+    await deleteTaskOfLabeler({
+      variables: { email: e.target.value, name: params.taskName },
+    });
+    /*
+    updateTask({
+      variables: {
+        labelers: taskDetail.getTaskDetail.labelers.filter(
+          labeler => labeler.email !== e.target.value
+        ),
+        name: params.taskName,
+      },
+    });
+    */
+    window.location.reload();
+  };
+
+  const onAddLabeler = async e => {
+    await addTaskToLabeler({
+      variables: { email: e.target.value, name: params.taskName },
+    });
+    /*
+    updateTask({
+      variables: {
+        labelers: [...taskDetail.getTaskDetail.labelers, newobj],
+        name: params.taskName,
+      },
+    });
+    */
+    window.location.reload();
+  };
 
   return (
     <>
       <InnerWrap data={taskDetail}>
         <DetailTop>
           <TaskInfo>
-            <TaskName>{taskDetail.getTaskDetail.name}</TaskName>
+            <TaskNameNav>
+              {edit ? (
+                <>
+                  <TaskNameInput
+                    value={editName}
+                    placeholder="예: 영상목록1"
+                    onChange={handleEditNameInput}
+                  ></TaskNameInput>
+                  <CloseIcon
+                    src="/images/close.png"
+                    alt="closeIcon"
+                    onClick={handleEditClick}
+                  />
+                  <CheckIcon
+                    src="/images/check.png"
+                    alt="checkIcon"
+                    onClick={updateTask}
+                  />
+                </>
+              ) : (
+                <>
+                  <EditIcon
+                    src="/images/edit.png"
+                    alt="editIcon"
+                    onClick={handleEditClick}
+                  />
+                  <TaskName>{taskDetail.getTaskDetail.name}</TaskName>
+                </>
+              )}
+            </TaskNameNav>
             <TaskCategory>Kind: {taskDetail.getTaskDetail.kind}</TaskCategory>
             <ExpireDate>
-              Exp.Date: {taskDetail.getTaskDetail.exp_date}
+              Exp.Date: {taskDetail.getTaskDetail.expiration_date}
             </ExpireDate>
           </TaskInfo>
           <ButtonsWrap>
             <Link href="/tasks">
               <GoBackBtn>뒤로가기</GoBackBtn>
             </Link>
-            <DeleteBtn onClick={deleteTask}>Task 삭제</DeleteBtn>
+            <DeleteBtn onClick={onDeleteClick}>Task 삭제</DeleteBtn>
+            {deleteModal && (
+              <DeleteModal
+                deleteTask={deleteTask}
+                params={params}
+                taskName={taskDetail.getTaskDetail.name}
+                taskKind={taskDetail.getTaskDetail.kind}
+                expDate={taskDetail.getTaskDetail.expiration_date}
+                setDeleteModal={setDeleteModal}
+              />
+            )}
             <CompleteBtn
               disabled={
                 Math.round(taskDetail.getTaskDetail.rate) == 100 &&
@@ -103,29 +257,43 @@ export default function TaskDetail({ params, allLabelers }) {
               Current Labelers ({taskDetail.getTaskDetail.labelers.length}):
             </CurrentLabelersTitle>
             <CurrentLabelers>
-              {taskDetail?.getTaskDetail?.labelers?.map((labeler, index) => (
-                <CurrentListWrap key={index}>
+              {taskDetail?.getTaskDetail?.labelers?.map(labeler => (
+                <CurrentListWrap key={labeler._id}>
                   <LabelerListNav>
-                    <Link href={`/labeler/detail/${labeler.labeler}`}>
-                      <LabelerName>{labeler.labeler}</LabelerName>
+                    <Link href={`/labeler/detail/${labeler.email}`}>
+                      <LabelerName>{labeler.email}</LabelerName>
                     </Link>
-                    <AddButton>삭제</AddButton>
+                    <AddButton
+                      value={labeler.email}
+                      onClick={e => onDeleteLabeler(e)}
+                    >
+                      삭제
+                    </AddButton>
                   </LabelerListNav>
                 </CurrentListWrap>
               ))}
             </CurrentLabelers>
           </CurrentLabelersWrap>
           <ListWrap>
+            <AllLabelers>
+              Labelers: ({allLabelers.data.getAllLabelers.length})
+            </AllLabelers>
+            {/*
             <LabelerListNav>
               <NavName>Name:</NavName>
               <NavName>Email:</NavName>
               <NavName>Add:</NavName>
             </LabelerListNav>
+            */}
             <LabelerListWrap>
               {allLabelers.data.getAllLabelers.map(labeler => (
-                <LabelerWrap>
-                  <LabelerName>{labeler.labeler}</LabelerName>
-                  <AddButton>추가</AddButton>
+                <LabelerWrap key={labeler._id}>
+                  <Link href={`/labeler/detail/${labeler.labeler}`}>
+                    <LabelerName>{labeler.email}</LabelerName>
+                  </Link>
+                  <AddButton value={labeler.email} onClick={onAddLabeler}>
+                    추가
+                  </AddButton>
                 </LabelerWrap>
               ))}
             </LabelerListWrap>
@@ -166,6 +334,18 @@ const DetailTop = styled.div`
 const TaskInfo = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const TaskNameNav = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const EditIcon = styled.img`
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  cursor: pointer;
 `;
 
 const TaskName = styled.h1`
@@ -241,6 +421,12 @@ const LabelerListWrap = styled(CurrentListWrap)`
   overflow-y: scroll;
 `;
 
+const AllLabelers = styled.h1`
+  margin-bottom: 1rem;
+  font-size: 20px;
+  font-weight: bold;
+`;
+
 const LabelerListNav = styled.div`
   display: flex;
   justify-content: space-between;
@@ -259,7 +445,12 @@ const NavName = styled.p`
 
 const LabelerWrap = styled(LabelerListNav)``;
 
-const LabelerName = styled.p``;
+const LabelerName = styled.p`
+  cursor: pointer;
+  &:hover {
+    color: red;
+  }
+`;
 
 const AddButton = styled.button``;
 
@@ -298,6 +489,38 @@ const RateBar = styled.div`
   background-color: ${props => (props.status ? '#4cd137' : '#fbc531')};
 `;
 
+const TaskNameInput = styled.input`
+  width: 100%;
+  margin-bottom: 1rem;
+  padding-bottom: 5px;
+  font-size: 16px;
+  border: none;
+  border-bottom: 2px solid black;
+  background-color: transparent;
+  &:focus {
+    outline: none;
+  }
+  &:focus::placeholder {
+    color: transparent;
+  }
+`;
+
+const CloseIcon = styled.img`
+  width: 15px;
+  height: 15px;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+`;
+
+const CheckIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+`;
+
 export async function getServerSideProps({ params }) {
   /*
   const taskDetail = await client.query(
@@ -305,7 +528,6 @@ export async function getServerSideProps({ params }) {
     { variables: { name: params.taskName } }
   );
   */
-
   const allLabelers = await client.query({ query: LABELER_LIST });
   return {
     props: { params, allLabelers },
