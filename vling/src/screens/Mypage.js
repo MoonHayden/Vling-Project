@@ -1,57 +1,57 @@
 import React from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {Text, TouchableOpacity} from 'react-native';
+import {Text, View, TouchableOpacity} from 'react-native';
 import {StyleSheet} from 'react-native';
 
-export default function Mypage(navigation) {
-  // const checkSign = async () => {
-  //   const check = await GoogleSignin.isSignedIn();
-  //   const info = await GoogleSignin.getCurrentUser();
-  //   console.log('check', check);
-  //   console.log('info', info.user.id);
-  //   console.log('info', info.user.email);
-  //   // id, email, name
-  // };
-
+export default function Mypage({navigation, route}) {
+  // const userName = route.params;
+  // // console.log(route.params.userName);
   const signOut = async () => {
     try {
-      const LogOut = await GoogleSignin.revokeAccess();
-      const SignOut = await GoogleSignin.signOut();
-      console.log(LogOut);
-      console.log(SignOut);
-      const check = await GoogleSignin.isSignedIn();
-      console.log('check', check);
-      if (check) {
-        return navigation.reset({routes: [{name: 'Login'}]});
-      } else {
-        console.log('없엉');
-      }
+      await GoogleSignin.revokeAccess();
+      await GoogleSignin.signOut();
+      navigation.reset({routes: [{name: 'Login'}]});
     } catch (error) {
-      console.error(error);
+      console.error('error', error);
     }
   };
-
   return (
-    <TouchableOpacity style={styles.mypage} onPress={signOut}>
-      <Text style={styles.signout}>Signout</Text>
-    </TouchableOpacity>
+    <View style={styles.mypage}>
+      <Text>name: 님 </Text>
+      <TouchableOpacity style={styles.button} onPress={signOut}>
+        <Text style={styles.signout}>Google Signout</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   mypage: {
+    display: 'flex',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // borderWidth: 1,
   },
-  signout: {
-    // flex: 1,
-    color: 'blue',
-    borderWidth: 1,
-    height: 20,
+  button: {
+    display: 'flex',
     width: 300,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 10,
+    backgroundColor: '#FF0044',
+  },
+  signout: {
+    color: 'white',
+    fontSize: 25,
   },
 });
+
+// const checkSign = async () => {
+//   const check = await GoogleSignin.isSignedIn();
+//   const info = await GoogleSignin.getCurrentUser();
+//   console.log('check', check);
+//   console.log('info', info.user.id);
+//   console.log('info', info.user.email);
+//   // id, email, name
+// };

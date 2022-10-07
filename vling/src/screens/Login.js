@@ -1,31 +1,83 @@
-import React, {useState} from 'react';
-import {View, Image, StyleSheet, Text} from 'react-native';
+import React /*, {useState}*/ from 'react';
+import {View, Image, StyleSheet} from 'react-native';
+import {gql, useMutation} from '@apollo/client';
 import {
   GoogleSignin,
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 
+const LOGINGQL = gql`
+  mutation LabelerLogIn(
+    $email: String
+    $googleId: String
+    $name: String
+    $idToken: String
+  ) {
+    labelerLogIn(
+      email: $email
+      googleId: $googleId
+      name: $name
+      idToken: $idToken
+    ) {
+      _id
+      googleId
+      idToken
+      email
+      name
+      value
+      created_at
+    }
+  }
+`;
 GoogleSignin.configure({
   webClientId:
     '224145633081-g145bsnbpscdau8pdbrkp37gnk1lnvrk.apps.googleusercontent.com',
-  // offlineAccess: true,
+  offlineAccess: true,
   forceCodeForRefreshToken: true,
 });
+
 export default function Login({navigation}) {
-  const [user, setUser] = useState({});
+  // const [user, setUser] = useState();
+  const [LoginInfo] = useMutation(LOGINGQL);
+
   const signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      // console.log(userInfo.user.email);
-      console.log('로그인 완료');
+      // setUser(userInfo);
+      // console.log('userInfo:', userInfo);
+      const {email, name, photo} = userInfo.user;
+      console.log(email);
+      console.log(name);
+      console.log(photo);
+
       if (userInfo) {
-        console.log(userInfo);
-        setUser(userInfo);
-        return navigation.reset({routes: [{name: 'MainScreen'}]});
+        return (
+          navigation.navigate('MainScreen', {
+            email: email,
+            userName: name,
+            photo: photo,
+          }),
+          // navigation.reset(
+          //   {routes: [{name: 'MainScreen'}]},
+          //   {
+          //     email: userInfo.user.email,
+          //     name: userInfo.user.name,
+          //     photo: userInfo.user.photo,
+          //   },
+          // ),
+          LoginInfo({
+            variables: {
+              email: userInfo.user.email,
+              googleId: userInfo.user.id,
+              name: userInfo.user.name,
+              idToken: userInfo.idToken,
+            },
+          })
+        );
       } else {
-        console.log('없엉');
+        console.log('로그인 실패');
       }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -44,46 +96,31 @@ export default function Login({navigation}) {
     }
   };
 
-  // const signOut = async () => {
-  //   try {
-  //     await GoogleSignin.revokeAccess();
-  //     await GoogleSignin.signOut();
-  //     setUser({});
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   return (
     <View style={styles.login}>
       <Image
+        source={require('/Users/haydenmoon/Desktop/labeling/vling/src/asset/images/vling_logo.png')}
+      />
+      <Image
         source={require('/Users/haydenmoon/Desktop/labeling/vling/src/asset/images/logo.png')}
       />
-
       <View>
-        {!user.idToken && (
-          <GoogleSigninButton style={styles.Google} onPress={signIn} />
-        )}
+        <GoogleSigninButton style={styles.Google} onPress={signIn} />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    width: 250,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 10,
+  Google: {
+    marginTop: 20,
+    width: 300,
+    height: 50,
   },
-  Google: {width: 250, height: 50},
   login: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 100,
     backgroundColor: '#FF0044',
   },
 });
@@ -110,5 +147,14 @@ const styles = StyleSheet.create({
 //       alert('Someting went wrong.');
 //       console.log('Someting went wrong.');
 //     }
+//   }
+// };
+// const signOut = async () => {
+//   try {
+//     await GoogleSignin.revokeAccess();
+//     await GoogleSignin.signOut();
+//     setUser({});
+//   } catch (error) {
+//     console.error(error);
 //   }
 // };

@@ -13,10 +13,11 @@ const Tab = createBottomTabNavigator();
 export default function MainScreen() {
   return (
     <Tab.Navigator
+      headerMode="none"
       screenOptions={({route}) => ({
+        headerShown: false,
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
-
           if (route.name === 'Mypage') {
             iconName = focused ? 'person' : 'person-outline';
           } else if (route.name === 'Categories') {
@@ -35,9 +36,6 @@ export default function MainScreen() {
       <Tab.Screen name="Categories" component={CategoriesScreen} />
       <Tab.Screen name="Emotion" component={EmotionScreen} />
       <Tab.Screen name="NER" component={NERScreen} />
-      {/* <Stack.Screen name="Categorization" component={Categorization} /> */}
     </Tab.Navigator>
-
-    // <Stack.Screen name="Categories" component={CategoriesScreen} />
   );
 }
