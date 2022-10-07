@@ -38,6 +38,8 @@ const AddCategoryValue = async (_, args, context, info) => {
   });
 
   console.log("result: ", result);
+
+  return categoryValue;
 };
 
 module.exports = {
