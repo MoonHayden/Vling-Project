@@ -5,16 +5,19 @@ import CategoriesScreen from './Categories';
 import MypageScreen from './Mypage';
 import NERScreen from './NER';
 import EmotionScreen from './Emotion';
+// import Categorization from './Categorization';
 
 const Tab = createBottomTabNavigator();
+// const Stack = createStackNavigator();
 
 export default function MainScreen() {
   return (
     <Tab.Navigator
+      headerMode="none"
       screenOptions={({route}) => ({
+        headerShown: false,
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
-
           if (route.name === 'Mypage') {
             iconName = focused ? 'person' : 'person-outline';
           } else if (route.name === 'Categories') {
@@ -28,11 +31,7 @@ export default function MainScreen() {
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
-      })}
-      tabBarOptions={{
-        activeTintColor: 'black',
-        inactiveTintColor: 'gray',
-      }}>
+      })}>
       <Tab.Screen name="Mypage" component={MypageScreen} />
       <Tab.Screen name="Categories" component={CategoriesScreen} />
       <Tab.Screen name="Emotion" component={EmotionScreen} />
