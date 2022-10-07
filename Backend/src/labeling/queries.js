@@ -9,6 +9,7 @@ const LabelerLogIn = async (_, args, context, info) => {
   const email = args.email;
   const googleId = args.googleId;
   const name = args.name;
+  const idToken = args.idToken;
 
   const labelerCheck = {
     googleId: googleId,
@@ -22,6 +23,7 @@ const LabelerLogIn = async (_, args, context, info) => {
     email: email,
     googleId: googleId,
     name: name,
+    idToken: idToken,
     created_at: createdAt,
   };
 

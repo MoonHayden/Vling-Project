@@ -106,7 +106,12 @@ const typeDefs = gql`
     addMasterSignUp(name: String, password: String): Master
     masterLogIn(name: String, password: String): Master
 
-    labelerLogIn(email: String, googleId: String, name: String): Labeler
+    labelerLogIn(
+      email: String
+      googleId: String
+      name: String
+      idToken: String
+    ): Labeler
   }
 `;
 
