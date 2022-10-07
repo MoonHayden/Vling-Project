@@ -4,8 +4,8 @@ import {Text, View, TouchableOpacity} from 'react-native';
 import {StyleSheet} from 'react-native';
 
 export default function Mypage({navigation, route}) {
-  // const userName = route.params;
-  // // console.log(route.params.userName);
+  const userName = route.params;
+  console.log(route.params.userName);
   const signOut = async () => {
     try {
       await GoogleSignin.revokeAccess();
