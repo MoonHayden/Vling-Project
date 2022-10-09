@@ -1,6 +1,5 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-// import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoriesScreen from './Categories';
 import MypageScreen from './Mypage';
@@ -14,10 +13,11 @@ const Tab = createBottomTabNavigator();
 export default function MainScreen() {
   return (
     <Tab.Navigator
+      headerMode="none"
       screenOptions={({route}) => ({
+        headerShown: false,
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
-
           if (route.name === 'Mypage') {
             iconName = focused ? 'person' : 'person-outline';
           } else if (route.name === 'Categories') {
@@ -31,18 +31,11 @@ export default function MainScreen() {
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
         },
-      })}
-      tabBarOptions={{
-        activeTintColor: 'black',
-        inactiveTintColor: 'gray',
-      }}>
+      })}>
       <Tab.Screen name="Mypage" component={MypageScreen} />
       <Tab.Screen name="Categories" component={CategoriesScreen} />
       <Tab.Screen name="Emotion" component={EmotionScreen} />
       <Tab.Screen name="NER" component={NERScreen} />
-      {/* <Stack.Screen name="Categorization" component={Categorization} /> */}
     </Tab.Navigator>
-
-    // <Stack.Screen name="Categories" component={CategoriesScreen} />
   );
 }

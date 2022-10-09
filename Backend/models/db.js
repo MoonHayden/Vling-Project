@@ -6,6 +6,7 @@ class DB {
   constructor() {
     this.url = process.env.DB_URL;
     this.dbName = process.env.DB_NAME;
+
     this.cache;
   }
   async connectDB(doc) {
