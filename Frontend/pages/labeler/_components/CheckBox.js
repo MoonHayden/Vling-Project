@@ -4,19 +4,12 @@ import blankBox from '../../../public/images/blankBox.png';
 import Image from 'next/image';
 import styled from 'styled-components';
 
-const CheckBox = ({
-  email,
-  isDeleteButtonClicked,
-  clickedLabelersForDelete,
-}) => {
-  const isCheck = clickedLabelersForDelete.includes(email)
-    ? checkBox
-    : blankBox;
-  console.log(clickedLabelersForDelete);
+const CheckBox = ({ isDeleteButtonClicked, isIncludeClickedLabelers }) => {
+  const checkImage = isIncludeClickedLabelers ? checkBox : blankBox;
 
   return (
     <Wrap isDeleteButtonClicked={isDeleteButtonClicked}>
-      <Image src={isCheck} alt="checkBox" />
+      <Image src={checkImage} alt="checkBox" />
     </Wrap>
   );
 };

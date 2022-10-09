@@ -1,15 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useMutation, gql } from '@apollo/client';
-
-//id-라벨러, name-테스크네임
-export const TASK_OF_LABELER_DELETE = gql`
-  mutation DeleteTaskOfLabeler($email: String, $name: String) {
-    deleteTaskOfLabeler(email: $email, name: $name) {
-      _id
-    }
-  }
-`;
+import { DELETE_TASK_OF_LABELER } from '../../../../components/gql';
 
 const OngoingTasks = ({
   ongoingTasks,
@@ -17,12 +9,14 @@ const OngoingTasks = ({
   setOngoingTasks,
   labelerInformation,
 }) => {
-  const [deleteTaskOfLabeler] = useMutation(TASK_OF_LABELER_DELETE);
+  const [deleteTaskOfLabeler] = useMutation(DELETE_TASK_OF_LABELER);
 
+  console.log(labelerInformation.email, labelerInformation._id);
   const deleteOngoingTask = async clickedTask => {
     await deleteTaskOfLabeler({
       variables: {
         email: labelerInformation.email,
+        id: labelerInformation._id,
         name: clickedTask,
       },
     });

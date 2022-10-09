@@ -1,14 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useMutation, gql } from '@apollo/client';
-
-export const TASK_OF_LABELER_ADD = gql`
-  mutation AddTaskToLabeler($email: String, $id: ID, $name: String) {
-    addTaskToLabeler(email: $email, _id: $id, name: $name) {
-      _id
-    }
-  }
-`;
+import { useMutation } from '@apollo/client';
+import { ADD_TASK_TO_LABELER } from '../../../../components/gql';
 
 const TotalTask = ({
   name,
@@ -22,14 +15,15 @@ const TotalTask = ({
 }) => {
   if (ongoingTasks === undefined) return;
 
-  const [addTaskToLabeler] = useMutation(TASK_OF_LABELER_ADD);
+  const [addTaskToLabeler] = useMutation(ADD_TASK_TO_LABELER);
 
   const isOverlap = ongoingTasks.find(task => task.name === name);
 
+  console.log(labelerId, '하하', labelerInformation._id);
   const addOngoinTask = async clickedTask => {
     await addTaskToLabeler({
       variables: {
-        email: labelerId,
+        email: labelerInformation.email,
         id: labelerInformation._id,
         name: clickedTask,
       },

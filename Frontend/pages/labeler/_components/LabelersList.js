@@ -6,12 +6,12 @@ const LabelersList = ({
   labelers,
   searchLabelers,
   isDeleteButtonClicked,
-  clickedLabelersForDelete,
-  setClickedLabelersForDelete,
+  clickedLabelers,
+  setClickedLabelers,
 }) => {
   const filteredLabelers =
     searchLabelers.length === 0 ? labelers : searchLabelers;
-    
+
   return (
     <Wrap>
       {filteredLabelers.map(labeler => {
@@ -20,8 +20,8 @@ const LabelersList = ({
             key={labeler._id}
             {...labeler}
             isDeleteButtonClicked={isDeleteButtonClicked}
-            clickedLabelersForDelete={clickedLabelersForDelete}
-            setClickedLabelersForDelete={setClickedLabelersForDelete}
+            clickedLabelers={clickedLabelers}
+            setClickedLabelers={setClickedLabelers}
           />
         );
       })}

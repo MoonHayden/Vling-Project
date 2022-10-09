@@ -1,42 +1,42 @@
 import React from 'react';
 import styled from 'styled-components';
-import { gql, useMutation } from '@apollo/client';
-
-const LABELER_DELETE = gql`
-  mutation ($email: String) {
-    deleteLabelers(email: $email) {
-      labeler
-    }
-  }
-`;
+import { useMutation } from '@apollo/client';
+import { LABELER_DELETE } from '../../../components/gql';
 
 const DeleteModal = ({
   setIsModalOpen,
   setIsDeleteButtonClicked,
-  setClickedLabelersForDelete,
+  setClickedLabelers,
   labelers,
   setLabelers,
-  clickedLabelersForDelete,
+  clickedLabelers,
 }) => {
   const [deleteLabelers] = useMutation(LABELER_DELETE);
 
   const deleteHandler = async () => {
     try {
-      await deleteLabelers({
-        variables: { labeler: clickedLabelersForDelete[0] },
+      clickedLabelers.forEach(labeler => {
+        deleteLabelers({
+          variables: { id: labeler.id },
+        });
       });
-      setIsDeleteButtonClicked(false);
-      setClickedLabelersForDelete({});
-      setLabelers(deleteFilter());
-      setIsModalOpen(false);
+      initialization();
     } catch (e) {
       alert(e);
     }
   };
 
+  const initialization = () => {
+    setLabelers(deleteFilter());
+    setIsDeleteButtonClicked(false);
+    setClickedLabelers([]);
+    setIsModalOpen(false);
+  };
+
   const deleteFilter = () => {
+    const deleteLabelersList = clickedLabelers.map(labeler => labeler.id);
     return labelers.filter(
-      labeler => !clickedLabelersForDelete.includes(labeler.email)
+      labeler => !deleteLabelersList.includes(labeler._id)
     );
   };
 
@@ -48,8 +48,8 @@ const DeleteModal = ({
     <Wrap>
       <Title>정말 삭제 하시겠습니까?</Title>
       <SubWrap>
-        {clickedLabelersForDelete.map((labeler, idx) => {
-          return <Labeler key={idx}>{labeler}</Labeler>;
+        {clickedLabelers.map((labeler, idx) => {
+          return <Labeler key={idx}>{labeler.email}</Labeler>;
         })}
       </SubWrap>
       <BtnWrap>

@@ -5,27 +5,33 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 const Labeler = ({
+  _id,
   email,
   value,
   isDeleteButtonClicked,
-  clickedLabelersForDelete,
-  setClickedLabelersForDelete,
+  clickedLabelers,
+  setClickedLabelers,
 }) => {
   const router = useRouter();
-  const url = `/labeler/detail/${email}`;
+  const url = `/labeler/detail/${_id}`;
 
   function labelerClickHandler() {
     isDeleteButtonClicked ? sortLabelers() : router.push(url);
   }
 
+  const isIncludeClickedLabelers = clickedLabelers.some(
+    labeler => labeler.id === _id
+  );
+
+  const filteredLabelers = clickedLabelers.filter(
+    labeler => labeler.id !== _id
+  );
+
   function sortLabelers() {
-    if (clickedLabelersForDelete.includes(email)) {
-      const filteredLabelers = clickedLabelersForDelete.filter(
-        clickedLabeler => clickedLabeler !== email
-      );
-      setClickedLabelersForDelete(filteredLabelers);
+    if (isIncludeClickedLabelers) {
+      setClickedLabelers(filteredLabelers);
     } else {
-      setClickedLabelersForDelete([...clickedLabelersForDelete, email]);
+      setClickedLabelers([...clickedLabelers, { email: email, id: _id }]);
     }
   }
 
@@ -35,8 +41,9 @@ const Labeler = ({
         <CheckBox
           email={email}
           isDeleteButtonClicked={isDeleteButtonClicked}
-          clickedLabelersForDelete={clickedLabelersForDelete}
-          setClickedLabelersForDelete={setClickedLabelersForDelete}
+          clickedLabelers={clickedLabelers}
+          isIncludeClickedLabelers={isIncludeClickedLabelers}
+          setClickedLabelers={setClickedLabelers}
         />
         <div>{email}</div>
       </SubWrap>

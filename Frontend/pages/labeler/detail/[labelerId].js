@@ -9,44 +9,9 @@ import DeleteModal from './_components/DeleteModal';
 import client from '../../../components/apollo-client';
 import back from '../../../public/images/back.png';
 import Image from 'next/image';
-
-const TOTAL_TASK_LIST = gql`
-  query GetAllTasks {
-    getAllTasks {
-      _id
-      name
-      kind
-      status
-      rate
-      expiration_date
-    }
-  }
-`;
-
-const ONGOING_TASK_LIST = gql`
-  query GetLabelersTasks($email: String) {
-    getLabelersTasks(email: $email) {
-      _id
-      name
-      kind
-      status
-      rate
-      expiration_date
-    }
-  }
-`;
-
-const SEARCH_LABELER = gql`
-  query SearchLabeler($email: String) {
-    searchLabeler(email: $email) {
-      _id
-      email
-      name
-      value
-      created_at
-    }
-  }
-`;
+import { TOTAL_TASK_LIST } from '../../../components/gql';
+import { ONGOING_TASK_LIST } from '../../../components/gql';
+import { SEARCH_LABELER } from '../../../components/gql';
 
 function labelerDetail(props) {
   const router = useRouter();
@@ -63,6 +28,9 @@ function labelerDetail(props) {
   const backPage = () => {
     router.push('/labeler');
   };
+
+  var today = new Date(labelerInformation.created_at);
+  console.log(today);
 
   useEffect(() => {
     setOngoingTasks(props.ongoingTasks);
@@ -85,7 +53,7 @@ function labelerDetail(props) {
             />
           </ImageWrap>
           <TitleWrap>
-            <Email>Email: {labelerId}</Email>
+            <Email>Email: {labelerInformation.email}</Email>
             <DeleteBtn onClick={() => setIsModalOpen(true)}>
               라벨러 삭제
             </DeleteBtn>
@@ -135,15 +103,15 @@ export default labelerDetail;
 export async function getServerSideProps(context) {
   const { query } = context;
 
-  const { data: getLabelersTasks } = await client.query({
-    query: ONGOING_TASK_LIST,
-    variables: { email: query.labelerId },
+  const { data: labelerInformation } = await client.query({
+    query: SEARCH_LABELER,
+    variables: { id: query.labelerId },
     fetchPolicy: 'network-only',
   });
 
-  const { data: labelerInformation } = await client.query({
-    query: SEARCH_LABELER,
-    variables: { email: query.labelerId },
+  const { data: getLabelersTasks } = await client.query({
+    query: ONGOING_TASK_LIST,
+    variables: { id: query.labelerId },
     fetchPolicy: 'network-only',
   });
 

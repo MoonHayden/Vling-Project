@@ -1,25 +1,15 @@
 import styled from 'styled-components';
 import LabelersList from './_components/LabelersList';
-import { gql } from '@apollo/client';
 import Search from './_components/Search';
 import { useEffect, useState } from 'react';
 import DeleteButton from './_components/DeleteButton';
 import client from '../../components/apollo-client';
 import DeleteModal from './_components/DeleteModal';
-
-export const GET_ALL_LABELERS = gql`
-  query GetAllLabelers {
-    getAllLabelers {
-      _id
-      email
-      value
-    }
-  }
-`;
+import { GET_ALL_LABELERS } from '../../components/gql';
 
 function labelersPage({ labelersData }) {
   const [labelers, setLabelers] = useState([]);
-  const [clickedLabelersForDelete, setClickedLabelersForDelete] = useState([]);
+  const [clickedLabelers, setClickedLabelers] = useState([]);
   const [isDeleteButtonClicked, setIsDeleteButtonClicked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchLabelers, setSearchLabelers] = useState([]);
@@ -42,7 +32,7 @@ function labelersPage({ labelersData }) {
           />
           <DeleteButton
             isDeleteButtonClicked={isDeleteButtonClicked}
-            clickedLabelersForDelete={clickedLabelersForDelete}
+            clickedLabelers={clickedLabelers}
             setIsModalOpen={setIsModalOpen}
             setIsDeleteButtonClicked={setIsDeleteButtonClicked}
           />
@@ -50,8 +40,8 @@ function labelersPage({ labelersData }) {
             <DeleteModal
               labelers={labelers}
               setLabelers={setLabelers}
-              clickedLabelersForDelete={clickedLabelersForDelete}
-              setClickedLabelersForDelete={setClickedLabelersForDelete}
+              clickedLabelers={clickedLabelers}
+              setClickedLabelers={setClickedLabelers}
               setIsModalOpen={setIsModalOpen}
               setIsDeleteButtonClicked={setIsDeleteButtonClicked}
             />
@@ -65,8 +55,8 @@ function labelersPage({ labelersData }) {
           labelers={labelers}
           searchLabelers={searchLabelers}
           isDeleteButtonClicked={isDeleteButtonClicked}
-          clickedLabelersForDelete={clickedLabelersForDelete}
-          setClickedLabelersForDelete={setClickedLabelersForDelete}
+          clickedLabelers={clickedLabelers}
+          setClickedLabelers={setClickedLabelers}
         />
       </Wrap>
     </>
@@ -79,8 +69,6 @@ export async function getServerSideProps() {
     query: GET_ALL_LABELERS,
     fetchPolicy: 'network-only',
   });
-
-  console.log(data);
 
   return {
     props: {

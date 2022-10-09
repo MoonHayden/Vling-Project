@@ -3,11 +3,11 @@ import styled from 'styled-components';
 
 const DeleteButton = ({
   setIsModalOpen,
-  clickedLabelersForDelete,
+  clickedLabelers,
   isDeleteButtonClicked,
   setIsDeleteButtonClicked,
 }) => {
-  const selectedNum = clickedLabelersForDelete.length;
+  const selectedNum = clickedLabelers.length;
   const isSelected = selectedNum > 0;
 
   function buttonTitle() {
