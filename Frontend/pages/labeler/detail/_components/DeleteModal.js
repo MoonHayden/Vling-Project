@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import { useMutation, gql } from '@apollo/client';
 
 const LABELER_DELETE = gql`
-  mutation ($labeler: String) {
-    deleteLabelers(labeler: $labeler) {
+  mutation ($email: String) {
+    deleteLabelers(email: $email) {
       labeler
     }
   }
@@ -15,7 +15,7 @@ const DeleteModal = ({ setIsModalOpen, labelerId }) => {
   const router = useRouter();
 
   const [deleteLabelers] = useMutation(LABELER_DELETE, {
-    variables: { labeler: labelerId },
+    variables: { email: labelerId },
   });
 
   const deleteHandler = async () => {

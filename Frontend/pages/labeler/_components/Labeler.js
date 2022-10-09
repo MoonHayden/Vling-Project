@@ -4,24 +4,28 @@ import { useRouter } from 'next/router';
 
 import styled from 'styled-components';
 
-const LabelerInfo = ({
-  labeler,
+const Labeler = ({
+  email,
   value,
   isDeleteButtonClicked,
   clickedLabelersForDelete,
   setClickedLabelersForDelete,
 }) => {
   const router = useRouter();
+  const url = `/labeler/detail/${email}`;
 
   function labelerClickHandler() {
-    if (isDeleteButtonClicked) {
-      setClickedLabelersForDelete({
-        ...clickedLabelersForDelete,
-        [labeler]: !clickedLabelersForDelete[labeler],
-      });
+    isDeleteButtonClicked ? sortLabelers() : router.push(url);
+  }
+
+  function sortLabelers() {
+    if (clickedLabelersForDelete.includes(email)) {
+      const filteredLabelers = clickedLabelersForDelete.filter(
+        clickedLabeler => clickedLabeler !== email
+      );
+      setClickedLabelersForDelete(filteredLabelers);
     } else {
-      const url = `/labeler/detail/${labeler}`;
-      router.push(url);
+      setClickedLabelersForDelete([...clickedLabelersForDelete, email]);
     }
   }
 
@@ -29,19 +33,19 @@ const LabelerInfo = ({
     <Wrap onClick={labelerClickHandler}>
       <SubWrap>
         <CheckBox
-          labeler={labeler}
+          email={email}
           isDeleteButtonClicked={isDeleteButtonClicked}
           clickedLabelersForDelete={clickedLabelersForDelete}
           setClickedLabelersForDelete={setClickedLabelersForDelete}
         />
-        <div>{labeler}</div>
+        <div>{email}</div>
       </SubWrap>
       <div>{value}</div>
     </Wrap>
   );
 };
 
-export default LabelerInfo;
+export default Labeler;
 
 const Wrap = styled.div`
   width: 100%;

@@ -1,45 +1,42 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
 import { gql, useMutation } from '@apollo/client';
 
 const LABELER_DELETE = gql`
-  mutation ($labeler: String) {
-    deleteLabelers(labeler: $labeler) {
+  mutation ($email: String) {
+    deleteLabelers(email: $email) {
       labeler
     }
   }
 `;
 
 const DeleteModal = ({
-  filteredLabeler,
   setIsModalOpen,
   setIsDeleteButtonClicked,
   setClickedLabelersForDelete,
   labelers,
   setLabelers,
+  clickedLabelersForDelete,
 }) => {
-  const router = useRouter();
   const [deleteLabelers] = useMutation(LABELER_DELETE);
 
   const deleteHandler = async () => {
     try {
       await deleteLabelers({
-        variables: { labeler: filteredLabeler[0] },
+        variables: { labeler: clickedLabelersForDelete[0] },
       });
       setIsDeleteButtonClicked(false);
       setClickedLabelersForDelete({});
-      setLabelers(calcul());
+      setLabelers(deleteFilter());
+      setIsModalOpen(false);
     } catch (e) {
       alert(e);
     }
-    setIsModalOpen(false);
-    router.replace('/labeler');
   };
 
-  const calcul = () => {
+  const deleteFilter = () => {
     return labelers.filter(
-      labeler => !filteredLabeler.includes(labeler.labeler)
+      labeler => !clickedLabelersForDelete.includes(labeler.email)
     );
   };
 
@@ -48,20 +45,18 @@ const DeleteModal = ({
   };
 
   return (
-    <>
-      <Wrap>
-        <Title>정말 삭제 하시겠습니까?</Title>
-        <SubWrap>
-          {filteredLabeler.map((labeler, idx) => {
-            return <Labeler key={idx}>{labeler}</Labeler>;
-          })}
-        </SubWrap>
-        <BtnWrap>
-          <DeleteBtn onClick={() => deleteHandler()}>삭제하기</DeleteBtn>
-          <CancleBtn onClick={() => modalCancle()}>취소</CancleBtn>
-        </BtnWrap>
-      </Wrap>
-    </>
+    <Wrap>
+      <Title>정말 삭제 하시겠습니까?</Title>
+      <SubWrap>
+        {clickedLabelersForDelete.map((labeler, idx) => {
+          return <Labeler key={idx}>{labeler}</Labeler>;
+        })}
+      </SubWrap>
+      <BtnWrap>
+        <DeleteBtn onClick={() => deleteHandler()}>삭제하기</DeleteBtn>
+        <CancleBtn onClick={() => modalCancle()}>취소</CancleBtn>
+      </BtnWrap>
+    </Wrap>
   );
 };
 

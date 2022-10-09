@@ -1,31 +1,32 @@
 import styled from 'styled-components';
-import LabelerList from './_components/LabelerList';
+import LabelersList from './_components/LabelersList';
 import { gql } from '@apollo/client';
 import Search from './_components/Search';
 import { useEffect, useState } from 'react';
-import DeleteLabeler from './_components/DeleteLabeler';
+import DeleteButton from './_components/DeleteButton';
 import client from '../../components/apollo-client';
+import DeleteModal from './_components/DeleteModal';
 
 export const GET_ALL_LABELERS = gql`
-  query {
+  query GetAllLabelers {
     getAllLabelers {
       _id
-      labeler
+      email
       value
     }
   }
 `;
 
-function labelersPage(props) {
+function labelersPage({ labelersData }) {
   const [labelers, setLabelers] = useState([]);
-  const [clickedLabelersForDelete, setClickedLabelersForDelete] = useState({});
+  const [clickedLabelersForDelete, setClickedLabelersForDelete] = useState([]);
   const [isDeleteButtonClicked, setIsDeleteButtonClicked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchLabelers, setSearchLabelers] = useState([]);
 
   useEffect(() => {
-    setLabelers(props.labelersData.getAllLabelers);
-  }, [props.labelersData.getAllLabelers]);
+    setLabelers(labelersData.getAllLabelers);
+  }, [labelersData.getAllLabelers]);
 
   if (labelers === undefined) return;
 
@@ -39,22 +40,28 @@ function labelersPage(props) {
             searchLabelers={searchLabelers}
             setSearchLabelers={setSearchLabelers}
           />
-          <DeleteLabeler
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
-            clickedLabelersForDelete={clickedLabelersForDelete}
-            setClickedLabelersForDelete={setClickedLabelersForDelete}
+          <DeleteButton
             isDeleteButtonClicked={isDeleteButtonClicked}
+            clickedLabelersForDelete={clickedLabelersForDelete}
+            setIsModalOpen={setIsModalOpen}
             setIsDeleteButtonClicked={setIsDeleteButtonClicked}
-            labelers={labelers}
-            setLabelers={setLabelers}
           />
+          <ModalWrap isModalOpen={isModalOpen}>
+            <DeleteModal
+              labelers={labelers}
+              setLabelers={setLabelers}
+              clickedLabelersForDelete={clickedLabelersForDelete}
+              setClickedLabelersForDelete={setClickedLabelersForDelete}
+              setIsModalOpen={setIsModalOpen}
+              setIsDeleteButtonClicked={setIsDeleteButtonClicked}
+            />
+          </ModalWrap>
         </Menus>
         <TitleBox>
           <div>Email</div>
           <div>Value</div>
         </TitleBox>
-        <LabelerList
+        <LabelersList
           labelers={labelers}
           searchLabelers={searchLabelers}
           isDeleteButtonClicked={isDeleteButtonClicked}
@@ -72,6 +79,8 @@ export async function getServerSideProps() {
     query: GET_ALL_LABELERS,
     fetchPolicy: 'network-only',
   });
+
+  console.log(data);
 
   return {
     props: {
@@ -111,4 +120,13 @@ const TitleBox = styled.div`
   justify-content: space-between;
   padding: 0 3rem 0 2rem;
   margin-top: 0.5rem;
+`;
+
+const ModalWrap = styled.div`
+  z-index: 3000;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: ${({ isModalOpen }) => (isModalOpen ? 'block' : 'none')};
 `;

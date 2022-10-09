@@ -13,18 +13,19 @@ const Search = ({ labelers, searchLabelers, setSearchLabelers }) => {
   function SearchLabeler(event) {
     event.preventDefault();
 
-    const value = event.target['name'].value;
+    const value = event.target['email'].value;
+
     const filteredLabelers = labelers.filter(labeler =>
-      labeler.labeler.includes(value)
+      labeler.email.includes(value)
     );
 
-    if (value === '') {
+    if (!value) {
       setSearchLabelers([]);
     } else if (filteredLabelers.length === 0) {
       alert('찾으시는 라벨러가 없습니다!');
     } else {
       setSearchLabelers(
-        labelers.filter(labeler => labeler.labeler.includes(value))
+        labelers.filter(labeler => labeler.email.includes(value))
       );
     }
   }
@@ -56,7 +57,7 @@ const Search = ({ labelers, searchLabelers, setSearchLabelers }) => {
         >
           <Image src={reset} alt="reset" width={12} height={12} />
         </ResetButton>
-        <Input type="text" name="name" />
+        <Input type="text" name="email" />
         <SarchButton type="submit">검색</SarchButton>
       </Wrap>
     </>

@@ -1,11 +1,11 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { useMutation, gql } from '@apollo/client';
 
 export const TASK_OF_LABELER_ADD = gql`
-  mutation AddTaskToLabeler($name: String, $labeler: String) {
-    addTaskToLabeler(name: $name, labeler: $labeler) {
-      name
+  mutation AddTaskToLabeler($email: String, $id: ID, $name: String) {
+    addTaskToLabeler(email: $email, _id: $id, name: $name) {
+      _id
     }
   }
 `;
@@ -18,21 +18,28 @@ const TotalTask = ({
   expirationDate,
   goToTaskDetail,
   labelerId,
+  labelerInformation,
 }) => {
   if (ongoingTasks === undefined) return;
+
   const [addTaskToLabeler] = useMutation(TASK_OF_LABELER_ADD);
 
   const isOverlap = ongoingTasks.find(task => task.name === name);
 
   const addOngoinTask = async clickedTask => {
     await addTaskToLabeler({
-      variables: { name: clickedTask, labeler: labelerId },
+      variables: {
+        email: labelerId,
+        id: labelerInformation._id,
+        name: clickedTask,
+      },
     });
     setOngoingTasks([
       { name: clickedTask, expiration_date: expirationDate, kind: category },
       ...ongoingTasks,
     ]);
   };
+
   return (
     <Wrap isOverlap={isOverlap}>
       <Task onClick={() => goToTaskDetail(name)} isOverlap={isOverlap}>
@@ -71,15 +78,13 @@ const Task = styled.li`
   width: 5rem;
   padding-left: 0.4rem;
   font-size: 0.8rem;
+
   cursor: pointer;
   :hover {
     color: red;
   }
-  ${({ isOverlap }) =>
-    isOverlap &&
-    css`
-      opacity: 0.3;
-    `}
+
+  opacity: ${({ isOverlap }) => (isOverlap ? '0.3' : '1')};
 `;
 
 const CompleteText = styled.div`

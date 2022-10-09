@@ -13,6 +13,7 @@ import Image from 'next/image';
 const TOTAL_TASK_LIST = gql`
   query GetAllTasks {
     getAllTasks {
+      _id
       name
       kind
       status
@@ -21,15 +22,28 @@ const TOTAL_TASK_LIST = gql`
     }
   }
 `;
+
 const ONGOING_TASK_LIST = gql`
-  query GetLabelersTasks($labeler: String) {
-    getLabelersTasks(labeler: $labeler) {
+  query GetLabelersTasks($email: String) {
+    getLabelersTasks(email: $email) {
+      _id
       name
       kind
+      status
+      rate
       expiration_date
-      labelers {
-        labeler
-      }
+    }
+  }
+`;
+
+const SEARCH_LABELER = gql`
+  query SearchLabeler($email: String) {
+    searchLabeler(email: $email) {
+      _id
+      email
+      name
+      value
+      created_at
     }
   }
 `;
@@ -38,6 +52,7 @@ function labelerDetail(props) {
   const router = useRouter();
   const labelerId = router.query.labelerId;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [labelerInformation, setLabelerInformation] = useState({});
   const [ongoingTasks, setOngoingTasks] = useState();
   const [totalTasks, setTotalTasks] = useState();
 
@@ -52,6 +67,7 @@ function labelerDetail(props) {
   useEffect(() => {
     setOngoingTasks(props.ongoingTasks);
     setTotalTasks(props.total_tasks.getAllTasks);
+    setLabelerInformation(props.labelerInformation);
   }, [props.ongoingTasks]);
 
   return (
@@ -82,6 +98,7 @@ function labelerDetail(props) {
               goToTaskDetail={goToTaskDetail}
               ongoingTasks={ongoingTasks}
               setOngoingTasks={setOngoingTasks}
+              labelerInformation={labelerInformation}
             />
             <CompleteTasks goToTaskDetail={goToTaskDetail} />
           </SubWrap>
@@ -91,6 +108,7 @@ function labelerDetail(props) {
             </ListBoxTitle>
             <TaskBox>
               <TaskList
+                labelerInformation={labelerInformation}
                 goToTaskDetail={goToTaskDetail}
                 setOngoingTasks={setOngoingTasks}
                 ongoingTasks={ongoingTasks}
@@ -119,7 +137,13 @@ export async function getServerSideProps(context) {
 
   const { data: getLabelersTasks } = await client.query({
     query: ONGOING_TASK_LIST,
-    variables: { labeler: query.labelerId },
+    variables: { email: query.labelerId },
+    fetchPolicy: 'network-only',
+  });
+
+  const { data: labelerInformation } = await client.query({
+    query: SEARCH_LABELER,
+    variables: { email: query.labelerId },
     fetchPolicy: 'network-only',
   });
 
@@ -132,6 +156,7 @@ export async function getServerSideProps(context) {
     props: {
       ongoingTasks: getLabelersTasks.getLabelersTasks,
       total_tasks: totalTasks,
+      labelerInformation: labelerInformation.searchLabeler[0],
     },
   };
 }

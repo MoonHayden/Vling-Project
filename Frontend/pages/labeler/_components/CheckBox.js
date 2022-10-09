@@ -5,11 +5,14 @@ import Image from 'next/image';
 import styled from 'styled-components';
 
 const CheckBox = ({
-  labeler,
+  email,
   isDeleteButtonClicked,
   clickedLabelersForDelete,
 }) => {
-  const isCheck = clickedLabelersForDelete[labeler] ? checkBox : blankBox;
+  const isCheck = clickedLabelersForDelete.includes(email)
+    ? checkBox
+    : blankBox;
+  console.log(clickedLabelersForDelete);
 
   return (
     <Wrap isDeleteButtonClicked={isDeleteButtonClicked}>
@@ -21,8 +24,8 @@ const CheckBox = ({
 export default CheckBox;
 
 const Wrap = styled.span`
+  margin-right: 0.4rem;
+
   visibility: ${({ isDeleteButtonClicked }) =>
     isDeleteButtonClicked ? 'visible' : 'hidden'};
-
-  margin-right: 0.4rem;
 `;

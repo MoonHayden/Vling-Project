@@ -1,9 +1,8 @@
 import React from 'react';
-import LabelerInfo from './LabelerInfo';
-
+import Labeler from './Labeler';
 import styled from 'styled-components';
 
-const LabelerList = ({
+const LabelersList = ({
   labelers,
   searchLabelers,
   isDeleteButtonClicked,
@@ -12,11 +11,12 @@ const LabelerList = ({
 }) => {
   const filteredLabelers =
     searchLabelers.length === 0 ? labelers : searchLabelers;
+    
   return (
     <Wrap>
       {filteredLabelers.map(labeler => {
         return (
-          <LabelerInfo
+          <Labeler
             key={labeler._id}
             {...labeler}
             isDeleteButtonClicked={isDeleteButtonClicked}
@@ -29,7 +29,7 @@ const LabelerList = ({
   );
 };
 
-export default LabelerList;
+export default LabelersList;
 
 const Wrap = styled.div`
   height: 27rem;
