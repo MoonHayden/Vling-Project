@@ -40,7 +40,6 @@ function labelerDetail(props) {
 
   return (
     <>
-      {isModalOpen && <BlurWrap onClick={() => setIsModalOpen(false)} />}
       <Wrap>
         <TopWrap>
           <ImageWrap>
@@ -87,13 +86,12 @@ function labelerDetail(props) {
           </TaskListBox>
         </TaskContainer>
       </Wrap>
-      <ModalWrap isModalOpen={isModalOpen}>
-        <DeleteModal
-          labelerId={labelerId}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-        />
-      </ModalWrap>
+      <DeleteModal
+        labelerInformation={labelerInformation}
+        labelerId={labelerId}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
     </>
   );
 }
@@ -139,7 +137,6 @@ const Wrap = styled.div`
   height: 100%;
   padding: 1rem;
   position: relative;
-  z-index: 1000;
 `;
 
 const TitleWrap = styled.div`
@@ -177,7 +174,6 @@ const ListBoxTitle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1000;
 `;
 
 const DeleteBtn = styled.button`
@@ -191,15 +187,6 @@ const SubWrap = styled.div`
   width: 40%;
 `;
 
-const ModalWrap = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3000;
-  visibility: ${({ isModalOpen }) => (isModalOpen ? 'visible' : 'hidden')};
-`;
-
 const ImageWrap = styled.span`
   cursor: pointer;
 `;
@@ -209,13 +196,4 @@ const TopWrap = styled.div`
   align-items: center;
   height: 1.5rem;
   margin-bottom: 4rem;
-`;
-
-const BlurWrap = styled.div`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 2000;
 `;

@@ -1,18 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { LABELER_DELETE } from '../../../../components/gql';
-
-const DeleteModal = ({ setIsModalOpen, labelerId }) => {
+import ModalFrame from '../../../../components/ModalFrame';
+const DeleteModal = ({ setIsModalOpen, isModalOpen, labelerInformation }) => {
   const router = useRouter();
+  console.log(labelerInformation);
 
   const [deleteLabelers] = useMutation(LABELER_DELETE, {
-    variables: { id: labelerId },
+    variables: { id: labelerInformation._id },
   });
 
   const deleteHandler = async () => {
-    await deleteLabelers();
+    try {
+      await deleteLabelers();
+      initialization();
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const initialization = () => {
     setIsModalOpen(false);
     router.replace('/labeler');
   };
@@ -22,31 +31,34 @@ const DeleteModal = ({ setIsModalOpen, labelerId }) => {
   };
 
   return (
-    <Wrap>
-      <Title>정말 삭제 하시겠습니까?</Title>
-      <BtnWrap>
-        <DeleteBtn onClick={() => deleteHandler()}>삭제하기</DeleteBtn>
-        <CancleBtn onClick={() => modalCancle()}>취소</CancleBtn>
-      </BtnWrap>
-    </Wrap>
+    <>
+      {isModalOpen && (
+        <ModalFrame
+          setIsModalOpen={setIsModalOpen}
+          deleteHandler={deleteHandler}
+          modalCancle={modalCancle}
+          selectedLabelers={[labelerInformation]}
+        />
+      )}
+    </>
   );
 };
 
 export default DeleteModal;
 
-const Wrap = styled.div`
-  background-color: #606060;
-  height: 10rem;
-  width: 20rem;
-  color: black;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  border-radius: 15px;
-  justify-content: space-between;
-  box-shadow: 0 5px 18px -7px rgba(0, 0, 0, 1);
-`;
+// const Wrap = styled.div`
+//   background-color: #606060;
+//   height: 10rem;
+//   width: 20rem;
+//   color: black;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   padding: 2rem;
+//   border-radius: 15px;
+//   justify-content: space-between;
+//   box-shadow: 0 5px 18px -7px rgba(0, 0, 0, 1);
+// `;
 
 const Title = styled.div`
   color: white;
