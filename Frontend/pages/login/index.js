@@ -50,7 +50,7 @@ function loginPage() {
       <ImageWrap>
         <Image src={logo} alt="checkBox" width={230} height={90} />
       </ImageWrap>
-      <SubWrap>
+      <Form>
         <Input
           onChange={e => idUpdate(e)}
           type="text"
@@ -76,7 +76,7 @@ function loginPage() {
             로그인
           </Buttton>
         </Box>
-      </SubWrap>
+      </Form>
     </Wrap>
   );
 }
@@ -91,7 +91,7 @@ const Wrap = styled.div`
   padding: 3rem;
 `;
 
-const SubWrap = styled.div`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
 `;

@@ -12,6 +12,7 @@ const LabelersList = ({
   const filteredLabelers =
     searchLabelers.length === 0 ? labelers : searchLabelers;
 
+  console.log(labelers, '여긴 리스튼');
   return (
     <Wrap>
       {filteredLabelers.map(labeler => {

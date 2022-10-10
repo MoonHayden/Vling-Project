@@ -2,23 +2,22 @@ import styled from 'styled-components';
 import LabelersList from './_components/LabelersList';
 import Search from './_components/Search';
 import { useEffect, useState } from 'react';
-import DeleteButton from './_components/DeleteButton';
 import client from '../../components/apollo-client';
 import DeleteModal from './_components/DeleteModal';
 import { GET_ALL_LABELERS } from '../../components/gql';
+import TitleTab from './_components/TitleTab';
 
 function labelersPage({ labelersData }) {
   const [labelers, setLabelers] = useState([]);
   const [clickedLabelers, setClickedLabelers] = useState([]);
   const [isDeleteButtonClicked, setIsDeleteButtonClicked] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchLabelers, setSearchLabelers] = useState([]);
 
   useEffect(() => {
     setLabelers(labelersData.getAllLabelers);
   }, [labelersData.getAllLabelers]);
 
-  if (labelers === undefined) return;
+  if (!labelers) return;
 
   return (
     <Wrap>
@@ -28,26 +27,16 @@ function labelersPage({ labelersData }) {
           searchLabelers={searchLabelers}
           setSearchLabelers={setSearchLabelers}
         />
-        <DeleteButton
-          isDeleteButtonClicked={isDeleteButtonClicked}
-          clickedLabelers={clickedLabelers}
-          setIsModalOpen={setIsModalOpen}
-          setIsDeleteButtonClicked={setIsDeleteButtonClicked}
-        />
         <DeleteModal
-          isModalOpen={isModalOpen}
           labelers={labelers}
-          setLabelers={setLabelers}
           clickedLabelers={clickedLabelers}
+          isDeleteButtonClicked={isDeleteButtonClicked}
+          setLabelers={setLabelers}
           setClickedLabelers={setClickedLabelers}
-          setIsModalOpen={setIsModalOpen}
           setIsDeleteButtonClicked={setIsDeleteButtonClicked}
         />
       </Menus>
-      <TitleBox>
-        <div>Email</div>
-        <div>Value</div>
-      </TitleBox>
+      <TitleTab labelers={labelers} setLabelers={setLabelers} />
       <LabelersList
         labelers={labelers}
         searchLabelers={searchLabelers}
@@ -85,14 +74,4 @@ const Menus = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 1.5rem;
-`;
-
-const TitleBox = styled.div`
-  display: flex;
-  width: 100%;
-  height: 3rem;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 3rem 0 2rem;
-  margin-top: 0.5rem;
 `;

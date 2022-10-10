@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { LABELER_DELETE } from '../../../components/gql';
 import ModalFrame from '../../../components/ModalFrame';
-
+import DeleteButton from './DeleteButton';
 const DeleteModal = ({
-  setIsModalOpen,
   setIsDeleteButtonClicked,
   setClickedLabelers,
   labelers,
   setLabelers,
   clickedLabelers,
-  isModalOpen,
+  isDeleteButtonClicked,
 }) => {
   const [deleteLabelers] = useMutation(LABELER_DELETE);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const deleteHandler = async () => {
     try {
@@ -47,6 +47,12 @@ const DeleteModal = ({
 
   return (
     <>
+      <DeleteButton
+        isDeleteButtonClicked={isDeleteButtonClicked}
+        clickedLabelers={clickedLabelers}
+        setIsModalOpen={setIsModalOpen}
+        setIsDeleteButtonClicked={setIsDeleteButtonClicked}
+      />
       {isModalOpen && (
         <ModalFrame
           deleteHandler={deleteHandler}

@@ -16,7 +16,6 @@ import { SEARCH_LABELER } from '../../../components/gql';
 function labelerDetail(props) {
   const router = useRouter();
   const labelerId = router.query.labelerId;
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [labelerInformation, setLabelerInformation] = useState({});
   const [ongoingTasks, setOngoingTasks] = useState();
   const [totalTasks, setTotalTasks] = useState();
@@ -53,9 +52,7 @@ function labelerDetail(props) {
           </ImageWrap>
           <TitleWrap>
             <Email>Email: {labelerInformation.email}</Email>
-            <DeleteBtn onClick={() => setIsModalOpen(true)}>
-              라벨러 삭제
-            </DeleteBtn>
+            <DeleteModal labelerInformation={labelerInformation} />
           </TitleWrap>
         </TopWrap>
         <TaskContainer>
@@ -86,12 +83,6 @@ function labelerDetail(props) {
           </TaskListBox>
         </TaskContainer>
       </Wrap>
-      <DeleteModal
-        labelerInformation={labelerInformation}
-        labelerId={labelerId}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-      />
     </>
   );
 }
@@ -174,10 +165,6 @@ const ListBoxTitle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-`;
-
-const DeleteBtn = styled.button`
-  width: 8rem;
 `;
 
 const SubWrap = styled.div`
