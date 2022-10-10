@@ -11,49 +11,41 @@ import {
 } from 'react-native';
 
 const TASKS = gql`
-  query GetAllTasks {
-    getAllTasks {
+  query GetLabelersTasks($id: ID) {
+    getLabelersTasks(_id: $id) {
       name
-      kind
-      labelers {
-        labeler
-      }
-      status
-      rate
-      expiration_date
     }
   }
 `;
-
-export default function CategoriesScreen({navigation}) {
-  const {data} = useQuery(TASKS);
+export default function CategoriesScreen({navigation, route}) {
+  const {data} = useQuery(TASKS, {
+    variables: {id: '633f8cdcd91b030398d27faf'},
+  });
+  // console.log(data);
   if (data === undefined) {
     return;
   }
 
-  const DATA = data.getAllTasks;
-  // console.log(data);
+  const DATA = data.getLabelersTasks;
+  console.log(DATA);
 
   const renderItem = ({item}) => {
     const categoryTitle = item.name;
-    // console.log(item);
+    console.log(categoryTitle);
     return (
       <View style={styles.wrap}>
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.5}
           onPress={() =>
-            navigation.navigate('Categorization', {
-              name: item.name,
-              kind: item.kind,
-            })
+            navigation.navigate('Categorization', {name: categoryTitle})
           }>
           <Text style={{fontWeight: 'bold', color: '#2323dd'}}>
             {categoryTitle}
           </Text>
         </TouchableOpacity>
         <Progress.Bar
-          progress={item.rate / 100}
+          progress={0.3}
           width={null}
           height={10}
           marginTop={10}
@@ -61,7 +53,7 @@ export default function CategoriesScreen({navigation}) {
         />
         <View style={{alignItems: 'center'}}>
           <Text style={{fontWeight: 'bold', color: '#2b2525'}}>
-            진행률 {item.rate} %
+            진행률 30 %
           </Text>
         </View>
       </View>

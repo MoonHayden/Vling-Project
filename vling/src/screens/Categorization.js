@@ -2,7 +2,14 @@ import React, {useState} from 'react';
 import YouTube from 'react-native-youtube';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useQuery, gql, useMutation} from '@apollo/client';
-import {StyleSheet, Text, View, FlatList, SafeAreaView} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+} from 'react-native';
 
 const VIDEOS = gql`
   query GetRandomVideo($taskName: String) {
@@ -60,6 +67,7 @@ export default function Categorization({route}) {
     videoId: '',
     label: '',
   });
+  console.log(category);
 
   const [addLabel] = useMutation(LABEL);
 
@@ -67,14 +75,22 @@ export default function Categorization({route}) {
   if (data === undefined) {
     return;
   }
+  // console.log(data);
+  // console.log(DATA);
 
   const DATA = data.getRandomVideo[0];
   const VideoUrl = DATA.videoId;
+  const title = DATA.title;
+  const description = DATA.description;
+  const tags = DATA.tags;
+  const myArray = JSON.stringify(tags);
+  const TAGS = JSON.parse(myArray);
 
-  console.log(category);
+  // const myArray = tags.split('');
+  console.log(typeof myArray);
+  console.log(TAGS);
 
   const renderItem = ({item}) => {
-    // console.log(item);
     const categoryTag = item.category;
 
     const handleInput = () => {
@@ -83,12 +99,11 @@ export default function Categorization({route}) {
         variables: {videoId: VideoUrl, label: categoryTag},
       });
     };
-    // console.log(categoryTag);
 
     return (
       <View>
         <TouchableOpacity>
-          <Text style={styles.button} onPress={handleInput}>
+          <Text style={styles.Button} onPress={handleInput}>
             {categoryTag}
           </Text>
         </TouchableOpacity>
@@ -97,7 +112,6 @@ export default function Categorization({route}) {
   };
 
   const renderItem2 = ({item}) => {
-    // console.log(item);
     const categoryTag = item.category;
     const handleInput = () => {
       setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
@@ -105,11 +119,11 @@ export default function Categorization({route}) {
         variables: {videoId: VideoUrl, label: categoryTag},
       });
     };
-    // console.log(categoryTag);
+
     return (
       <View>
-        <TouchableOpacity>
-          <Text style={styles.button} onPress={handleInput}>
+        <TouchableOpacity style={styles.test}>
+          <Text style={styles.Button} onPress={handleInput}>
             {categoryTag}
           </Text>
         </TouchableOpacity>
@@ -117,7 +131,6 @@ export default function Categorization({route}) {
     );
   };
   const renderItem3 = ({item}) => {
-    // console.log(item);
     const categoryTag = item.category;
     const handleInput = () => {
       setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
@@ -125,11 +138,11 @@ export default function Categorization({route}) {
         variables: {videoId: VideoUrl, label: categoryTag},
       });
     };
-    // console.log(categoryTag);
+
     return (
       <View>
         <TouchableOpacity>
-          <Text style={styles.button} onPress={handleInput}>
+          <Text style={styles.Button} onPress={handleInput}>
             {categoryTag}
           </Text>
         </TouchableOpacity>
@@ -139,69 +152,136 @@ export default function Categorization({route}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <YouTube
-        videoId={VideoUrl}
-        apiKey="AIzaSyBpEiykhELvQ6kySUMrIPcCYfd6WvnGxkU"
-        play={true}
-        fullscreen={false}
-        loop={false}
-        onReady={e => console.log('onReady')}
-        onChangeState={e => console.log('onChangeState:', e.state)}
-        onChangeQuality={e => console.log('onChangeQuality: ', e.quality)}
-        onError={e => console.log('onError: ', e.error)}
-        style={{width: '100%', height: 300}}
-      />
-      <View style={styles.Buttons}>
-        <FlatList
-          data={categoryList}
-          renderItem={renderItem}
-          keyExtractor={item => item.category}
+      <ScrollView>
+        <YouTube
+          style={styles.youtube}
+          videoId={VideoUrl}
+          apiKey="AIzaSyBpEiykhELvQ6kySUMrIPcCYfd6WvnGxkU"
+          play={true}
+          fullscreen={false}
+          loop={false}
+          onReady={e => console.log('onReady')}
+          onChangeState={e => console.log('onChangeState:', e.state)}
+          onChangeQuality={e => console.log('onChangeQuality: ', e.quality)}
+          onError={e => console.log('onError: ', e.error)}
         />
-        <FlatList
-          data={categoryList2}
-          renderItem={renderItem2}
-          keyExtractor={item => item.category}
-        />
+        <Text style={styles.title}>{title}</Text>
 
-        <FlatList
-          data={categoryList3}
-          renderItem={renderItem3}
-          keyExtractor={item => item.category}
-        />
-      </View>
+        <View style={styles.ButtonDirection}>
+          <View style={styles.Buttons}>
+            <FlatList
+              data={categoryList}
+              renderItem={renderItem}
+              keyExtractor={item => item.category}
+            />
+          </View>
+          <View style={styles.Buttons}>
+            <FlatList
+              data={categoryList2}
+              renderItem={renderItem2}
+              keyExtractor={item => item.category}
+            />
+          </View>
+          <View style={styles.Buttons}>
+            <FlatList
+              data={categoryList3}
+              renderItem={renderItem3}
+              keyExtractor={item => item.category}
+            />
+          </View>
+        </View>
+
+        <Text style={styles.description}>
+          {'\n'}
+          <Text style={styles.Description}>[Description]</Text>
+          {'\n'}
+          {'\n'}
+          {description}
+          {'\n'}
+        </Text>
+
+        <Text style={styles.tags}>
+          <Text style={styles.Tags}>[Tags]</Text>
+          {'\n'}
+          {'\n'}
+          <Text style={styles.TAGS}>{tags}</Text>
+        </Text>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
+  Description: {
+    fontSize: 25,
   },
-  button: {
-    backgroundColor: '#e8e8ce',
+  description: {
+    // height: 300,
+    color: 'black',
+    // height: 100,
+  },
+  test: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  TAGS: {
+    borderWidth: 1,
+    borderColor: 'black',
+  },
+  Tags: {
+    fontSize: 25,
+  },
+  tags: {
+    color: 'black',
+    // height: 100,
+  },
+  title: {
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    color: 'black',
+  },
+  youtube: {
+    // borderWidth: 10,
+    // borderColor: 'red',
+    width: '100%',
+    height: 300,
+  },
+
+  Button: {
+    backgroundColor: '#e8e8ce',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // left: 5,
     width: 100,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderRadius: 10,
     borderColor: '#FF0044',
-    marginTop: 10,
+    marginTop: 7,
     fontWeight: 'bold',
     color: '#6250ed',
   },
   Buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flex: 1,
+    // borderWidth: 10,
+    // borderColor: 'blue',
+    // justifyContent: 'center',
     alignItems: 'center',
   },
-  test: {
-    // alignItems: 'center',
+  ButtonDirection: {
+    flex: 1,
+    // borderWidth: 10,
+    // borderColor: 'lightblue',
+    flexDirection: 'row',
     // justifyContent: 'center',
+    alignItems: 'center',
   },
-  category: {
-    // backgroundColor: 'blue',
-    // justifyContent: 'center',
-    // alignItems: 'center',
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    alignitems: 'center',
+    justifyContent: 'center',
+    // borderWidth: 10,
+    // borderColor: 'gray',
   },
 });
 
@@ -213,8 +293,6 @@ const styles = StyleSheet.create({
 //   setCategory({...category, label: e.nativeEvent.text});
 // };
 
-// console.log(category);
-// console.log(VideoUrl);
 // return (
 //   <View style={styles.container}>
 //     <YouTube
@@ -223,10 +301,10 @@ const styles = StyleSheet.create({
 //       play={true}
 //       fullscreen={false}
 //       loop={false}
-//       onReady={e => console.log('onReady')}
-//       onChangeState={e => console.log('onChangeState:', e.state)}
-//       onChangeQuality={e => console.log('onChangeQuality: ', e.quality)}
-//       onError={e => console.log('onError: ', e.error)}
+//       onReady={e => .log('onReady')}
+//       onChangeState={e => .log('onChangeState:', e.state)}
+//       onChangeQuality={e => .log('onChangeQuality: ', e.quality)}
+//       onError={e => .log('onError: ', e.error)}
 //       style={{width: '100%', height: 300}}
 //     />
 //     <View style={styles.Buttons}>

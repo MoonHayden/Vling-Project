@@ -10,7 +10,9 @@ import EmotionScreen from './Emotion';
 const Tab = createBottomTabNavigator();
 // const Stack = createStackNavigator();
 
-export default function MainScreen() {
+export default function MainScreen({route}) {
+  const {userName, email, photo} = route.params;
+
   return (
     <Tab.Navigator
       headerMode="none"
@@ -32,8 +34,16 @@ export default function MainScreen() {
           return <Icon name={iconName} size={size} color={color} />;
         },
       })}>
-      <Tab.Screen name="Mypage" component={MypageScreen} />
-      <Tab.Screen name="Categories" component={CategoriesScreen} />
+      <Tab.Screen
+        name="Mypage"
+        component={MypageScreen}
+        initialParams={{email: email, userName: userName, photo: photo}}
+      />
+      <Tab.Screen
+        name="Categories"
+        component={CategoriesScreen}
+        initialParams={{email: email}}
+      />
       <Tab.Screen name="Emotion" component={EmotionScreen} />
       <Tab.Screen name="NER" component={NERScreen} />
     </Tab.Navigator>

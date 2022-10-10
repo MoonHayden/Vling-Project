@@ -9,7 +9,7 @@ import MainScreen from './src/screens/MainScreen';
 import Categorization from './src/screens/Categorization';
 
 export const client = new ApolloClient({
-  uri: 'http://192.168.0.217:4000/graphql',
+  uri: 'http://www2.wecode.buzzntrend.com:4000/graphql',
   cache: new InMemoryCache(),
 });
 const Stack = createStackNavigator();
@@ -21,8 +21,12 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login" headerMode="none">
-          <Stack.Screen name="Login" component={Login} />
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{headerShown: false}}
+          />
           <Stack.Screen
             name="MainScreen"
             options={{headerShown: false}}
