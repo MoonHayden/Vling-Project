@@ -16,7 +16,6 @@ export const GET_ALL_TASKS = gql`
         created_at
       }
       status
-      rate
       expiration_date
     }
   }
@@ -118,20 +117,7 @@ export const GET_ALL_LABELER = gql`
   }
 `;
 
-export const ONGOING_TASK_LIST = gql`
-  query GetLabelersTasks($labeler: String) {
-    getLabelersTasks(labeler: $labeler) {
-      name
-      kind
-      expiration_date
-      labelers {
-        labeler
-      }
-    }
-  }
-`;
-
-export const TASK_OF_LABELER_ADD = gql`
+export const ADD_TASK_TO_LABELER = gql`
   mutation AddTaskToLabeler($email: String, $id: ID, $name: String) {
     addTaskToLabeler(email: $email, _id: $id, name: $name) {
       _id
@@ -139,7 +125,7 @@ export const TASK_OF_LABELER_ADD = gql`
   }
 `;
 
-export const TASK_OF_LABELER_DELETE = gql`
+export const DELETE_TASK_OF_LABELER = gql`
   mutation DeleteTaskOfLabeler($email: String, $id: ID, $name: String) {
     deleteTaskOfLabeler(email: $email, _id: $id, name: $name) {
       _id
@@ -148,9 +134,60 @@ export const TASK_OF_LABELER_DELETE = gql`
 `;
 
 export const LABELER_DELETE = gql`
-  mutation ($labeler: String) {
-    deleteLabelers(labeler: $labeler) {
-      labeler
+  mutation DeleteLabelers($id: ID) {
+    deleteLabelers(_id: $id) {
+      _id
+    }
+  }
+`;
+
+/////////////////////////////////////
+
+export const GET_ALL_LABELERS = gql`
+  query GetAllLabelers {
+    getAllLabelers {
+      _id
+      email
+      value
+    }
+  }
+`;
+
+export const TOTAL_TASK_LIST = gql`
+  query GetAllTasks {
+    getAllTasks {
+      _id
+      name
+      kind
+      status
+      totalVideos
+      expiration_date
+    }
+  }
+`;
+
+export const ONGOING_TASK_LIST = gql`
+  query GetLabelersTasks($id: ID) {
+    getLabelersTasks(_id: $id) {
+      _id
+      name
+      kind
+      status
+      expiration_date
+    }
+  }
+`;
+
+export const SEARCH_LABELER = gql`
+  query SearchLabeler($id: ID) {
+    searchLabeler(_id: $id) {
+      _id
+      googleId
+      idToken
+      email
+      name
+      value
+      created_at
     }
   }
 `;

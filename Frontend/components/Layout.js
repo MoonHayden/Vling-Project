@@ -1,11 +1,20 @@
 import styled from 'styled-components';
 import Nav from './Nav';
 import Alram from './Alram';
+import Logout from './Logout';
+import { useRouter } from 'next/router';
+
 export default function Layout({ children }) {
+  const router = useRouter();
+  const isVisible = router.pathname !== '/login';
+
   return (
     <>
       <MainWrap>
-        <Alram />
+        <MenuWrap isVisible={isVisible}>
+          <Alram />
+          <Logout />
+        </MenuWrap>
         <Nav />
         <SubWrap>{children}</SubWrap>
       </MainWrap>
@@ -31,4 +40,12 @@ const SubWrap = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #bbb5c3;
+`;
+
+const MenuWrap = styled.div`
+  width: 60%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
 `;
