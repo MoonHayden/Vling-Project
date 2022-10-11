@@ -1,50 +1,20 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
-import { TASKS } from '../pages/tasks';
-import CreateModal from '../pages/CreateModal';
-import axios from 'axios';
-import { argumentsObjectFromField } from '@apollo/client/utilities';
+import { useMutation } from '@apollo/client';
+import CreateModal from './CreateModal';
+import { ADD_TASK } from '../../../components/gql';
 
-const ADD_TASK = gql`
-  mutation (
-    $name: String
-    $kind: String
-    $labelers: [addLabelerInput]
-    $expirationDate: Date
-  ) {
-    addTask(
-      name: $name
-      kind: $kind
-      labelers: $labelers
-      expiration_date: $expirationDate
-    ) {
-      name
-      kind
-      labelers {
-        _id
-        email
-        value
-      }
-      expiration_date
-    }
-  }
-`;
-
-export default function AddTask({ allLabelers }) {
+export default function AddTask({ allLabelers, setAllLabelers }) {
   const [showLabelerList, setShowLabelerList] = useState(false);
   const [taskName, setTaskName] = useState('');
   const [taskKind, setTaskKind] = useState('');
   const [expDate, setExpDate] = useState('');
   const [labelerList, setLabelerList] = useState([]);
-  const [labelerListAll, setLabelerListAll] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [file, setFile] = useState(new FormData());
-  const [labelerId, setLabelerId] = useState('');
 
   const onClickShowList = () => {
     setShowLabelerList(true);
-    setLabelerListAll(allLabelers.data.getAllLabelers);
   };
 
   const handleTaskNameInput = e => {
@@ -61,65 +31,28 @@ export default function AddTask({ allLabelers }) {
     setExpDate(e.target.value);
   };
 
-  const handleAddLabeler = e => {
-    for (i in labelerListAll) {
-      if (i.email === e.target.value) {
-        setLabelerId(i._id);
-      }
-    }
-    console.log(labelerId);
-    /*
-    setLabelerList([...labelerList, { _id: labelerId, email: e.target.value }]);
-    setLabelerListAll(
-      labelerListAll.filter(labeler => labeler.email !== e.target.value)
+  const handleAddLabeler = (e, id) => {
+    setLabelerList([...labelerList, { _id: id, email: e.target.value }]);
+    setAllLabelers(
+      allLabelers.filter(labeler => labeler.email !== e.target.value)
     );
-    */
   };
 
   const handleDeleteLabeler = e => {
     setLabelerList(
       labelerList.filter(labeler => labeler.email !== e.target.value)
     );
-    labelerListAll.push({ email: e.target.value });
-    setLabelerListAll(labelerListAll);
+    allLabelers.push({ email: e.target.value });
+    setAllLabelers(allLabelers);
   };
-
-  const [addTask] = useMutation(ADD_TASK, {
-    /*
-    variables: {
-      name: taskName,
-      kind: taskKind,
-      labelers: labelerList,
-      expirationDate: expDate.split('-').join(''),
-      numVideos: 1,
-    },
-    
-    refetchQueries: () => [{ query: TASKS }, 'getAllTasks'],
-    options: {
-      awaitRefetchQueries: true,
-    },
-    */
-  });
 
   const handleFileChange = e => {
     const formData = new FormData();
     formData.append('file', e.target.files[0]);
     setFile(formData);
-    /*
-    axios({
-      method: 'POST',
-      url: 'http://www2.wecode.buzzntrend.com:4000/upload',
-      data: formData,
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }).then(response => {
-      if (response.data.success == true) {
-        alert('csv파일 등록이 성공하였습니다.');
-      } else if (response.data.success == false) {
-        alert('csv파일 등록이 실패하였습니다.');
-      }
-    });
-    */
   };
+
+  const [addTask] = useMutation(ADD_TASK);
 
   return (
     <>
@@ -185,7 +118,7 @@ export default function AddTask({ allLabelers }) {
         <LabelerListAllWrap>
           <NavTop>
             <AllLabelers>
-              Labelers ({showLabelerList && labelerListAll.length}):
+              Labelers ({showLabelerList && allLabelers.length}):
             </AllLabelers>
 
             <SubmitButton
@@ -210,10 +143,13 @@ export default function AddTask({ allLabelers }) {
           </NavTop>
           {showLabelerList && (
             <LabelersListWrap>
-              {labelerListAll.map(labeler => (
+              {allLabelers.map(labeler => (
                 <LabelerWrap key={labeler._id}>
                   <LabelerName>{labeler.email}</LabelerName>
-                  <AddButton onClick={handleAddLabeler} value={labeler.email}>
+                  <AddButton
+                    onClick={e => handleAddLabeler(e, labeler._id)}
+                    value={labeler.email}
+                  >
                     추가
                   </AddButton>
                 </LabelerWrap>
