@@ -26,9 +26,10 @@ const LabelerLogIn = async (_, args, context, info) => {
     name: name,
     idToken: idToken,
     created_at: createdAt,
+    value: "",
   };
 
-  if (isLabeler) return labelerCheck;
+  if (isLabeler) return labelerValue;
   if (!isLabeler) await labelerColl.insert(labelerValue);
 
   return labelerValue;
