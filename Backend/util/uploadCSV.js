@@ -30,7 +30,7 @@ router.post("/upload", (req, res) => {
 
     const csvToDb = async () => {
 
-      const collection = await db.connectDB("videosTest");
+      const collection = await db.connectDB("videos");
       const taskColl = await db.connectDB("tasks");
 
       fs.createReadStream(res.req.file.path)
