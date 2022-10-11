@@ -83,7 +83,7 @@ const typeDefs = gql`
     addTask(
       name: String
       kind: String
-      labelers: [Labeler]
+      labelers: [addLabelerInput]
       status: Boolean = false
       totalVideos: Int = 0
       expiration_date: Date
@@ -95,16 +95,12 @@ const typeDefs = gql`
       name: String
       newName: String
       kind: String
-      labelers: [Labeler]
+      labelers: [addLabelerInput]
       status: Boolean = false
       expiration_date: Date
     ): Task
 
-    addCategoryValue(
-      _id: ID
-      labeler: ID
-      label: String
-      ): Boolean
+    addCategoryValue(_id: ID, labeler: ID, label: String): Boolean
 
     addMasterSignUp(name: String, password: String): Master
     masterLogIn(name: String, password: String): Master
