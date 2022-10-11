@@ -11,10 +11,7 @@ const OngoingTasks = ({
 }) => {
   const [deleteTaskOfLabeler] = useMutation(DELETE_TASK_OF_LABELER);
 
-  console.log('ss');
   const deleteOngoingTask = async clickedTask => {
-    console.log(labelerInformation.email, labelerInformation._id, clickedTask);
-
     await deleteTaskOfLabeler({
       variables: {
         email: labelerInformation.email,

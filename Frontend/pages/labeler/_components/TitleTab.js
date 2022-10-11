@@ -83,6 +83,10 @@ const TitleBox = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+
+  :hover {
+    color: red;
+  }
 `;
 
 const ImageWrap = styled.div`

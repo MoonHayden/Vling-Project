@@ -16,7 +16,6 @@ export const GET_ALL_TASKS = gql`
         created_at
       }
       status
-      rate
       expiration_date
     }
   }
