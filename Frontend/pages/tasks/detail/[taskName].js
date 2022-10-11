@@ -10,18 +10,16 @@ export default function TaskDetail({ taskName, allLabelers, taskInfo }) {
   const [taskDetail, setTaskDetail] = useState([]);
   const [currLabelersList, setCurrLabelersList] = useState([]);
   const [labelersList, setLabelersList] = useState([]);
-  const [added, setAdded] = useState(false);
 
   useEffect(() => {
-    setTaskDetail(taskInfo.data.getTaskDetail);
-    setCurrLabelersList(taskInfo.data.getTaskDetail.labelers);
-    setLabelersList(allLabelers.data.getAllLabelers);
+    setTaskDetail(taskInfo?.data?.getTaskDetail);
+    setCurrLabelersList(taskInfo?.data?.getTaskDetail?.labelers);
+    setLabelersList(allLabelers?.data?.getAllLabelers);
   }, [
-    taskInfo.data.getTaskDetail,
-    taskInfo.data.getTaskDetail.labelers,
-    allLabelers.data.getAllLabelers,
+    taskInfo?.data?.getTaskDetail,
+    taskInfo?.data?.getTaskDetail?.labelers,
+    allLabelers?.data?.getAllLabelers,
   ]);
-  console.log(taskInfo);
 
   return (
     <>
@@ -39,11 +37,10 @@ export default function TaskDetail({ taskName, allLabelers, taskInfo }) {
             setAllLabelers={setLabelersList}
             currLabelersList={currLabelersList}
             setCurrLabelersList={setCurrLabelersList}
-            added={added}
           />
         </LabelersInfoWrap>
         <ProgressInfo>
-          <RateNumber>{Math.round(taskDetail.rate)}%</RateNumber>
+          {/* <RateNumber>{Math.round(taskDetail.rate)}%</RateNumber> */}
           <ProgressWrap>
             <FullBar status={taskDetail.status}></FullBar>
             <RateBar
@@ -126,36 +123,4 @@ const RateBar = styled.div`
   height: 1rem;
   border: 0.5px solid ${props => (props.status ? '#4cd137' : '#fbc531')};
   background-color: ${props => (props.status ? '#4cd137' : '#fbc531')};
-`;
-
-const TaskNameInput = styled.input`
-  width: 100%;
-  margin-bottom: 1rem;
-  padding-bottom: 5px;
-  font-size: 16px;
-  border: none;
-  border-bottom: 2px solid black;
-  background-color: transparent;
-  &:focus {
-    outline: none;
-  }
-  &:focus::placeholder {
-    color: transparent;
-  }
-`;
-
-const CloseIcon = styled.img`
-  width: 15px;
-  height: 15px;
-  margin-left: 1rem;
-  margin-bottom: 1rem;
-  cursor: pointer;
-`;
-
-const CheckIcon = styled.img`
-  width: 20px;
-  height: 20px;
-  margin-left: 1rem;
-  margin-bottom: 1rem;
-  cursor: pointer;
 `;

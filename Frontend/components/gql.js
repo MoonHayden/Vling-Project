@@ -16,14 +16,14 @@ export const GET_ALL_TASKS = gql`
         created_at
       }
       status
-      rate
+      totalVideos
       expiration_date
     }
   }
 `;
 
 export const TASK_DETAIL = gql`
-  query ($name: String!) {
+  query ($name: String) {
     getTaskDetail(name: $name) {
       _id
       name
@@ -34,8 +34,8 @@ export const TASK_DETAIL = gql`
         value
       }
       status
-      rate
       expiration_date
+      totalVideos
     }
   }
 `;
@@ -49,32 +49,9 @@ export const DELETE_TASK = gql`
 `;
 
 export const UPDATE_TASK = gql`
-  mutation (
-    $name: String
-    $kind: String
-    $labelers: [addLabelerInput]
-    $expirationDate: Date
-  ) {
-    updateTask(
-      name: $name
-      kind: $kind
-      labelers: $labelers
-      expiration_date: $expirationDate
-    ) {
+  mutation ($name: String, $newName: String) {
+    updateTask(name: $name, newName: $newName) {
       name
-      kind
-      labelers {
-        _id
-        googleId
-        idToken
-        email
-        name
-        value
-        created_at
-      }
-      status
-      rate
-      expiration_date
     }
   }
 `;
@@ -119,19 +96,18 @@ export const GET_ALL_LABELER = gql`
 `;
 
 export const ONGOING_TASK_LIST = gql`
-  query GetLabelersTasks($labeler: String) {
-    getLabelersTasks(labeler: $labeler) {
+  query GetLabelersTasks($id: ID) {
+    getLabelersTasks(_id: $id) {
+      _id
       name
       kind
+      status
       expiration_date
-      labelers {
-        labeler
-      }
     }
   }
 `;
 
-export const TASK_OF_LABELER_ADD = gql`
+export const ADD_TASK_TO_LABELER = gql`
   mutation AddTaskToLabeler($email: String, $id: ID, $name: String) {
     addTaskToLabeler(email: $email, _id: $id, name: $name) {
       _id
@@ -139,7 +115,7 @@ export const TASK_OF_LABELER_ADD = gql`
   }
 `;
 
-export const TASK_OF_LABELER_DELETE = gql`
+export const DELETE_TASK_OF_LABELER = gql`
   mutation DeleteTaskOfLabeler($email: String, $id: ID, $name: String) {
     deleteTaskOfLabeler(email: $email, _id: $id, name: $name) {
       _id
@@ -148,9 +124,9 @@ export const TASK_OF_LABELER_DELETE = gql`
 `;
 
 export const LABELER_DELETE = gql`
-  mutation ($labeler: String) {
-    deleteLabelers(labeler: $labeler) {
-      labeler
+  mutation DeleteLabelers($id: id) {
+    deleteLabelers(_id: $id) {
+      _id
     }
   }
 `;

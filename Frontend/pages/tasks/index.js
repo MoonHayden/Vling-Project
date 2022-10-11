@@ -41,7 +41,7 @@ export default function Tasks({ allTasks, allLabelers }) {
             <TaskContainer key={task._id} task={task} />
           ))}
         {addTask === true && (
-          <AddTask allLabelers={labelersAll} setAllLabelers={setLabelersAll} />
+          <AddTask labelersAll={labelersAll} setAllLabelers={setLabelersAll} />
         )}
       </InnerWrap>
     </>

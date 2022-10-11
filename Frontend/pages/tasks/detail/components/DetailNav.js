@@ -3,9 +3,11 @@ import Link from 'next/link';
 import DeleteModal from './DeleteModal';
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { useRouter } from 'next/router';
 import { DELETE_TASK, UPDATE_TASK } from '../../../../components/gql';
 
 export default function DetailNav({ taskName, taskDetail }) {
+  const router = useRouter();
   const [edit, setEdit] = useState(false);
   const [editName, setEditName] = useState('');
   const [deleteModal, setDeleteModal] = useState(false);
@@ -23,6 +25,13 @@ export default function DetailNav({ taskName, taskDetail }) {
 
   const handleEditNameInput = e => {
     setEditName(e.target.value);
+  };
+
+  const handleEditSubmit = () => {
+    updateTask({ variables: { name: taskName, newName: editName } });
+    alert('task 이름이 수정되었습니다.');
+    setEdit(!edit);
+    router.push(`/tasks/detail/${editName}`);
   };
 
   return (
@@ -44,7 +53,7 @@ export default function DetailNav({ taskName, taskDetail }) {
               <CheckIcon
                 src="/images/check.png"
                 alt="checkIcon"
-                onClick={updateTask}
+                onClick={handleEditSubmit}
               />
             </>
           ) : (
@@ -104,6 +113,37 @@ const TaskInfo = styled.div`
 const TaskNameNav = styled.div`
   display: flex;
   align-items: center;
+`;
+const TaskNameInput = styled.input`
+  width: 100%;
+  margin-bottom: 1rem;
+  padding-bottom: 5px;
+  font-size: 16px;
+  border: none;
+  border-bottom: 2px solid black;
+  background-color: transparent;
+  &:focus {
+    outline: none;
+  }
+  &:focus::placeholder {
+    color: transparent;
+  }
+`;
+
+const CloseIcon = styled.img`
+  width: 15px;
+  height: 15px;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+`;
+
+const CheckIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
 `;
 
 const EditIcon = styled.img`

@@ -4,14 +4,14 @@ import { useMutation } from '@apollo/client';
 import CreateModal from './CreateModal';
 import { ADD_TASK } from '../../../components/gql';
 
-export default function AddTask({ allLabelers, setAllLabelers }) {
+export default function AddTask({ labelersAll, setAllLabelers }) {
   const [showLabelerList, setShowLabelerList] = useState(false);
   const [taskName, setTaskName] = useState('');
   const [taskKind, setTaskKind] = useState('');
   const [expDate, setExpDate] = useState('');
   const [labelerList, setLabelerList] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [file, setFile] = useState(new FormData());
+  const [bodyFormData, setBodyFormData] = useState(new FormData());
 
   const onClickShowList = () => {
     setShowLabelerList(true);
@@ -34,7 +34,7 @@ export default function AddTask({ allLabelers, setAllLabelers }) {
   const handleAddLabeler = (e, id) => {
     setLabelerList([...labelerList, { _id: id, email: e.target.value }]);
     setAllLabelers(
-      allLabelers.filter(labeler => labeler.email !== e.target.value)
+      labelersAll.filter(labeler => labeler.email !== e.target.value)
     );
   };
 
@@ -42,14 +42,14 @@ export default function AddTask({ allLabelers, setAllLabelers }) {
     setLabelerList(
       labelerList.filter(labeler => labeler.email !== e.target.value)
     );
-    allLabelers.push({ email: e.target.value });
-    setAllLabelers(allLabelers);
+    labelersAll.push({ email: e.target.value });
+    setAllLabelers(labelersAll);
   };
 
   const handleFileChange = e => {
     const formData = new FormData();
     formData.append('file', e.target.files[0]);
-    setFile(formData);
+    setBodyFormData(formData);
   };
 
   const [addTask] = useMutation(ADD_TASK);
@@ -118,7 +118,7 @@ export default function AddTask({ allLabelers, setAllLabelers }) {
         <LabelerListAllWrap>
           <NavTop>
             <AllLabelers>
-              Labelers ({showLabelerList && allLabelers.length}):
+              Labelers ({showLabelerList && labelersAll.length}):
             </AllLabelers>
 
             <SubmitButton
@@ -137,13 +137,13 @@ export default function AddTask({ allLabelers, setAllLabelers }) {
                 taskKind={taskKind}
                 labelerList={labelerList}
                 expDate={expDate}
-                file={file}
+                bodyFormData={bodyFormData}
               />
             )}
           </NavTop>
           {showLabelerList && (
             <LabelersListWrap>
-              {allLabelers.map(labeler => (
+              {labelersAll.map(labeler => (
                 <LabelerWrap key={labeler._id}>
                   <LabelerName>{labeler.email}</LabelerName>
                   <AddButton
