@@ -6,7 +6,15 @@ export const GET_ALL_TASKS = gql`
       _id
       name
       kind
-      attendents
+      labelers {
+        _id
+        googleId
+        idToken
+        email
+        name
+        value
+        created_at
+      }
       status
       rate
       expiration_date
@@ -21,7 +29,8 @@ export const TASK_DETAIL = gql`
       name
       kind
       labelers {
-        labeler
+        _id
+        email
         value
       }
       status
@@ -44,7 +53,7 @@ export const UPDATE_TASK = gql`
     $name: String
     $kind: String
     $labelers: [addLabelerInput]
-    $expirationDate: String
+    $expirationDate: Date
   ) {
     updateTask(
       name: $name
@@ -54,10 +63,14 @@ export const UPDATE_TASK = gql`
     ) {
       name
       kind
-      attendants
       labelers {
-        labeler
+        _id
+        googleId
+        idToken
+        email
+        name
         value
+        created_at
       }
       status
       rate
@@ -66,11 +79,41 @@ export const UPDATE_TASK = gql`
   }
 `;
 
+export const ADD_TASK = gql`
+  mutation (
+    $name: String
+    $kind: String
+    $labelers: [addLabelerInput]
+    $expirationDate: Date
+  ) {
+    addTask(
+      name: $name
+      kind: $kind
+      labelers: $labelers
+      expiration_date: $expirationDate
+    ) {
+      name
+      kind
+      labelers {
+        _id
+        email
+        value
+      }
+      expiration_date
+    }
+  }
+`;
+
 export const GET_ALL_LABELER = gql`
   query {
     getAllLabelers {
-      labeler
+      _id
+      googleId
+      idToken
+      email
+      name
       value
+      created_at
     }
   }
 `;

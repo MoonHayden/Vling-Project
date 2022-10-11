@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import Loading from '../components/Loading';
 
 export default function CreateModal({
   setModalOpen,
@@ -14,32 +13,6 @@ export default function CreateModal({
   expDate,
   file,
 }) {
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    axios.interceptors.request.use(
-      function (config) {
-        if (config.url.includes('tasks')) {
-          setLoading(true);
-        }
-        return config;
-      },
-      function (error) {
-        return Promise.reject(error);
-      }
-    );
-    axios.interceptors.response.use(
-      function (response) {
-        setLoading(false);
-        return response;
-      },
-      function (error) {
-        setLoading(false);
-        return Promise.reject(error);
-      }
-    );
-  }, []);
-
   const handleAddTask = () => {
     addTask({
       variables: {
@@ -54,6 +27,7 @@ export default function CreateModal({
       url: 'http://www2.wecode.buzzntrend.com:4000/upload',
       data: file,
       headers: { 'Content-Type': 'multipart/form-data' },
+      body: { taskName: taskName },
     }).then(response => {
       if (response.data.success == true) {
         alert('task 등록이 완료되었습니다.');
@@ -66,8 +40,6 @@ export default function CreateModal({
       }
     });
   };
-
-  console.log(loading);
 
   return (
     <Wrap>
@@ -89,7 +61,6 @@ export default function CreateModal({
         <DeleteBtn onClick={handleAddTask}>등록하기</DeleteBtn>
         <CancleBtn onClick={() => setModalOpen(false)}>취소</CancleBtn>
       </BtnWrap>
-      <Loading loading={loading} />
     </Wrap>
   );
 }

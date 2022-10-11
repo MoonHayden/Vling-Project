@@ -60,6 +60,7 @@ const typeDefs = gql`
   type Query {
     getAllLabelers: [Labeler]
     searchLabeler(_id: ID): [Labeler]
+    searchLabelerByGId(googleId: String): Labeler
     getLabelersTasks(_id: ID): [Task]
 
     getAllTasks: [Task]

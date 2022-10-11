@@ -4,17 +4,16 @@ import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
 
 export default function DeleteModal({
-  deleteTask,
-  params,
   taskName,
   taskKind,
   expDate,
   setDeleteModal,
+  deleteTask,
 }) {
   const router = useRouter();
   const handleDeleteTask = () => {
-    deleteTask({ variables: { name: params.taskName } });
-    alert(`${params.taskName}이 삭제 되었습니다.`);
+    deleteTask({ variables: { name: taskName } });
+    alert(`${taskName}이 삭제 되었습니다.`);
     setDeleteModal(false);
     router.push('/tasks');
   };
