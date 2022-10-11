@@ -38,6 +38,7 @@ const resolvers = {
     addTask: AddTask,
     deleteTask: DeleteTask,
     updateTask: UpdateTask,
+    
     addCategoryValue: AddCategoryValue,
 
     addMasterSignUp: MasterSignUp,

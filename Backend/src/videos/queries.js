@@ -1,45 +1,56 @@
+const { ObjectId } = require("mongodb");
 const DB = require("../../models/db");
 const db = new DB();
 
 const GetRandomVideo = async (_, args, context, info) => {
-  const videoColl = await db.connectDB("videos");
+  const videoColl = await db.connectDB("videosTest");
+  let result;
 
-  // const taskName = args.taskName;
-  // console.log("taskName: ", args.taskName);
+  // const check = await videoColl.find()
+  //3ro check
+  //labeler value false => true
+  //task status => true
 
-  const taskValue = {
-    taskName: args.taskName,
-  };
-  console.log("taskValue: ", taskValue);
+  do {
+    result = await videoColl.aggregate([
+      {
+        $match: { taskName: args.taskName }
+      },
+      {
+        $sample: { size: 1 }
+      }
+    ]).toArray();
+  } while (result[0].labeler.find(el => el._id == args.labeler) != undefined || result[0].in_progress.length === 3);
 
-  const result = await videoColl.find(taskValue).toArray();
-  console.log("pong!");
-  console.log("result: ", result);
-  return result;
+  return result[0];
 };
 
 const AddCategoryValue = async (_, args, context, info) => {
-  const videoColl = await db.connectDB("videos");
+  const videoColl = await db.connectDB("videosTest");
 
-  console.log("args: ", args);
+  await videoColl.updateOne(
+    {
+      _id: ObjectId(args._id)
+    },
+    {
+      $push: {
+        labeler: {
+          _id: ObjectId(args.labeler),
+        }
+      },
+    });
 
-  const videoValue = {
-    videoId: args.videoId,
-  };
-  console.log("videoValue: ", videoValue);
+  await videoColl.updateOne({
+    _id: ObjectId(args._id)
+  },
+    {
+      $push: {
+          label: { name: args.label }
+        }
+    });
 
-  const categoryValue = {
-    label: args.label,
-  };
-  console.log("label: ", args.label);
 
-  const result = await videoColl.updateOne(videoValue, {
-    $push: { label: categoryValue },
-  });
-
-  console.log("result: ", result);
-
-  return categoryValue;
+  return true;
 };
 
 module.exports = {
