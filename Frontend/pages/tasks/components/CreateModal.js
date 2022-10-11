@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function CreateModal({
   setModalOpen,
@@ -11,9 +12,13 @@ export default function CreateModal({
   taskKind,
   labelerList,
   expDate,
-  file,
+  bodyFormData,
 }) {
+  const [loading, setLoading] = useState(false);
+  console.log(labelerList);
+
   const handleAddTask = () => {
+    bodyFormData.append('taskName', taskName);
     addTask({
       variables: {
         name: taskName,
@@ -25,9 +30,8 @@ export default function CreateModal({
     axios({
       method: 'POST',
       url: 'http://www2.wecode.buzzntrend.com:4000/upload',
-      data: file,
       headers: { 'Content-Type': 'multipart/form-data' },
-      body: { taskName: taskName },
+      data: bodyFormData,
     }).then(response => {
       if (response.data.success == true) {
         alert('task 등록이 완료되었습니다.');
@@ -54,13 +58,18 @@ export default function CreateModal({
         <TextValue>{expDate}</TextValue>
         <Text>#Labelers ({labelerList.length}): </Text>
         {labelerList.map(labeler => (
-          <TextValue>{labeler.labeler}</TextValue>
+          <TextValue>{labeler.email}</TextValue>
         ))}
       </SubWrap>
       <BtnWrap>
         <DeleteBtn onClick={handleAddTask}>등록하기</DeleteBtn>
         <CancleBtn onClick={() => setModalOpen(false)}>취소</CancleBtn>
       </BtnWrap>
+      <Spinner
+        as="div"
+        style={{ display: loading ? 'block' : 'null' }}
+        animation="border"
+      />
     </Wrap>
   );
 }
@@ -127,5 +136,3 @@ const CancleBtn = styled.button`
   height: 3rem;
   width: 7rem;
 `;
-
-const CsvUploadBtn = styled.input``;

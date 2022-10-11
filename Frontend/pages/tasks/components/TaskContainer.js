@@ -14,7 +14,7 @@ export default function TaskContainer({ task }) {
             <FolderIcon src="./images/folder.png" alt="folderIcon" />
             {/*<NumOfVideos>#videos : </NumOfVideos>*/}
             <NumOfVideos>Kind : {kind}</NumOfVideos>
-            <NumOfVideos>#Labelers : {labelers.length}</NumOfVideos>
+            <NumOfVideos>#Labelers : {labelers?.length}</NumOfVideos>
           </TaskInfo>
           <ProgressInfo>
             <TaskName>{name}</TaskName>
@@ -22,7 +22,7 @@ export default function TaskContainer({ task }) {
               <FullBar status={status}></FullBar>
               <RateBar status={status} rate={rate}></RateBar>
             </ProgressWrap>
-            <RateNumber>{Math.round(rate)}%</RateNumber>
+            {/* <RateNumber>{Math.round(rate)}%</RateNumber> */}
           </ProgressInfo>
         </TaskWrap>
       </Link>
@@ -60,15 +60,6 @@ const Status = styled.div`
   background-color: ${props => (props.status ? '#4cd137' : '#fbc531')};
 `;
 
-/*
-const DeleteBtn = styled.img`
-  width: 20px;
-  height: 20px;
-  margin-right: 5px;
-  cursor: pointer;
-`;
-*/
-
 const TaskInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -77,6 +68,7 @@ const TaskInfo = styled.div`
 
 const FolderIcon = styled.img`
   width: 10%;
+  margin-bottom: 10px;
 `;
 
 const NumOfVideos = styled.p`

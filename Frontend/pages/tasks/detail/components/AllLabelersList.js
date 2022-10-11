@@ -9,21 +9,23 @@ export default function AllLabelersList({
   setAllLabelers,
   currLabelersList,
   setCurrLabelersList,
-  added,
 }) {
   const [addTaskToLabeler] = useMutation(ADD_TASK_TO_LABELER);
 
   const onAddLabeler = async (e, id) => {
     await addTaskToLabeler({
-      variables: { _id: id, email: e.target.value, name: taskName },
+      variables: { id: id, email: e.target.value, name: taskName },
     });
-
+    /*
     setAllLabelers(
       allLabelers.filter(labeler => labeler.email !== e.target.value)
     );
+    */
+    setCurrLabelersList([
+      ...currLabelersList,
+      { _id: id, email: e.target.value },
+    ]);
   };
-
-  console.log(allLabelers);
 
   return (
     <ListWrap>
@@ -31,13 +33,15 @@ export default function AllLabelersList({
       <LabelerListWrap>
         {allLabelers.map(labeler => (
           <LabelerWrap key={labeler._id}>
-            <Link href={`/labeler/detail/${labeler.labeler}`}>
+            <Link href={`/labeler/detail/${labeler.email}`}>
               <LabelerName>{labeler.email}</LabelerName>
             </Link>
             <AddButton
               value={labeler.email}
               onClick={e => onAddLabeler(e, labeler._id)}
-              added={added}
+              disabled={currLabelersList.find(
+                curr => curr.email === labeler.email
+              )}
             >
               추가
             </AddButton>

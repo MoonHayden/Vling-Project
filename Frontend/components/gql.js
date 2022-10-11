@@ -16,13 +16,13 @@ export const GET_ALL_TASKS = gql`
         created_at
       }
       status
-      expiration_date
+      totalVideos
     }
   }
 `;
 
 export const TASK_DETAIL = gql`
-  query ($name: String!) {
+  query ($name: String) {
     getTaskDetail(name: $name) {
       _id
       name
@@ -33,8 +33,8 @@ export const TASK_DETAIL = gql`
         value
       }
       status
-      rate
       expiration_date
+      totalVideos
     }
   }
 `;
@@ -48,32 +48,9 @@ export const DELETE_TASK = gql`
 `;
 
 export const UPDATE_TASK = gql`
-  mutation (
-    $name: String
-    $kind: String
-    $labelers: [addLabelerInput]
-    $expirationDate: Date
-  ) {
-    updateTask(
-      name: $name
-      kind: $kind
-      labelers: $labelers
-      expiration_date: $expirationDate
-    ) {
+  mutation ($name: String, $newName: String) {
+    updateTask(name: $name, newName: $newName) {
       name
-      kind
-      labelers {
-        _id
-        googleId
-        idToken
-        email
-        name
-        value
-        created_at
-      }
-      status
-      rate
-      expiration_date
     }
   }
 `;
@@ -103,16 +80,14 @@ export const ADD_TASK = gql`
   }
 `;
 
-export const GET_ALL_LABELER = gql`
-  query {
-    getAllLabelers {
+export const ONGOING_TASK_LIST = gql`
+  query GetLabelersTasks($id: ID) {
+    getLabelersTasks(_id: $id) {
       _id
-      googleId
-      idToken
-      email
       name
-      value
-      created_at
+      kind
+      status
+      expiration_date
     }
   }
 `;
@@ -141,8 +116,6 @@ export const LABELER_DELETE = gql`
   }
 `;
 
-/////////////////////////////////////
-
 export const GET_ALL_LABELERS = gql`
   query GetAllLabelers {
     getAllLabelers {
@@ -161,18 +134,6 @@ export const TOTAL_TASK_LIST = gql`
       kind
       status
       totalVideos
-      expiration_date
-    }
-  }
-`;
-
-export const ONGOING_TASK_LIST = gql`
-  query GetLabelersTasks($id: ID) {
-    getLabelersTasks(_id: $id) {
-      _id
-      name
-      kind
-      status
       expiration_date
     }
   }

@@ -11,7 +11,6 @@ export default function CurrLabelersList({
   const [deleteTaskOfLabeler] = useMutation(DELETE_TASK_OF_LABELER);
 
   const onDeleteLabeler = async (e, id) => {
-    console.log(id, e.target.value, taskName);
     await deleteTaskOfLabeler({
       variables: { id: id, email: e.target.value, name: taskName },
     });
