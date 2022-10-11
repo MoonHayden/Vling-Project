@@ -57,7 +57,8 @@ const typeDefs = gql`
 
   input addLabelerInput {
     _id: ID
-    labeler: String
+    # labeler: String
+    email: String
     value: Boolean = false
   }
 
