@@ -3,7 +3,7 @@ const DB = require("../../models/db");
 const db = new DB();
 
 const GetRandomVideo = async (_, args, context, info) => {
-  const videoColl = await db.connectDB("videosTest");
+  const videoColl = await db.connectDB("videos");
   let result;
 
   // const check = await videoColl.find()
@@ -12,43 +12,50 @@ const GetRandomVideo = async (_, args, context, info) => {
   //task status => true
 
   do {
-    result = await videoColl.aggregate([
-      {
-        $match: { taskName: args.taskName }
-      },
-      {
-        $sample: { size: 1 }
-      }
-    ]).toArray();
-  } while (result[0].labeler.find(el => el._id == args.labeler) != undefined || result[0].in_progress.length === 3);
+    result = await videoColl
+      .aggregate([
+        {
+          $match: { taskName: args.taskName },
+        },
+        {
+          $sample: { size: 1 },
+        },
+      ])
+      .toArray();
+  } while (
+    result[0].labeler.find((el) => el._id == args.labeler) != undefined ||
+    result[0].in_progress.length === 3
+  );
 
   return result[0];
 };
 
 const AddCategoryValue = async (_, args, context, info) => {
-  const videoColl = await db.connectDB("videosTest");
+  const videoColl = await db.connectDB("videos");
 
   await videoColl.updateOne(
     {
-      _id: ObjectId(args._id)
+      _id: ObjectId(args._id),
     },
     {
       $push: {
         labeler: {
           _id: ObjectId(args.labeler),
-        }
+        },
       },
-    });
+    }
+  );
 
-  await videoColl.updateOne({
-    _id: ObjectId(args._id)
-  },
+  await videoColl.updateOne(
+    {
+      _id: ObjectId(args._id),
+    },
     {
       $push: {
-          label: { name: args.label }
-        }
-    });
-
+        label: { name: args.label },
+      },
+    }
+  );
 
   return true;
 };
