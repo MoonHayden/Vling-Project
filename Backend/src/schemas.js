@@ -39,7 +39,7 @@ const typeDefs = gql`
     category_label: String
     category_predict: String
     taskName: String
-    in_progress: [String]
+    in_progress: [Labeler]
     labeler: [Labeler]
     label: [Label]
     check: Boolean
@@ -57,7 +57,7 @@ const typeDefs = gql`
 
   input addLabelerInput {
     _id: ID
-    labeler: String
+    email: String
     value: Boolean = false
   }
 
@@ -83,7 +83,7 @@ const typeDefs = gql`
     addTask(
       name: String
       kind: String
-      labelers: [Labeler]
+      labelers: [addLabelerInput]
       status: Boolean = false
       totalVideos: Int = 0
       expiration_date: Date
@@ -95,7 +95,7 @@ const typeDefs = gql`
       name: String
       newName: String
       kind: String
-      labelers: [Labeler]
+      labelers: [addLabelerInput]
       status: Boolean = false
       expiration_date: Date
     ): Task

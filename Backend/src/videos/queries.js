@@ -5,9 +5,10 @@ const db = new DB();
 const GetRandomVideo = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videosTest");
   let result;
-
-  // const check = await videoColl.find()
+  
   //3ro check
+  // await videoColl.updateMany({ labeler: { $size: 3 }, $set: {check: true}});
+
   //labeler value false => true
   //task status => true
 
@@ -22,6 +23,17 @@ const GetRandomVideo = async (_, args, context, info) => {
     ]).toArray();
   } while (result[0].labeler.find(el => el._id == args.labeler) != undefined || result[0].in_progress.length === 3);
 
+  await videoColl.updateOne({
+    _id: result[0]._id
+  },
+    {
+      $push: {
+        in_progress: { name: args.labeler }
+      }
+    }
+  );
+
+  console.log(result[0])
   return result[0];
 };
 
@@ -35,7 +47,7 @@ const AddCategoryValue = async (_, args, context, info) => {
     {
       $push: {
         labeler: {
-          _id: ObjectId(args.labeler),
+          _id: args.labeler,
         }
       },
     });
@@ -45,10 +57,19 @@ const AddCategoryValue = async (_, args, context, info) => {
   },
     {
       $push: {
-          label: { name: args.label }
-        }
+        label: { name: args.label }
+      }
     });
 
+  await videoColl.updateOne({
+    _id: ObjectId(args._id)
+  },
+    {
+      $pull: {
+        in_progress: { name: ObjectId(args.labeler)}
+      }
+    }
+  );
 
   return true;
 };
