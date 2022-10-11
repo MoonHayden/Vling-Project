@@ -1,11 +1,12 @@
 const {
+  LabelerLogIn,
   GetAllLabelers,
   SearchLabeler,
+  SearchLabelerByGId,
   GetLabelersTasks,
   AddTaskToLabeler,
   DeleteLabelers,
   DeleteTaskOfLabeler,
-  LabelerLogIn,
 } = require("./labeling/queries");
 
 const {
@@ -24,6 +25,7 @@ const resolvers = {
   Query: {
     getAllLabelers: GetAllLabelers,
     searchLabeler: SearchLabeler,
+    searchLabelerByGId: SearchLabelerByGId,
     getLabelersTasks: GetLabelersTasks,
     getAllTasks: Tasks,
     getTaskDetail: GetTaskDetail,
