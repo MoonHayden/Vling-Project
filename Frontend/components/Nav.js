@@ -1,28 +1,31 @@
 import React from 'react';
+import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import styled, { css } from 'styled-components';
 
 const Nav = () => {
   const router = useRouter();
-  const isVisible = router.pathname !== '/' && router.pathname !== '/login';
+  const hiddenPageList = ['/', '/login'];
+  const isVisible = !hiddenPageList.includes(router.pathname);
 
-  const pagePath = router.pathname.split('/')[1];
+  const currentPagePath = router.pathname.split('/')[1];
 
   const pageMove = pageName => {
-    router.replace(`/${pageName}`, `/${pageName}`);
+    router.replace(`/${pageName}`);
   };
 
   return (
     <MenuWrap isVisible={isVisible}>
       <Menu
         onClick={() => pageMove('labeler')}
-        isCurrentPage={pagePath === 'labeler'}
+        isCurrentPage={currentPagePath === 'labeler'}
       >
         Labelers
       </Menu>
       <Menu
         onClick={() => pageMove('tasks')}
-        isCurrentPage={pagePath === 'task' || pagePath === 'tasks'}
+        isCurrentPage={
+          currentPagePath === 'task' || currentPagePath === 'tasks'
+        }
       >
         Tasks
       </Menu>
@@ -49,6 +52,8 @@ const Menu = styled.div`
   font-size: 1.5rem;
   margin-right: 1rem;
   background-color: #dfcaea;
+  border-radius: 5px 5px 0px 0px;
+
   cursor: pointer;
 
   background-color: ${({ isCurrentPage }) =>

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import { TASK_DETAIL, GET_ALL_LABELER } from '../../../components/gql';
+import { TASK_DETAIL, GET_ALL_LABELERS } from '../../../components/gql';
 import DetailNav from './components/DetailNav';
 import CurrLabelersList from './components/CurrLabelersList';
 import AllLabelersList from './components/AllLabelersList';
@@ -62,7 +62,7 @@ export async function getServerSideProps({ params }) {
   });
 
   const allLabelers = await client.query({
-    query: GET_ALL_LABELER,
+    query: GET_ALL_LABELERS,
     fetchPolicy: 'network-only',
   });
 

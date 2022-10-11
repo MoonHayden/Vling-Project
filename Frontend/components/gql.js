@@ -17,7 +17,6 @@ export const GET_ALL_TASKS = gql`
       }
       status
       totalVideos
-      expiration_date
     }
   }
 `;
@@ -81,20 +80,6 @@ export const ADD_TASK = gql`
   }
 `;
 
-export const GET_ALL_LABELER = gql`
-  query {
-    getAllLabelers {
-      _id
-      googleId
-      idToken
-      email
-      name
-      value
-      created_at
-    }
-  }
-`;
-
 export const ONGOING_TASK_LIST = gql`
   query GetLabelersTasks($id: ID) {
     getLabelersTasks(_id: $id) {
@@ -124,9 +109,46 @@ export const DELETE_TASK_OF_LABELER = gql`
 `;
 
 export const LABELER_DELETE = gql`
-  mutation DeleteLabelers($id: id) {
+  mutation DeleteLabelers($id: ID) {
     deleteLabelers(_id: $id) {
       _id
+    }
+  }
+`;
+
+export const GET_ALL_LABELERS = gql`
+  query GetAllLabelers {
+    getAllLabelers {
+      _id
+      email
+      value
+    }
+  }
+`;
+
+export const TOTAL_TASK_LIST = gql`
+  query GetAllTasks {
+    getAllTasks {
+      _id
+      name
+      kind
+      status
+      totalVideos
+      expiration_date
+    }
+  }
+`;
+
+export const SEARCH_LABELER = gql`
+  query SearchLabeler($id: ID) {
+    searchLabeler(_id: $id) {
+      _id
+      googleId
+      idToken
+      email
+      name
+      value
+      created_at
     }
   }
 `;

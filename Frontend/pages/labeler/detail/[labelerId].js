@@ -2,43 +2,21 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import TaskList from './_components/TotalTasks';
 import { useEffect, useState } from 'react';
-import { gql } from '@apollo/client';
 import OngoingTasks from './_components/OngoingTasks';
 import CompleteTasks from './_components/CompleteTasks';
 import DeleteModal from './_components/DeleteModal';
 import client from '../../../components/apollo-client';
 import back from '../../../public/images/back.png';
 import Image from 'next/image';
-
-const TOTAL_TASK_LIST = gql`
-  query GetAllTasks {
-    getAllTasks {
-      name
-      kind
-      attendents
-      status
-      rate
-      expiration_date
-    }
-  }
-`;
-const ONGOING_TASK_LIST = gql`
-  query GetLabelersTasks($labeler: String) {
-    getLabelersTasks(labeler: $labeler) {
-      name
-      kind
-      expiration_date
-      labelers {
-        labeler
-      }
-    }
-  }
-`;
+import { TOTAL_TASK_LIST } from '../../../components/gql';
+import { ONGOING_TASK_LIST } from '../../../components/gql';
+import { SEARCH_LABELER } from '../../../components/gql';
+import LabelerInfo from './_components/LabelerInfo';
 
 function labelerDetail(props) {
   const router = useRouter();
   const labelerId = router.query.labelerId;
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [labelerInformation, setLabelerInformation] = useState({});
   const [ongoingTasks, setOngoingTasks] = useState();
   const [totalTasks, setTotalTasks] = useState();
 
@@ -52,12 +30,12 @@ function labelerDetail(props) {
 
   useEffect(() => {
     setOngoingTasks(props.ongoingTasks);
-    setTotalTasks(props.total_tasks.getAllTasks);
+    setTotalTasks(props.totalTasks);
+    setLabelerInformation(props.labelerInformation);
   }, [props.ongoingTasks]);
 
   return (
     <>
-      {isModalOpen && <BlurWrap onClick={() => setIsModalOpen(false)} />}
       <Wrap>
         <TopWrap>
           <ImageWrap>
@@ -70,12 +48,11 @@ function labelerDetail(props) {
             />
           </ImageWrap>
           <TitleWrap>
-            <Email>Email: {labelerId}</Email>
-            <DeleteBtn onClick={() => setIsModalOpen(true)}>
-              라벨러 삭제
-            </DeleteBtn>
+            <Email>Email: {labelerInformation.email}</Email>
+            <DeleteModal labelerInformation={labelerInformation} />
           </TitleWrap>
         </TopWrap>
+        <LabelerInfo labelerInformation={labelerInformation} />
         <TaskContainer>
           <SubWrap>
             <OngoingTasks
@@ -83,6 +60,7 @@ function labelerDetail(props) {
               goToTaskDetail={goToTaskDetail}
               ongoingTasks={ongoingTasks}
               setOngoingTasks={setOngoingTasks}
+              labelerInformation={labelerInformation}
             />
             <CompleteTasks goToTaskDetail={goToTaskDetail} />
           </SubWrap>
@@ -92,6 +70,7 @@ function labelerDetail(props) {
             </ListBoxTitle>
             <TaskBox>
               <TaskList
+                labelerInformation={labelerInformation}
                 goToTaskDetail={goToTaskDetail}
                 setOngoingTasks={setOngoingTasks}
                 ongoingTasks={ongoingTasks}
@@ -102,13 +81,6 @@ function labelerDetail(props) {
           </TaskListBox>
         </TaskContainer>
       </Wrap>
-      <ModalWrap isModalOpen={isModalOpen}>
-        <DeleteModal
-          labelerId={labelerId}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-        />
-      </ModalWrap>
     </>
   );
 }
@@ -118,9 +90,15 @@ export default labelerDetail;
 export async function getServerSideProps(context) {
   const { query } = context;
 
+  const { data: labelerInformation } = await client.query({
+    query: SEARCH_LABELER,
+    variables: { id: query.labelerId },
+    fetchPolicy: 'network-only',
+  });
+
   const { data: getLabelersTasks } = await client.query({
     query: ONGOING_TASK_LIST,
-    variables: { labeler: query.labelerId },
+    variables: { id: query.labelerId },
     fetchPolicy: 'network-only',
   });
 
@@ -132,7 +110,8 @@ export async function getServerSideProps(context) {
   return {
     props: {
       ongoingTasks: getLabelersTasks.getLabelersTasks,
-      total_tasks: totalTasks,
+      totalTasks: totalTasks.getAllTasks,
+      labelerInformation: labelerInformation.searchLabeler[0],
     },
   };
 }
@@ -147,7 +126,6 @@ const Wrap = styled.div`
   height: 100%;
   padding: 1rem;
   position: relative;
-  z-index: 1000;
 `;
 
 const TitleWrap = styled.div`
@@ -185,11 +163,6 @@ const ListBoxTitle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1000;
-`;
-
-const DeleteBtn = styled.button`
-  width: 8rem;
 `;
 
 const SubWrap = styled.div`
@@ -197,15 +170,6 @@ const SubWrap = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 40%;
-`;
-
-const ModalWrap = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 3000;
-  visibility: ${({ isModalOpen }) => (isModalOpen ? 'visible' : 'hidden')};
 `;
 
 const ImageWrap = styled.span`
@@ -216,14 +180,5 @@ const TopWrap = styled.div`
   display: flex;
   align-items: center;
   height: 1.5rem;
-  margin-bottom: 4rem;
-`;
-
-const BlurWrap = styled.div`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 2000;
+  margin-bottom: 0.5rem;
 `;
