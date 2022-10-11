@@ -47,7 +47,7 @@ export default function Login({navigation}) {
       const userInfo = await GoogleSignin.signIn();
       // setUser(userInfo);
       // console.log(userInfo);
-      const {email, name, photo} = userInfo.user;
+      const {email, name, photo, id} = userInfo.user;
 
       if (userInfo) {
         return (
@@ -55,6 +55,7 @@ export default function Login({navigation}) {
             email: email,
             userName: name,
             photo: photo,
+            googleId: id,
           }),
           LoginInfo({
             variables: {

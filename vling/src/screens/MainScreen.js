@@ -1,17 +1,39 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {useQuery, gql} from '@apollo/client';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoriesScreen from './Categories';
 import MypageScreen from './Mypage';
 import NERScreen from './NER';
 import EmotionScreen from './Emotion';
-// import Categorization from './Categorization';
+
+const idSearch = gql`
+  query SearchLabelerByGId($googleId: String) {
+    searchLabelerByGId(googleId: $googleId) {
+      _id
+      googleId
+      email
+      name
+      value
+      created_at
+    }
+  }
+`;
 
 const Tab = createBottomTabNavigator();
-// const Stack = createStackNavigator();
 
 export default function MainScreen({route}) {
-  const {userName, email, photo} = route.params;
+  const {userName, email, photo, googleId} = route.params;
+
+  const {data: objId} = useQuery(idSearch, {
+    variables: {googleId: googleId},
+  });
+  if (objId === undefined) {
+    return;
+  }
+  const objectId = objId.searchLabelerByGId._id;
+
+  console.log(objId);
 
   return (
     <Tab.Navigator
@@ -37,12 +59,16 @@ export default function MainScreen({route}) {
       <Tab.Screen
         name="Mypage"
         component={MypageScreen}
-        initialParams={{email: email, userName: userName, photo: photo}}
+        initialParams={{
+          email: email,
+          userName: userName,
+          photo: photo,
+        }}
       />
       <Tab.Screen
         name="Categories"
         component={CategoriesScreen}
-        initialParams={{email: email}}
+        initialParams={{googleId: googleId, objectId: objectId}}
       />
       <Tab.Screen name="Emotion" component={EmotionScreen} />
       <Tab.Screen name="NER" component={NERScreen} />

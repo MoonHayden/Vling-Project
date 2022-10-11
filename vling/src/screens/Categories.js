@@ -10,6 +10,19 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+// const idSearch = gql`
+//   query SearchLabelerByGId($googleId: String) {
+//     searchLabelerByGId(googleId: $googleId) {
+//       _id
+//       googleId
+//       email
+//       name
+//       value
+//       created_at
+//     }
+//   }
+// `;
+
 const TASKS = gql`
   query GetLabelersTasks($id: ID) {
     getLabelersTasks(_id: $id) {
@@ -18,27 +31,38 @@ const TASKS = gql`
   }
 `;
 export default function CategoriesScreen({navigation, route}) {
+  const {googleId, objectId} = route.params;
+  console.log(objectId);
+  // const {data: objId} = useQuery(idSearch, {
+  //   variables: {googleId: googleId},
+  // });
+  // const objectId = objId.searchLabelerByGId._id;
+  // console.log(objectId);
+  // 633f8cdcd91b030398d27faf
   const {data} = useQuery(TASKS, {
-    variables: {id: '633f8cdcd91b030398d27faf'},
+    variables: {id: googleId},
   });
-  // console.log(data);
   if (data === undefined) {
     return;
   }
+  console.log(data);
 
   const DATA = data.getLabelersTasks;
-  console.log(DATA);
+  // console.log(DATA);
 
   const renderItem = ({item}) => {
     const categoryTitle = item.name;
-    console.log(categoryTitle);
+    // console.log(categoryTitle);
     return (
       <View style={styles.wrap}>
         <TouchableOpacity
           style={styles.button}
           activeOpacity={0.5}
           onPress={() =>
-            navigation.navigate('Categorization', {name: categoryTitle})
+            navigation.navigate('Categorization', {
+              name: categoryTitle,
+              labeler: objectId,
+            })
           }>
           <Text style={{fontWeight: 'bold', color: '#2323dd'}}>
             {categoryTitle}

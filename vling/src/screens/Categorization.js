@@ -12,20 +12,33 @@ import {
 } from 'react-native';
 
 const VIDEOS = gql`
-  query GetRandomVideo($taskName: String) {
-    getRandomVideo(taskName: $taskName) {
+  query GetRandomVideo($labeler: String!, $taskName: String!) {
+    getRandomVideo(labeler: $labeler, taskName: $taskName) {
+      _id
       videoId
       title
-      description
+      category
       tags
+      tags_str
+      description
+      category_ori
+      category_label
+      category_predict
+      taskName
+      in_progress
+      labeler {
+        _id
+      }
+      label {
+        name
+      }
+      check
     }
   }
 `;
 const LABEL = gql`
-  mutation AddCategoryValue($videoId: String, $label: String) {
-    addCategoryValue(videoId: $videoId, label: $label) {
-      name
-    }
+  mutation AddCategoryValue($id: ID, $labeler: ID, $label: String) {
+    addCategoryValue(_id: $id, labeler: $labeler, label: $label)
   }
 `;
 
@@ -62,33 +75,39 @@ const categoryList3 = [
   {category: 'ETC'},
 ];
 
-export default function Categorization({route}) {
+export default function Categorization({route, navigation}) {
   const [category, setCategory] = useState({
     videoId: '',
     label: '',
   });
+  const {name, labeler} = route.params;
   console.log(category);
+  // console.log(name);
+  // console.log(labeler);
 
   const [addLabel] = useMutation(LABEL);
-
-  const {data} = useQuery(VIDEOS, {variables: {taskName: route.params.name}});
+  const {data} = useQuery(VIDEOS, {
+    variables: {labeler: labeler, taskName: name},
+  });
   if (data === undefined) {
     return;
   }
   // console.log(data);
   // console.log(DATA);
 
-  const DATA = data.getRandomVideo[0];
+  const DATA = data.getRandomVideo;
   const VideoUrl = DATA.videoId;
   const title = DATA.title;
   const description = DATA.description;
   const tags = DATA.tags;
-  const myArray = JSON.stringify(tags);
-  const TAGS = JSON.parse(myArray);
+  const myArray = tags.split(',');
+  // console.log(title);
 
-  // const myArray = tags.split('');
-  console.log(typeof myArray);
-  console.log(TAGS);
+  // const myArray = JSON.stringify(tags);
+  // const TAGS = JSON.parse(myArray);
+
+  // console.log(typeof myArray);
+  // console.log(myArray);
 
   const renderItem = ({item}) => {
     const categoryTag = item.category;
@@ -98,6 +117,7 @@ export default function Categorization({route}) {
       addLabel({
         variables: {videoId: VideoUrl, label: categoryTag},
       });
+      // return navigation.navigate('Categorization');
     };
 
     return (
@@ -118,11 +138,12 @@ export default function Categorization({route}) {
       addLabel({
         variables: {videoId: VideoUrl, label: categoryTag},
       });
+      // return navigation.navigate('Categorization');
     };
 
     return (
       <View>
-        <TouchableOpacity style={styles.test}>
+        <TouchableOpacity>
           <Text style={styles.Button} onPress={handleInput}>
             {categoryTag}
           </Text>
@@ -137,6 +158,7 @@ export default function Categorization({route}) {
       addLabel({
         variables: {videoId: VideoUrl, label: categoryTag},
       });
+      // return navigation.navigate('Categorization');
     };
 
     return (
@@ -149,6 +171,15 @@ export default function Categorization({route}) {
       </View>
     );
   };
+
+  // const renderItem4 = ({item}) => {
+  //   console.log(item);
+  //   return (
+  //     <View style={styles.Tags}>
+  //       <Text style={styles.tags}>{item}</Text>
+  //     </View>
+  //   );
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -190,7 +221,6 @@ export default function Categorization({route}) {
             />
           </View>
         </View>
-
         <Text style={styles.description}>
           {'\n'}
           <Text style={styles.Description}>[Description]</Text>
@@ -199,12 +229,16 @@ export default function Categorization({route}) {
           {description}
           {'\n'}
         </Text>
-
-        <Text style={styles.tags}>
-          <Text style={styles.Tags}>[Tags]</Text>
+        <Text style={styles.tagTop}>
+          <Text style={styles.tagsTitle}>[Tags]</Text>
           {'\n'}
           {'\n'}
-          <Text style={styles.TAGS}>{tags}</Text>
+          {/* <FlatList
+            data={myArray}
+            renderItem={renderItem4}
+            keyExtractor={item => item.tags}
+          /> */}
+          <Text style={styles.tags}>{myArray}</Text>
         </Text>
       </ScrollView>
     </SafeAreaView>
@@ -220,20 +254,24 @@ const styles = StyleSheet.create({
     color: 'black',
     // height: 100,
   },
-  test: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  TAGS: {
-    borderWidth: 1,
-    borderColor: 'black',
+  tagTop: {
+    // flex: 1,
+    // borderWidth: 1,
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   Tags: {
-    fontSize: 25,
+    // borderWidth: 1,
+    // justifyContent: 'center',
+    alignItems: 'center',
   },
   tags: {
     color: 'black',
-    // height: 100,
+    borderWidth: 3,
+  },
+  tagsTitle: {
+    color: 'black',
+    fontSize: 25,
   },
   title: {
     // justifyContent: 'center',
@@ -249,22 +287,20 @@ const styles = StyleSheet.create({
 
   Button: {
     backgroundColor: '#e8e8ce',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // left: 5,
-    width: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 5,
     borderColor: '#FF0044',
-    marginTop: 7,
+    marginTop: 10,
     fontWeight: 'bold',
     color: '#6250ed',
   },
   Buttons: {
     flex: 1,
     // borderWidth: 10,
-    // borderColor: 'blue',
-    // justifyContent: 'center',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   ButtonDirection: {
@@ -272,7 +308,7 @@ const styles = StyleSheet.create({
     // borderWidth: 10,
     // borderColor: 'lightblue',
     flexDirection: 'row',
-    // justifyContent: 'center',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   container: {
