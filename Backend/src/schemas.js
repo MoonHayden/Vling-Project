@@ -39,7 +39,7 @@ const typeDefs = gql`
     category_label: String
     category_predict: String
     taskName: String
-    in_progress: [String]
+    in_progress: [Labeler]
     labeler: [Labeler]
     label: [Label]
     check: Boolean
@@ -57,7 +57,7 @@ const typeDefs = gql`
 
   input addLabelerInput {
     _id: ID
-    labeler: String
+    email: String
     value: Boolean = false
   }
 

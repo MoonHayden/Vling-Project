@@ -79,8 +79,7 @@ const SearchLabelerByGId = async (_, args, context, info) => {
 const GetLabelersTasks = async (_, args, context, info) => {
   const taskColl = await db.connectDB("tasks");
 
-  const id = args._id;
-  const _id = new ObjectId(id);
+  const _id = args._id;
 
   const result = await taskColl
     .find({ labelers: { $elemMatch: { _id: _id } } })
@@ -97,8 +96,7 @@ const AddTaskToLabeler = async (_, args, context, info) => {
   const task = args.name;
 
   const email = args.email;
-  const id = args._id;
-  const _id = new ObjectId(id);
+  const _id = args._id;
 
   const labelerValue = {
     email: email,
@@ -145,8 +143,7 @@ const DeleteTaskOfLabeler = async (_, args, context, info) => {
   const task = args.name;
 
   const email = args.email;
-  const id = args._id;
-  const _id = new ObjectId(id);
+  const _id = args._id;
 
   console.log("args: ", args);
 
