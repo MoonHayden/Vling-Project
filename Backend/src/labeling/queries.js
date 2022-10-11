@@ -28,7 +28,7 @@ const LabelerLogIn = async (_, args, context, info) => {
     created_at: createdAt,
   };
 
-  if (isLabeler) return labelerCheck;
+  if (isLabeler) return labelerValue;
   if (!isLabeler) await labelerColl.insert(labelerValue);
 
   return labelerValue;
