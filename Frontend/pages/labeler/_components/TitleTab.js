@@ -13,7 +13,7 @@ const TitleTab = ({ labelers, setLabelers }) => {
     value: sortDefault,
   });
 
-  const sortGogo = title => {
+  const sorting = title => {
     if (sortType[title] === sortDefault) {
       setLabelers(upSortedLabelers(title));
       changeSortType(title, sortUp);
@@ -34,7 +34,7 @@ const TitleTab = ({ labelers, setLabelers }) => {
 
   const downSortedLabelers = title => {
     return [...labelers].sort((a, b) =>
-      a[title].toLowerCase() < b.email.toLowerCase() ? 1 : -1
+      a[title].toLowerCase() < b[title].toLowerCase() ? 1 : -1
     );
   };
 
@@ -56,7 +56,7 @@ const TitleTab = ({ labelers, setLabelers }) => {
   return (
     <Wrap>
       {TITLE_LIST.map((title, idx) => (
-        <TitleBox onClick={() => sortGogo(title)} key={idx}>
+        <TitleBox onClick={() => sorting(title)} key={idx}>
           <ImageWrap>
             <Image src={sortType[title]} width={22} height={20} alt="sort" />
           </ImageWrap>
@@ -82,9 +82,9 @@ const Wrap = styled.div`
 const TitleBox = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const ImageWrap = styled.div`
   margin-right: 0.5rem;
-  cursor: pointer;
 `;

@@ -161,7 +161,7 @@ export const TOTAL_TASK_LIST = gql`
       name
       kind
       status
-      rate
+      totalVideos
       expiration_date
     }
   }
@@ -174,7 +174,6 @@ export const ONGOING_TASK_LIST = gql`
       name
       kind
       status
-      rate
       expiration_date
     }
   }

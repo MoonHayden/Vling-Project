@@ -19,6 +19,8 @@ function labelersPage({ labelersData }) {
 
   if (!labelers) return;
 
+  const isSearch = searchLabelers.length > 0;
+
   return (
     <Wrap>
       <Menus>
@@ -36,7 +38,10 @@ function labelersPage({ labelersData }) {
           setIsDeleteButtonClicked={setIsDeleteButtonClicked}
         />
       </Menus>
-      <TitleTab labelers={labelers} setLabelers={setLabelers} />
+      <TitleTab
+        labelers={isSearch ? searchLabelers : labelers}
+        setLabelers={isSearch ? setSearchLabelers : setLabelers}
+      />
       <LabelersList
         labelers={labelers}
         searchLabelers={searchLabelers}
