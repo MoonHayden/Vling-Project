@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useMutation } from '@apollo/client';
-import { TASK_OF_LABELER_ADD } from '../../../../components/gql';
+import { ADD_TASK_TO_LABELER } from '../../../../components/gql';
 
 export default function AllLabelersList({
   taskName,
@@ -11,7 +11,7 @@ export default function AllLabelersList({
   setCurrLabelersList,
   added,
 }) {
-  const [addTaskToLabeler] = useMutation(TASK_OF_LABELER_ADD);
+  const [addTaskToLabeler] = useMutation(ADD_TASK_TO_LABELER);
 
   const onAddLabeler = async (e, id) => {
     await addTaskToLabeler({

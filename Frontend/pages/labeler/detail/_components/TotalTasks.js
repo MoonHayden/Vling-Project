@@ -7,6 +7,7 @@ const TotalTasks = ({
   totalTasks,
   goToTaskDetail,
   labelerId,
+  labelerInformation,
 }) => {
   if (totalTasks === undefined) return;
   return (
@@ -22,6 +23,7 @@ const TotalTasks = ({
             name={task.name}
             category={task.kind}
             expirationDate={task.expiration_date}
+            labelerInformation={labelerInformation}
           />
         );
       })}

@@ -10,7 +10,6 @@ import { useEffect } from 'react';
 
 const Alram = () => {
   const router = useRouter();
-  const isVisible = router.pathname !== '/' && router.pathname !== '/login';
   const [isMessageBoxOpen, setIsMessageBoxOpen] = useState(false);
   const [messages, setMessages] = useState([]);
 
@@ -36,8 +35,9 @@ const Alram = () => {
 
   const isHaveAlarm = messages?.length > 0;
   const adminSrc = isHaveAlarm ? adminAlarm : admin;
+
   return (
-    <Wrap isVisible={isVisible}>
+    <Wrap>
       <SubWrap>
         <ImageWrap onClick={() => boxHandler()}>
           <Image src={adminSrc} alt="admin" width={40} height={40} />
@@ -68,7 +68,7 @@ const Wrap = styled.div`
   width: 60%;
   display: flex;
   justify-content: flex-end;
-  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+  align-items: center;
 `;
 
 const SubWrap = styled.div`

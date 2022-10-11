@@ -100,11 +100,7 @@ const typeDefs = gql`
       expiration_date: Date
     ): Task
 
-    addCategoryValue(
-      _id: ID
-      labeler: ID
-      label: String
-      ): Boolean
+    addCategoryValue(_id: ID, labeler: ID, label: String): Boolean
 
     addMasterSignUp(name: String, password: String): Master
     masterLogIn(name: String, password: String): Master

@@ -3,12 +3,28 @@ import Image from 'next/image';
 import logo from '../../public/images/vling_logo.png';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
+
+const MASTER_LOGIN = gql`
+  mutation MasterLogIn($name: String, $password: String) {
+    masterLogIn(name: $name, password: $password) {
+      _id
+    }
+  }
+`;
 
 function loginPage() {
-  const route = useRouter();
+  const router = useRouter();
+
   const [userId, setUserId] = useState({
     id: '',
     password: '',
+  });
+
+  const [isLoginFailed, setIsLoginFailed] = useState(false);
+
+  const [masterLogin] = useMutation(MASTER_LOGIN, {
+    variables: { name: userId.id, password: userId.password },
   });
 
   const idUpdate = e => {
@@ -17,25 +33,16 @@ function loginPage() {
 
   const isBtnActive = userId['id'].length > 0 && userId['password'].length > 0;
 
-  const loginValid = e => {
+  const loginValid = async e => {
     e.preventDefault();
-    fetch('주소', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: userId.id,
-        password: userId.password,
-      }),
-    })
-      .then(res => res.json())
-      .then(validData => {
-        if (validData.message === 'SUCCESS_LOGIN') {
-          localStorage.setItem('token', validData.token);
-          route.push('/');
-        } else if (validData.message === 'UNABLE_LOGIN') {
-          alert('비밀번호가 틀렸습니다!');
-        }
-      });
+    const result = await masterLogin();
+
+    if (result.data.masterLogIn == null) {
+      setIsLoginFailed(true);
+    } else {
+      localStorage.setItem('masterToken', 'master');
+      router.push('/');
+    }
   };
 
   return (
@@ -43,7 +50,7 @@ function loginPage() {
       <ImageWrap>
         <Image src={logo} alt="checkBox" width={230} height={90} />
       </ImageWrap>
-      <SubWrap>
+      <Form>
         <Input
           onChange={e => idUpdate(e)}
           type="text"
@@ -57,14 +64,19 @@ function loginPage() {
           name="password"
           placeholder="비밀번호"
         />
-        <Buttton
-          disabled={!isBtnActive}
-          isBtnActive={isBtnActive}
-          onClick={() => loginValid()}
-        >
-          로그인
-        </Buttton>
-      </SubWrap>
+        <Box>
+          <FailedText isLoginFailed={isLoginFailed}>
+            이메일 혹은 비밀번호가 틀렸습니다.
+          </FailedText>
+          <Buttton
+            disabled={!isBtnActive}
+            isBtnActive={isBtnActive}
+            onClick={e => loginValid(e)}
+          >
+            로그인
+          </Buttton>
+        </Box>
+      </Form>
     </Wrap>
   );
 }
@@ -79,7 +91,7 @@ const Wrap = styled.div`
   padding: 3rem;
 `;
 
-const SubWrap = styled.div`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
 `;
@@ -100,12 +112,9 @@ const Input = styled.input`
   }
 `;
 
-const InputName = styled.div``;
-
 const Buttton = styled.button`
   width: 15rem;
   height: 4rem;
-  margin-top: 3rem;
   background-color: #fafafa;
   border-radius: 5px;
   border: none;
@@ -125,4 +134,17 @@ const Buttton = styled.button`
 `;
 const ImageWrap = styled.div`
   margin-bottom: 2rem;
+`;
+
+const Box = styled.div`
+  margin-top: 3rem;
+`;
+
+const FailedText = styled.div`
+  font-size: 0.8rem;
+  color: red;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  visibility: ${({ isLoginFailed }) => (isLoginFailed ? 'visible' : 'hidden')};
 `;
