@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import TaskList from './_components/TotalTasks';
 import { useEffect, useState } from 'react';
-import { gql } from '@apollo/client';
 import OngoingTasks from './_components/OngoingTasks';
 import CompleteTasks from './_components/CompleteTasks';
 import DeleteModal from './_components/DeleteModal';
@@ -12,6 +11,7 @@ import Image from 'next/image';
 import { TOTAL_TASK_LIST } from '../../../components/gql';
 import { ONGOING_TASK_LIST } from '../../../components/gql';
 import { SEARCH_LABELER } from '../../../components/gql';
+import LabelerInfo from './_components/LabelerInfo';
 
 function labelerDetail(props) {
   const router = useRouter();
@@ -28,12 +28,9 @@ function labelerDetail(props) {
     router.push('/labeler');
   };
 
-  var today = new Date(labelerInformation.created_at);
-  console.log(today);
-
   useEffect(() => {
     setOngoingTasks(props.ongoingTasks);
-    setTotalTasks(props.total_tasks.getAllTasks);
+    setTotalTasks(props.totalTasks);
     setLabelerInformation(props.labelerInformation);
   }, [props.ongoingTasks]);
 
@@ -55,6 +52,7 @@ function labelerDetail(props) {
             <DeleteModal labelerInformation={labelerInformation} />
           </TitleWrap>
         </TopWrap>
+        <LabelerInfo labelerInformation={labelerInformation} />
         <TaskContainer>
           <SubWrap>
             <OngoingTasks
@@ -112,7 +110,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       ongoingTasks: getLabelersTasks.getLabelersTasks,
-      total_tasks: totalTasks,
+      totalTasks: totalTasks.getAllTasks,
       labelerInformation: labelerInformation.searchLabeler[0],
     },
   };
@@ -182,5 +180,5 @@ const TopWrap = styled.div`
   display: flex;
   align-items: center;
   height: 1.5rem;
-  margin-bottom: 4rem;
+  margin-bottom: 0.5rem;
 `;

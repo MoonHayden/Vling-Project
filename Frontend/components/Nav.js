@@ -52,6 +52,8 @@ const Menu = styled.div`
   font-size: 1.5rem;
   margin-right: 1rem;
   background-color: #dfcaea;
+  border-radius: 5px 5px 0px 0px;
+
   cursor: pointer;
 
   background-color: ${({ isCurrentPage }) =>
