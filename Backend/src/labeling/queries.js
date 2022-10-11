@@ -26,6 +26,7 @@ const LabelerLogIn = async (_, args, context, info) => {
     name: name,
     idToken: idToken,
     created_at: createdAt,
+    value: "",
   };
 
   if (isLabeler) return labelerValue;
