@@ -6,7 +6,7 @@ const GetRandomVideo = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videosTest");
   let result;
 
-  const check = await videoColl.find()
+  // const check = await videoColl.find()
   //3ro check
   //labeler value false => true
   //task status => true

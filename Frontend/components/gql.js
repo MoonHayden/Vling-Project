@@ -1,0 +1,156 @@
+import { gql } from '@apollo/client';
+
+export const GET_ALL_TASKS = gql`
+  query {
+    getAllTasks {
+      _id
+      name
+      kind
+      labelers {
+        _id
+        googleId
+        idToken
+        email
+        name
+        value
+        created_at
+      }
+      status
+      rate
+      expiration_date
+    }
+  }
+`;
+
+export const TASK_DETAIL = gql`
+  query ($name: String!) {
+    getTaskDetail(name: $name) {
+      _id
+      name
+      kind
+      labelers {
+        _id
+        email
+        value
+      }
+      status
+      rate
+      expiration_date
+    }
+  }
+`;
+
+export const DELETE_TASK = gql`
+  mutation ($name: String!) {
+    deleteTask(name: $name) {
+      name
+    }
+  }
+`;
+
+export const UPDATE_TASK = gql`
+  mutation (
+    $name: String
+    $kind: String
+    $labelers: [addLabelerInput]
+    $expirationDate: Date
+  ) {
+    updateTask(
+      name: $name
+      kind: $kind
+      labelers: $labelers
+      expiration_date: $expirationDate
+    ) {
+      name
+      kind
+      labelers {
+        _id
+        googleId
+        idToken
+        email
+        name
+        value
+        created_at
+      }
+      status
+      rate
+      expiration_date
+    }
+  }
+`;
+
+export const ADD_TASK = gql`
+  mutation (
+    $name: String
+    $kind: String
+    $labelers: [addLabelerInput]
+    $expirationDate: Date
+  ) {
+    addTask(
+      name: $name
+      kind: $kind
+      labelers: $labelers
+      expiration_date: $expirationDate
+    ) {
+      name
+      kind
+      labelers {
+        _id
+        email
+        value
+      }
+      expiration_date
+    }
+  }
+`;
+
+export const GET_ALL_LABELER = gql`
+  query {
+    getAllLabelers {
+      _id
+      googleId
+      idToken
+      email
+      name
+      value
+      created_at
+    }
+  }
+`;
+
+export const ONGOING_TASK_LIST = gql`
+  query GetLabelersTasks($labeler: String) {
+    getLabelersTasks(labeler: $labeler) {
+      name
+      kind
+      expiration_date
+      labelers {
+        labeler
+      }
+    }
+  }
+`;
+
+export const TASK_OF_LABELER_ADD = gql`
+  mutation AddTaskToLabeler($email: String, $id: ID, $name: String) {
+    addTaskToLabeler(email: $email, _id: $id, name: $name) {
+      _id
+    }
+  }
+`;
+
+export const TASK_OF_LABELER_DELETE = gql`
+  mutation DeleteTaskOfLabeler($email: String, $id: ID, $name: String) {
+    deleteTaskOfLabeler(email: $email, _id: $id, name: $name) {
+      _id
+    }
+  }
+`;
+
+export const LABELER_DELETE = gql`
+  mutation ($labeler: String) {
+    deleteLabelers(labeler: $labeler) {
+      labeler
+    }
+  }
+`;

@@ -1,6 +1,8 @@
 const {
-  Labelers,
-  Labeler,
+  LabelerLogIn,
+  GetAllLabelers,
+  SearchLabeler,
+  SearchLabelerByGId,
   GetLabelersTasks,
   AddTaskToLabeler,
   DeleteLabelers,
@@ -15,20 +17,15 @@ const {
   UpdateTask,
 } = require("./tasks/queries");
 
-const { 
-  MasterSignUp, 
-  MasterLogIn 
-} = require("./master/queries");
+const { MasterSignUp, MasterLogIn } = require("./master/queries");
 
-const { 
-  GetRandomVideo, 
-  AddCategoryValue 
-} = require("./videos/queries");
+const { GetRandomVideo, AddCategoryValue } = require("./videos/queries");
 
 const resolvers = {
   Query: {
-    getAllLabelers: Labelers,
-    searchLabelers: Labeler,
+    getAllLabelers: GetAllLabelers,
+    searchLabeler: SearchLabeler,
+    searchLabelerByGId: SearchLabelerByGId,
     getLabelersTasks: GetLabelersTasks,
     getAllTasks: Tasks,
     getTaskDetail: GetTaskDetail,
@@ -43,9 +40,11 @@ const resolvers = {
     updateTask: UpdateTask,
     
     addCategoryValue: AddCategoryValue,
-    
+
     addMasterSignUp: MasterSignUp,
     masterLogIn: MasterLogIn,
+
+    labelerLogIn: LabelerLogIn,
   },
 };
 

@@ -15,16 +15,16 @@ const typeDefs = gql`
 
   type Labeler {
     _id: ID
+    googleId: String
     idToken: String
-    labeler: String
+    email: String
     name: String
-    userId: String
     value: String
-    createdAt: Date
+    created_at: Date
   }
 
   type DeletedLabeler {
-    labeler: String
+    _id: ID
   }
 
   type Video {
@@ -63,8 +63,9 @@ const typeDefs = gql`
 
   type Query {
     getAllLabelers: [Labeler]
-    searchLabelers(labeler: String): [Labeler]
-    getLabelersTasks(labeler: String): [Task]
+    searchLabeler(_id: ID): [Labeler]
+    searchLabelerByGId(googleId: String): Labeler
+    getLabelersTasks(_id: ID): [Task]
 
     getAllTasks: [Task]
     getTaskDetail(_id: ID, name: String): Task
@@ -75,14 +76,14 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    deleteLabelers(labeler: String): [DeletedLabeler]
-    addTaskToLabeler(name: String, labeler: String): Task
-    deleteTaskOfLabeler(name: String, labeler: String): [Labeler]
+    deleteLabelers(_id: ID): [DeletedLabeler]
+    addTaskToLabeler(email: String, _id: ID, name: String): Task
+    deleteTaskOfLabeler(email: String, _id: ID, name: String): [Labeler]
 
     addTask(
       name: String
       kind: String
-      labelers: [addLabelerInput]
+      labelers: [Labeler]
       status: Boolean = false
       totalVideos: Int = 0
       expiration_date: Date
@@ -94,7 +95,7 @@ const typeDefs = gql`
       name: String
       newName: String
       kind: String
-      labelers: [addLabelerInput]
+      labelers: [Labeler]
       status: Boolean = false
       expiration_date: Date
     ): Task
@@ -107,6 +108,13 @@ const typeDefs = gql`
 
     addMasterSignUp(name: String, password: String): Master
     masterLogIn(name: String, password: String): Master
+
+    labelerLogIn(
+      email: String
+      googleId: String
+      name: String
+      idToken: String
+    ): Labeler
   }
 `;
 

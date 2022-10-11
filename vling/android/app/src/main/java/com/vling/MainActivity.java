@@ -1,4 +1,4 @@
-package com.vling;
+package com.vling.labeler;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

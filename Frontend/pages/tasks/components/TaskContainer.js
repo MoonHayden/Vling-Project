@@ -2,11 +2,10 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 export default function TaskContainer({ task }) {
-  console.log(task);
-  const { name, attendents, status, rate } = task;
+  const { name, kind, labelers, status, rate } = task;
   return (
     <>
-      <Link href={`/task/${name}`}>
+      <Link href={`/tasks/detail/${name}`}>
         <TaskWrap>
           <StatusWrap>
             <Status status={status}></Status>
@@ -14,7 +13,8 @@ export default function TaskContainer({ task }) {
           <TaskInfo>
             <FolderIcon src="./images/folder.png" alt="folderIcon" />
             {/*<NumOfVideos>#videos : </NumOfVideos>*/}
-            <NumOfVideos>#labelers : {attendents}</NumOfVideos>
+            <NumOfVideos>Kind : {kind}</NumOfVideos>
+            <NumOfVideos>#Labelers : {labelers.length}</NumOfVideos>
           </TaskInfo>
           <ProgressInfo>
             <TaskName>{name}</TaskName>

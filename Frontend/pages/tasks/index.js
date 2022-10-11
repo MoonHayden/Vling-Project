@@ -1,35 +1,18 @@
 import styled from 'styled-components';
 import Link from 'next/link';
-import { useQuery, useMutation, gql } from '@apollo/client';
-import { useState } from 'react';
-import TaskContainer from '../components/TaskContainer';
-import AddTask from '../components/AddTask';
-import client from '../components/apollo-client';
-
-const TASKS = gql`
-  query {
-    getAllTasks {
-      name
-      kind
-      attendents
-      status
-      rate
-      expiration_date
-    }
-  }
-`;
-
-const LABELER_LIST = gql`
-  query {
-    getAllLabelers {
-      labeler
-      value
-    }
-  }
-`;
+import { useEffect, useState } from 'react';
+import { GET_ALL_TASKS, GET_ALL_LABELER } from '../../components/gql';
+import TaskContainer from './components/TaskContainer';
+import AddTask from './components/AddTask';
+import client from '../../components/apollo-client';
 
 export default function Tasks({ allTasks, allLabelers }) {
   const [addTask, setAddTask] = useState(false);
+  const [labelersAll, setLabelersAll] = useState([]);
+
+  useEffect(() => {
+    setLabelersAll(allLabelers.data.getAllLabelers);
+  }, [allLabelers]);
 
   const onClickAddTask = () => {
     setAddTask(true);
@@ -55,9 +38,11 @@ export default function Tasks({ allTasks, allLabelers }) {
         </TaskNav>
         {addTask === false &&
           allTasks?.data?.getAllTasks?.map(task => (
-            <TaskContainer task={task} />
+            <TaskContainer key={task._id} task={task} />
           ))}
-        {addTask === true && <AddTask allLabelers={allLabelers} />}
+        {addTask === true && (
+          <AddTask allLabelers={labelersAll} setAllLabelers={setLabelersAll} />
+        )}
       </InnerWrap>
     </>
   );
@@ -87,9 +72,14 @@ const TaskNav = styled.div`
 const AddTaskBtn = styled.button``;
 
 export async function getServerSideProps() {
-  const allTasks = await client.query({ query: TASKS });
-  const allLabelers = await client.query({ query: LABELER_LIST });
-  console.log(allTasks);
+  const allTasks = await client.query({
+    query: GET_ALL_TASKS,
+    fetchPolicy: 'network-only',
+  });
+  const allLabelers = await client.query({
+    query: GET_ALL_LABELER,
+    fetchPolicy: 'network-only',
+  });
   return {
     props: { allTasks, allLabelers },
   };

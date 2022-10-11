@@ -1,43 +1,20 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import { useQuery, useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+import CreateModal from './CreateModal';
+import { ADD_TASK } from '../../../components/gql';
 
-const ADD_TASK = gql`
-  mutation (
-    $name: String
-    $kind: String
-    $labelers: [addLabelerInput]
-    $numVideos: Int!
-  ) {
-    addTask(
-      name: $name
-      kind: $kind
-      labelers: $labelers
-      numVideos: $numVideos
-    ) {
-      name
-      kind
-      attendants
-      labelers {
-        labeler
-        value
-      }
-      expiration_date
-    }
-  }
-`;
-
-export default function AddTask({ allLabelers }) {
+export default function AddTask({ allLabelers, setAllLabelers }) {
   const [showLabelerList, setShowLabelerList] = useState(false);
   const [taskName, setTaskName] = useState('');
   const [taskKind, setTaskKind] = useState('');
   const [expDate, setExpDate] = useState('');
   const [labelerList, setLabelerList] = useState([]);
-  const [labelerListAll, setLabelerListAll] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [file, setFile] = useState(new FormData());
 
   const onClickShowList = () => {
     setShowLabelerList(true);
-    setLabelerListAll(allLabelers.data.getAllLabelers);
   };
 
   const handleTaskNameInput = e => {
@@ -54,67 +31,28 @@ export default function AddTask({ allLabelers }) {
     setExpDate(e.target.value);
   };
 
-  const handleAddLabeler = e => {
-    setLabelerList([...labelerList, { labeler: e.target.value }]);
-    setLabelerListAll(
-      labelerListAll.filter(labeler => labeler.labeler !== e.target.value)
+  const handleAddLabeler = (e, id) => {
+    setLabelerList([...labelerList, { _id: id, email: e.target.value }]);
+    setAllLabelers(
+      allLabelers.filter(labeler => labeler.email !== e.target.value)
     );
   };
 
   const handleDeleteLabeler = e => {
     setLabelerList(
-      labelerList.filter(labeler => labeler.labeler !== e.target.value)
+      labelerList.filter(labeler => labeler.email !== e.target.value)
     );
-    labelerListAll.push({ labeler: e.target.value });
-    setLabelerListAll(labelerListAll);
+    allLabelers.push({ email: e.target.value });
+    setAllLabelers(allLabelers);
   };
 
-  const taskInfo = {
-    name: taskName,
-    kind: taskKind,
-    labelers: labelerList,
-    numVideos: 1,
+  const handleFileChange = e => {
+    const formData = new FormData();
+    formData.append('file', e.target.files[0]);
+    setFile(formData);
   };
 
-  const [addTask] = useMutation(
-    ADD_TASK,
-    /*
-    {
-      update(cache, { data: { addTask } }) {
-        const allTasks = cache.readQuery({ query: TASKS });
-        cache.writeQuery({
-          query: TASKS,
-          data: { getAllTasks: [addTask, ...allTasks.getAllTasks] },
-        });
-      },
-    },
-    */
-    {
-      variables: {
-        name: taskName,
-        kind: taskKind,
-        labelers: labelerList,
-        numVideos: 1,
-      },
-    }
-  );
-
-  /*
-  const [addTask] = useMutation(ADD_TASK, {
-    variables: {
-      input: {
-        name: taskName,
-        kind: taskKind,
-        labelers: labelerList,
-        numVideos: 1,
-      },
-    },
-  });
-*/
-
-  console.log(taskName);
-  console.log(taskKind);
-  console.log(labelerList);
+  const [addTask] = useMutation(ADD_TASK);
 
   return (
     <>
@@ -122,7 +60,14 @@ export default function AddTask({ allLabelers }) {
         <TaskInfoWrap>
           <TaskNameWrap>
             <CsvUploadTitle>CSV File Upload:</CsvUploadTitle>
-            <CsvUploadBtn type={'file'} accept={'.csv'} />
+            <form encType="multipart/form-data">
+              <CsvUploadBtn
+                type={'file'}
+                accept={'.csv'}
+                name="file"
+                onChange={handleFileChange}
+              />
+            </form>
           </TaskNameWrap>
           <TaskNameWrap>
             <TaskName>Task Name:</TaskName>
@@ -146,7 +91,7 @@ export default function AddTask({ allLabelers }) {
           <TaskNameWrap>
             <TaskName>Expire Date:</TaskName>
             <TaskNameInput
-              placeholder="예: YYYY / MM / DD"
+              type="date"
               onChange={handleExpDateInput}
               value={expDate}
             ></TaskNameInput>
@@ -160,13 +105,10 @@ export default function AddTask({ allLabelers }) {
             />
           </LabelersInfoWrap>
           <AddedLabelers>
-            {labelerList.map((labeler, index) => (
-              <LabelerWrap key={index}>
-                <LabelerName>{labeler.labeler}</LabelerName>
-                <AddButton
-                  onClick={handleDeleteLabeler}
-                  value={labeler.labeler}
-                >
+            {labelerList.map(labeler => (
+              <LabelerWrap key={labeler.email}>
+                <LabelerName>{labeler.email}</LabelerName>
+                <AddButton onClick={handleDeleteLabeler} value={labeler.email}>
                   삭제
                 </AddButton>
               </LabelerWrap>
@@ -176,17 +118,38 @@ export default function AddTask({ allLabelers }) {
         <LabelerListAllWrap>
           <NavTop>
             <AllLabelers>
-              Labelers ({showLabelerList && labelerListAll.length}):
+              Labelers ({showLabelerList && allLabelers.length}):
             </AllLabelers>
 
-            <SubmitButton onClick={addTask}>task 등록</SubmitButton>
+            <SubmitButton
+              onClick={() => {
+                setModalOpen(true);
+              }}
+            >
+              task 등록
+            </SubmitButton>
+            {modalOpen && (
+              <CreateModal
+                modalOpen={modalOpen}
+                setModalOpen={setModalOpen}
+                addTask={addTask}
+                taskName={taskName}
+                taskKind={taskKind}
+                labelerList={labelerList}
+                expDate={expDate}
+                file={file}
+              />
+            )}
           </NavTop>
           {showLabelerList && (
             <LabelersListWrap>
-              {labelerListAll.map(labeler => (
+              {allLabelers.map(labeler => (
                 <LabelerWrap key={labeler._id}>
-                  <LabelerName>{labeler.labeler}</LabelerName>
-                  <AddButton onClick={handleAddLabeler} value={labeler.labeler}>
+                  <LabelerName>{labeler.email}</LabelerName>
+                  <AddButton
+                    onClick={e => handleAddLabeler(e, labeler._id)}
+                    value={labeler.email}
+                  >
                     추가
                   </AddButton>
                 </LabelerWrap>
@@ -223,6 +186,8 @@ const CsvUploadTitle = styled.p`
 `;
 
 const CsvUploadBtn = styled.input``;
+
+const UploadFileBtn = styled.button``;
 
 const TaskName = styled.h1`
   margin-bottom: 1rem;
