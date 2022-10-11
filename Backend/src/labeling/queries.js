@@ -59,6 +59,22 @@ const SearchLabeler = async (_, args, context, info) => {
   return result;
 };
 
+const SearchLabelerByGId = async (_, args, context, info) => {
+  const labelingColl = await db.connectDB("labeling");
+
+  const googleId = args.googleId;
+
+  const labeler = {
+    googleId: googleId,
+  };
+  console.log("labeler", labeler);
+
+  const result = await labelingColl.findOne(labeler);
+  console.log("result", result);
+
+  return result;
+};
+
 const GetLabelersTasks = async (_, args, context, info) => {
   const taskColl = await db.connectDB("tasks");
 
@@ -156,8 +172,10 @@ module.exports = {
   LabelerLogIn,
   GetAllLabelers,
   SearchLabeler,
+  SearchLabelerByGId,
   GetLabelersTasks,
   AddTaskToLabeler,
   DeleteLabelers,
   DeleteTaskOfLabeler,
+  SearchLabelerByGId,
 };
