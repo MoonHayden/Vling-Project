@@ -1,19 +1,13 @@
 const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
-  type Labelers {
-    _id: ID
-    labeler: String
-    value: String
-  }
-
   type Task {
     _id: ID
     name: String
     kind: String
     labelers: [Labeler]
     status: Boolean
-    rate: Float
+    totalVideos: Int
     expiration_date: Date
   }
 
@@ -43,12 +37,15 @@ const typeDefs = gql`
     description: String
     category_ori: String
     category_label: String
-    category_predict: [Category]
+    category_predict: String
     taskName: String
-    labelers: [Labeler]
+    in_progress: [String]
+    labeler: [Labeler]
+    label: [Label]
+    check: Boolean
   }
 
-  type Category {
+  type Label {
     name: String
   }
 
@@ -65,14 +62,14 @@ const typeDefs = gql`
   }
 
   type Query {
-    getAllLabelers: [Labelers]
-    searchLabelers(labeler: String): [Labelers]
+    getAllLabelers: [Labeler]
+    searchLabelers(labeler: String): [Labeler]
     getLabelersTasks(labeler: String): [Task]
 
     getAllTasks: [Task]
     getTaskDetail(_id: ID, name: String): Task
 
-    getRandomVideo(taskName: String): Video
+    getRandomVideo(labeler: String!, taskName: String!): Video
 
     masterLogIn: Master
   }
@@ -87,7 +84,7 @@ const typeDefs = gql`
       kind: String
       labelers: [addLabelerInput]
       status: Boolean = false
-      rate: Float = 0.00
+      totalVideos: Int = 0
       expiration_date: Date
     ): Task
 
@@ -102,7 +99,11 @@ const typeDefs = gql`
       expiration_date: Date
     ): Task
 
-    addCategoryValue(videoId: String, category_predict: String): Category
+    addCategoryValue(
+      _id: ID
+      labeler: ID
+      label: String
+      ): Boolean
 
     addMasterSignUp(name: String, password: String): Master
     masterLogIn(name: String, password: String): Master
