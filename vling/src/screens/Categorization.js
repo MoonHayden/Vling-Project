@@ -9,6 +9,7 @@ import {
   FlatList,
   SafeAreaView,
   ScrollView,
+  Alert,
 } from 'react-native';
 
 const VIDEOS = gql`
@@ -82,6 +83,7 @@ export default function Categorization({route, navigation}) {
   const {data, refetch} = useQuery(VIDEOS, {
     variables: {labeler: labeler, taskName: name},
   });
+
   if (data === undefined) {
     return;
   }
@@ -103,7 +105,7 @@ export default function Categorization({route, navigation}) {
   const renderItem = ({item}) => {
     const categoryTag = item.category;
 
-    const handleInput = () => {
+    const handleInput = async () => {
       setCategory(() => ({
         id: VideoObjectId,
         labeler: labeler,
@@ -112,7 +114,13 @@ export default function Categorization({route, navigation}) {
       addLabel({
         variables: {id: VideoObjectId, labeler: labeler, label: categoryTag},
       });
-      refetch();
+      try {
+        await refetch();
+      } catch (err) {
+        if (err) {
+          Alert.alert(err);
+        }
+      }
     };
     return (
       <View style={styles.categoryWrap}>

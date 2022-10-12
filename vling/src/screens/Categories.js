@@ -27,6 +27,8 @@ const TASKS = gql`
   query GetLabelersTasks($id: ID) {
     getLabelersTasks(_id: $id) {
       name
+      totalVideos
+      doneVideos
     }
   }
 `;
@@ -48,10 +50,20 @@ export default function CategoriesScreen({navigation, route}) {
   // console.log(data);
 
   const DATA = data?.getLabelersTasks;
-  // console.log(DATA);
+  console.log(DATA);
+
+  // const doneVideos = DATA?.doneVideos;
+  // const totalVideos = DATA?.totalVideos;
+  // const rate = (doneVideos / totalVideos) * 100;
+  // console.log(rate);
 
   const renderItem = ({item}) => {
     const categoryTitle = item?.name;
+    const doneVideos = item?.doneVideos;
+    const totalVideos = item?.totalVideos;
+    const rate = (doneVideos / totalVideos) * 100;
+    console.log(rate);
+
     // console.log(categoryTitle);
     return (
       <View style={styles.wrap}>
@@ -69,7 +81,7 @@ export default function CategoriesScreen({navigation, route}) {
           </Text>
         </TouchableOpacity>
         <Progress.Bar
-          progress={0.3}
+          progress={rate / 100}
           width={null}
           height={10}
           marginTop={10}
@@ -77,7 +89,7 @@ export default function CategoriesScreen({navigation, route}) {
         />
         <View style={{alignItems: 'center'}}>
           <Text style={{fontWeight: 'bold', color: '#2b2525'}}>
-            진행률 30 %
+            진행률 {rate}%
           </Text>
         </View>
       </View>
