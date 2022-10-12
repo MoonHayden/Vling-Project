@@ -9,6 +9,7 @@ const typeDefs = gql`
     status: Boolean
     totalVideos: Int
     expiration_date: Date
+    doneVideos: Int
   }
 
   scalar Date
@@ -39,9 +40,9 @@ const typeDefs = gql`
     category_label: String
     category_predict: String
     taskName: String
-    in_progress: [Labeler]
-    labeler: [Labeler]
-    label: [Label]
+    in_progress: [String]
+    labeler: [String]
+    label: [String]
     check: Boolean
   }
 
@@ -87,9 +88,10 @@ const typeDefs = gql`
       status: Boolean = false
       totalVideos: Int = 0
       expiration_date: Date
+      doneVideos: Int = 0
     ): Task
 
-    deleteTask(name: String): Task
+    deleteTask(name: String): Boolean
 
     updateTask(
       name: String
