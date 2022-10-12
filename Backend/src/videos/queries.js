@@ -4,7 +4,6 @@ const db = new DB();
 
 const GetRandomVideo = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videos");
-
   const result = await videoColl
     .aggregate([
       {
@@ -65,7 +64,15 @@ const GetRandomVideo = async (_, args, context, info) => {
 
 const AddCategoryValue = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videos");
-  const taskColl = await db.connectDB("tasks")
+  // const taskColl = await db.connectDB("tasks");
+  // const total = await videoColl.aggregate(
+  //   {
+  //     $group: {
+  //       check: "$true",
+  //       total: { $sum: { $size: "$true" } }
+  //     }
+  //   }
+  // )
   await videoColl.updateMany({ label: { $size: 3 } }, { $set: { check: true } });
 
   await videoColl.updateOne(
