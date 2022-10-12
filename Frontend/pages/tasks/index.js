@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { GET_ALL_TASKS, GET_ALL_LABELER } from '../../components/gql';
+import { GET_ALL_TASKS, GET_ALL_LABELERS } from '../../components/gql';
 import TaskContainer from './components/TaskContainer';
 import AddTask from './components/AddTask';
 import client from '../../components/apollo-client';
@@ -77,7 +77,7 @@ export async function getServerSideProps() {
     fetchPolicy: 'network-only',
   });
   const allLabelers = await client.query({
-    query: GET_ALL_LABELER,
+    query: GET_ALL_LABELERS,
     fetchPolicy: 'network-only',
   });
   return {

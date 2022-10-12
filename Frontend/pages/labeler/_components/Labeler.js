@@ -8,6 +8,7 @@ const Labeler = ({
   _id,
   email,
   value,
+  progress,
   isDeleteButtonClicked,
   clickedLabelers,
   setClickedLabelers,
@@ -45,9 +46,12 @@ const Labeler = ({
           isIncludeClickedLabelers={isIncludeClickedLabelers}
           setClickedLabelers={setClickedLabelers}
         />
-        <div>{email}</div>
+        <Email>{email}</Email>
       </SubWrap>
-      <div>{value}</div>
+      <DD>
+        <Divv>{value}</Divv>
+        <Progess>{progress}</Progess>
+      </DD>
     </Wrap>
   );
 };
@@ -59,7 +63,6 @@ const Wrap = styled.div`
   height: 4rem;
   background-color: white;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid black;
   padding: 10px 40px 10px 6px;
@@ -73,4 +76,14 @@ const Wrap = styled.div`
 
 const SubWrap = styled.div`
   display: flex;
+  width: 75%;
+`;
+
+const Progess = styled.div``;
+const Email = styled.div``;
+const Divv = styled.div``;
+const DD = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 25%;
 `;

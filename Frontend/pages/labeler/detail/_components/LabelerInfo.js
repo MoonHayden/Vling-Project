@@ -2,18 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 
 const LabelerInfo = ({ labelerInformation }) => {
-  const { email, name, created_at } = labelerInformation;
+  const { name, created_at } = labelerInformation;
   const getCreatedDate = new Date(created_at);
 
   const year = getCreatedDate.getFullYear();
-  const month = getCreatedDate.getMonth() + 1;
-  const date = getCreatedDate.getDate();
-  const hours = getCreatedDate.getHours();
-  const minutes = getCreatedDate.getMinutes();
+  const month = (getCreatedDate.getMonth() + 1).toString().padStart(2, '0');
+  const date = getCreatedDate.getDate().toString().padStart(2, '0');
+  const hours = getCreatedDate.getHours().toString().padStart(2, '0');
+  const minutes = getCreatedDate.getMinutes().toString().padStart(2, '0');
 
-  // const zero = (time) => {
-  //   time<10? time
-  // }
   const createdDate = `${year}/${month}/${date} ${hours}:${minutes}`;
   return (
     <Wrap>

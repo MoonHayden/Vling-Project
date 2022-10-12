@@ -8,7 +8,7 @@ import DeleteModal from './_components/DeleteModal';
 import client from '../../../components/apollo-client';
 import back from '../../../public/images/back.png';
 import Image from 'next/image';
-import { TOTAL_TASK_LIST } from '../../../components/gql';
+import { TOTAL_TASK_DETAIL_LIST } from '../../../components/gql';
 import { ONGOING_TASK_LIST } from '../../../components/gql';
 import { SEARCH_LABELER } from '../../../components/gql';
 import LabelerInfo from './_components/LabelerInfo';
@@ -17,23 +17,25 @@ function labelerDetail(props) {
   const router = useRouter();
   const labelerId = router.query.labelerId;
   const [labelerInformation, setLabelerInformation] = useState({});
-  const [ongoingTasks, setOngoingTasks] = useState();
+  const [labelersTasks, setLabelersTasks] = useState();
   const [totalTasks, setTotalTasks] = useState();
 
-  const goToTaskDetail = taskName => {
-    router.replace(`/task/${taskName}`);
-  };
+  useEffect(() => {
+    setLabelersTasks(props.labelersTasks);
+    setTotalTasks(props.totalTasks);
+    setLabelerInformation(props.labelerInformation);
+  }, [props.labelersTasks]);
+
+  if (!totalTasks) return;
+
+  const completedTasks = labelersTasks.filter(task => task.status);
+  const ongoingTasks = labelersTasks.filter(task => !task.status);
 
   const backPage = () => {
     router.push('/labeler');
   };
 
-  useEffect(() => {
-    setOngoingTasks(props.ongoingTasks);
-    setTotalTasks(props.totalTasks);
-    setLabelerInformation(props.labelerInformation);
-  }, [props.ongoingTasks]);
-
+  console.log(labelersTasks, completedTasks);
   return (
     <>
       <Wrap>
@@ -57,23 +59,27 @@ function labelerDetail(props) {
           <SubWrap>
             <OngoingTasks
               labelerId={labelerId}
-              goToTaskDetail={goToTaskDetail}
               ongoingTasks={ongoingTasks}
-              setOngoingTasks={setOngoingTasks}
+              labelersTasks={labelersTasks}
+              setLabelersTasks={setLabelersTasks}
               labelerInformation={labelerInformation}
             />
-            <CompleteTasks goToTaskDetail={goToTaskDetail} />
+            <CompleteTasks
+              completedTasks={completedTasks}
+              labelerInformation={labelerInformation}
+            />
           </SubWrap>
           <TaskListBox>
             <ListBoxTitle>
               <BoldText>테스크 리스트</BoldText>
             </ListBoxTitle>
             <TaskBox>
+              {/* //온고잉이랑 겹치고, status ture빼 */}
               <TaskList
-                labelerInformation={labelerInformation}
-                goToTaskDetail={goToTaskDetail}
-                setOngoingTasks={setOngoingTasks}
                 ongoingTasks={ongoingTasks}
+                labelerInformation={labelerInformation}
+                setLabelersTasks={setLabelersTasks}
+                labelersTasks={labelersTasks}
                 totalTasks={totalTasks}
                 labelerId={labelerId}
               />
@@ -93,7 +99,6 @@ export async function getServerSideProps(context) {
   const { data: labelerInformation } = await client.query({
     query: SEARCH_LABELER,
     variables: { id: query.labelerId },
-    fetchPolicy: 'network-only',
   });
 
   const { data: getLabelersTasks } = await client.query({
@@ -103,13 +108,13 @@ export async function getServerSideProps(context) {
   });
 
   const { data: totalTasks } = await client.query({
-    query: TOTAL_TASK_LIST,
+    query: TOTAL_TASK_DETAIL_LIST,
     fetchPolicy: 'network-only',
   });
 
   return {
     props: {
-      ongoingTasks: getLabelersTasks.getLabelersTasks,
+      labelersTasks: getLabelersTasks.getLabelersTasks,
       totalTasks: totalTasks.getAllTasks,
       labelerInformation: labelerInformation.searchLabeler[0],
     },
