@@ -3,37 +3,58 @@ const DB = require("../../models/db");
 const db = new DB();
 
 const GetRandomVideo = async (_, args, context, info) => {
-  const videoColl = await db.connectDB("videos");
-  let result;
-  
-  //3ro check
-  // await videoColl.updateMany({ labeler: { $size: 3 }, $set: {check: true}});
+  const videoColl = await db.connectDB("videosTest");
 
-  //labeler value false => true
-  //task status => true
+  const result = await videoColl
+    .aggregate([
+      {
+        $match: {
+          $and: [
+            { taskName: args.taskName },
+            { check: false },
+            { labeler: { $nin: [args.labeler] } }
+          ]
+        },
+      },
+      // {
+      //   $project: {
+      //     in_progress: 1,
+      //     videoId: 1,
+      //     title: 1,
+      //     category: 1,
+      //     tags: 1,
+      //     tags_str: 1,
+      //     description: 1,
+      //     category_ori: 1,
+      //     category_label: 1,
+      //     taskName: 1,
+      //     category_predict: 1,
+      //     check: 1,
+      //     in_progress: 1,
+      //     labeler: 1,
+      //     label: 1,
+      //     lessThanThree: { $lte: [{ $size: "$in_progress" }, 3] }
+      //   }
+      // },
+      // {
+      //   $match: { lessThanThree: true }
+      // },
+      {
+        $sample: { size: 1 }
+      }
+    ])
+    .toArray();
 
-  do {
-    result = await videoColl
-      .aggregate([
-        {
-          $match: { taskName: args.taskName },
-        },
-        {
-          $sample: { size: 1 },
-        },
-      ])
-      .toArray();
-  } while (
-    result[0].labeler.find((el) => el._id == args.labeler) != undefined ||
-    result[0].in_progress.length === 3
-  );
+  if (result[0] == null) {
+    throw new Error("할당된 영상이 없습니다. 관리자에게 문의하세요");
+  };
 
   await videoColl.updateOne({
     _id: result[0]._id
   },
     {
       $push: {
-        in_progress: { name: args.labeler }
+        in_progress: args.labeler
       }
     }
   );
@@ -43,7 +64,9 @@ const GetRandomVideo = async (_, args, context, info) => {
 };
 
 const AddCategoryValue = async (_, args, context, info) => {
-  const videoColl = await db.connectDB("videos");
+  const videoColl = await db.connectDB("videosTest");
+  const taskColl = await db.connectDB("tasks")
+  await videoColl.updateMany({ label: { $size: 3 } }, { $set: { check: true } });
 
   await videoColl.updateOne(
     {
@@ -51,9 +74,7 @@ const AddCategoryValue = async (_, args, context, info) => {
     },
     {
       $push: {
-        labeler: {
-          _id: args.labeler,
-        }
+        labeler: args.labeler
       },
     }
   );
@@ -64,19 +85,19 @@ const AddCategoryValue = async (_, args, context, info) => {
     },
     {
       $push: {
-        label: { name: args.label }
+        label: args.label
       }
     });
 
-  await videoColl.updateOne({
-    _id: ObjectId(args._id)
-  },
-    {
-      $pull: {
-        in_progress: { name: ObjectId(args.labeler)}
-      }
-    }
-  );
+  // await videoColl.updateOne({
+  //   _id: ObjectId(args._id)
+  // },
+  //   {
+  //     $pull: {
+  //       in_progress: args.labeler
+  //     }
+  //   }
+  // );
 
   return true;
 };
