@@ -10,33 +10,61 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const TASKS = gql`
-  query GetAllTasks {
-    getAllTasks {
+const idSearch = gql`
+  query SearchLabelerByGId($googleId: String) {
+    searchLabelerByGId(googleId: $googleId) {
+      _id
+      googleId
+      email
       name
-      kind
-      labelers {
-        labeler
-      }
-      status
-      rate
-      expiration_date
+      value
+      created_at
     }
   }
 `;
 
-export default function CategoriesScreen({navigation}) {
-  const {data} = useQuery(TASKS);
+const TASKS = gql`
+  query GetLabelersTasks($id: ID) {
+    getLabelersTasks(_id: $id) {
+      name
+      totalVideos
+      doneVideos
+    }
+  }
+`;
+export default function CategoriesScreen({navigation, route}) {
+  const {googleId} = route.params;
+
+  const {data: objId} = useQuery(idSearch, {
+    variables: {googleId: googleId},
+  });
+  const objectId = objId?.searchLabelerByGId?._id;
+  console.log(objectId);
+
+  const {data} = useQuery(TASKS, {
+    variables: {id: objectId},
+  });
   if (data === undefined) {
     return;
   }
-
-  const DATA = data.getAllTasks;
   // console.log(data);
 
+  const DATA = data?.getLabelersTasks;
+  console.log(DATA);
+
+  // const doneVideos = DATA?.doneVideos;
+  // const totalVideos = DATA?.totalVideos;
+  // const rate = (doneVideos / totalVideos) * 100;
+  // console.log(rate);
+
   const renderItem = ({item}) => {
-    const categoryTitle = item.name;
-    // console.log(item);
+    const categoryTitle = item?.name;
+    const doneVideos = item?.doneVideos;
+    const totalVideos = item?.totalVideos;
+    const rate = (doneVideos / totalVideos) * 100;
+    console.log(rate);
+
+    // console.log(categoryTitle);
     return (
       <View style={styles.wrap}>
         <TouchableOpacity
@@ -44,8 +72,8 @@ export default function CategoriesScreen({navigation}) {
           activeOpacity={0.5}
           onPress={() =>
             navigation.navigate('Categorization', {
-              name: item.name,
-              kind: item.kind,
+              name: categoryTitle,
+              labeler: objectId,
             })
           }>
           <Text style={{fontWeight: 'bold', color: '#2323dd'}}>
@@ -53,7 +81,7 @@ export default function CategoriesScreen({navigation}) {
           </Text>
         </TouchableOpacity>
         <Progress.Bar
-          progress={item.rate / 100}
+          progress={rate / 100}
           width={null}
           height={10}
           marginTop={10}
@@ -61,7 +89,7 @@ export default function CategoriesScreen({navigation}) {
         />
         <View style={{alignItems: 'center'}}>
           <Text style={{fontWeight: 'bold', color: '#2b2525'}}>
-            진행률 {item.rate} %
+            진행률 {rate}%
           </Text>
         </View>
       </View>
