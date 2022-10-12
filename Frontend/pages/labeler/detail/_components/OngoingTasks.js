@@ -1,15 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { DELETE_TASK_OF_LABELER } from '../../../../components/gql';
-
+import { useRouter } from 'next/router';
 const OngoingTasks = ({
   ongoingTasks,
-  goToTaskDetail,
-  setOngoingTasks,
+  setLabelersTasks,
   labelerInformation,
+  labelersTasks,
 }) => {
   const [deleteTaskOfLabeler] = useMutation(DELETE_TASK_OF_LABELER);
+
+  const router = useRouter();
+  const goToTaskDetail = taskName => {
+    router.push(`/tasks/detail/${taskName}`);
+  };
 
   const deleteOngoingTask = async clickedTask => {
     await deleteTaskOfLabeler({
@@ -20,31 +25,38 @@ const OngoingTasks = ({
       },
     });
 
-    const changedTask = ongoingTasks.filter(task => {
+    const changedTask = labelersTasks.filter(task => {
       return task.name !== clickedTask;
     });
 
-    setOngoingTasks(changedTask);
+    setLabelersTasks(changedTask);
   };
 
   if (ongoingTasks === undefined) return;
 
+  const isHaveOngoingTask = ongoingTasks.length > 0;
   return (
     <Wrap>
       <BoldText>진행중인 테스크</BoldText>
       <TaskWrap>
-        {ongoingTasks.map((task, idx) => {
-          return (
-            <TaskBox key={idx}>
-              <Task onClick={() => goToTaskDetail(task.name)}>{task.name}</Task>
-              <Text>{task.kind}</Text>
-              <Text>{task.expiration_date}</Text>
-              <DeleteBtn onClick={() => deleteOngoingTask(task.name)}>
-                삭제
-              </DeleteBtn>
-            </TaskBox>
-          );
-        })}
+        {isHaveOngoingTask ? (
+          ongoingTasks.map((task, idx) => {
+            return (
+              <TaskBox key={idx}>
+                <Task onClick={() => goToTaskDetail(task.name)}>
+                  {task.name}
+                </Task>
+                <Text>{task.kind}</Text>
+                <Text>{task.expiration_date}</Text>
+                <DeleteBtn onClick={() => deleteOngoingTask(task.name)}>
+                  삭제
+                </DeleteBtn>
+              </TaskBox>
+            );
+          })
+        ) : (
+          <Notice>진행중인 테스크가 없습니다!</Notice>
+        )}
       </TaskWrap>
     </Wrap>
   );
@@ -100,4 +112,13 @@ const DeleteBtn = styled.button`
 const Text = styled.div`
   font-size: 0.7rem;
   width: 3rem;
+`;
+
+const Notice = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: gray;
 `;

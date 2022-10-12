@@ -2,24 +2,28 @@ import React from 'react';
 import styled from 'styled-components';
 import { useMutation } from '@apollo/client';
 import { ADD_TASK_TO_LABELER } from '../../../../components/gql';
-
+import { useRouter } from 'next/router';
 const TotalTask = ({
   name,
   category,
   ongoingTasks,
-  setOngoingTasks,
+  setLabelersTasks,
   expirationDate,
-  goToTaskDetail,
-  labelerId,
   labelerInformation,
+  labelersTasks,
 }) => {
+  const router = useRouter();
+
+  const goToTaskDetail = taskName => {
+    router.push(`/tasks/detail/${taskName}`);
+  };
+
   if (ongoingTasks === undefined) return;
 
   const [addTaskToLabeler] = useMutation(ADD_TASK_TO_LABELER);
 
   const isOverlap = ongoingTasks.find(task => task.name === name);
 
-  console.log(labelerId, '하하', labelerInformation._id);
   const addOngoinTask = async clickedTask => {
     await addTaskToLabeler({
       variables: {
@@ -28,9 +32,9 @@ const TotalTask = ({
         name: clickedTask,
       },
     });
-    setOngoingTasks([
+    setLabelersTasks([
       { name: clickedTask, expiration_date: expirationDate, kind: category },
-      ...ongoingTasks,
+      ...labelersTasks,
     ]);
   };
 

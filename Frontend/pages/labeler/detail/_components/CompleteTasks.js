@@ -1,21 +1,33 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TASK_LIST } from '../../../../data/TASK_LIST';
+import { useRouter } from 'next/router';
+const CompleteTasks = ({ completedTasks }) => {
+  const router = useRouter();
 
-const CompleteTasks = ({ goToTaskDetail }) => {
+  const goToTaskDetail = taskName => {
+    router.push(`/tasks/detail/${taskName}`);
+  };
+
+  const ishaveCompleteTask = completedTasks.length > 0;
   return (
     <Wrap>
       <BoldText>완료한 테스크</BoldText>
       <Tasks>
-        {TASK_LIST.map((task, idx) => {
-          return (
-            <TaskBox key={idx}>
-              <Task onClick={() => goToTaskDetail(task.name)}>{task.name}</Task>
-              <Text>카테고리</Text>
-              <Text>정답률:{task.correctRate}</Text>
-            </TaskBox>
-          );
-        })}
+        {ishaveCompleteTask ? (
+          completedTasks.map((task, idx) => {
+            return (
+              <TaskBox key={idx}>
+                <Task onClick={() => goToTaskDetail(task.name)}>
+                  {task.name}
+                </Task>
+                <Text>{task.kind}</Text>
+                <Text>정답률:mock</Text>
+              </TaskBox>
+            );
+          })
+        ) : (
+          <Notice>완료한 테스크가 없습니다!</Notice>
+        )}
       </Tasks>
     </Wrap>
   );
@@ -66,4 +78,13 @@ const TaskBox = styled.div`
 
 const Text = styled.div`
   font-size: 0.7rem;
+`;
+
+const Notice = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: gray;
 `;

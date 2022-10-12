@@ -148,6 +148,23 @@ export const TOTAL_TASK_LIST = gql`
   }
 `;
 
+export const TOTAL_TASK_DETAIL_LIST = gql`
+  query {
+    getAllTasks {
+      _id
+      name
+      kind
+      labelers {
+        _id
+        email
+      }
+      status
+      totalVideos
+      expiration_date
+    }
+  }
+`;
+
 export const SEARCH_LABELER = gql`
   query SearchLabeler($id: ID) {
     searchLabeler(_id: $id) {

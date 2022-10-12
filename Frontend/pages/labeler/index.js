@@ -6,16 +6,23 @@ import client from '../../components/apollo-client';
 import DeleteModal from './_components/DeleteModal';
 import { GET_ALL_LABELERS } from '../../components/gql';
 import TitleTab from './_components/TitleTab';
+import { ONGOING_TASK_LIST } from '../../components/gql';
 
-function labelersPage({ labelersData }) {
+function labelersPage({ labelersData, tasksData }) {
   const [labelers, setLabelers] = useState([]);
   const [clickedLabelers, setClickedLabelers] = useState([]);
   const [isDeleteButtonClicked, setIsDeleteButtonClicked] = useState(false);
   const [searchLabelers, setSearchLabelers] = useState([]);
 
   useEffect(() => {
-    setLabelers(labelersData.getAllLabelers);
-  }, [labelersData.getAllLabelers]);
+    const LabellersAddedValues = labelersData.map((labeler, idx) => {
+      labeler.value = tasksData[idx].length ? 'InProgress' : 'none';
+      labeler.progress = tasksData[idx].length.toString();
+      return labeler;
+    });
+
+    setLabelers(LabellersAddedValues);
+  }, [labelersData]);
 
   if (!labelers) return;
 
@@ -55,14 +62,34 @@ function labelersPage({ labelersData }) {
 export default labelersPage;
 
 export async function getServerSideProps() {
-  const { data } = await client.query({
+  const { data: labelersData } = await client.query({
     query: GET_ALL_LABELERS,
     fetchPolicy: 'network-only',
   });
 
+  const useTaskQuery = async labelerId => {
+    try {
+      const data = await client.query({
+        query: ONGOING_TASK_LIST,
+        variables: { id: labelerId },
+        fetchPolicy: 'network-only',
+      });
+      return data.data.getLabelersTasks;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const tasksData = await Promise.all(
+    labelersData.getAllLabelers.map(
+      async labeler => await useTaskQuery(labeler._id)
+    )
+  );
+
   return {
     props: {
-      labelersData: data,
+      labelersData: labelersData.getAllLabelers,
+      tasksData: tasksData,
     },
   };
 }
