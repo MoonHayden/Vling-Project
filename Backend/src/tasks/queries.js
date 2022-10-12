@@ -63,7 +63,7 @@ const DeleteTask = async (_, args, context, info) => {
   
   console.log(args);
 
-  return true;
+  return args;
 };
 
 const UpdateTask = async (_, args, context, info) => {

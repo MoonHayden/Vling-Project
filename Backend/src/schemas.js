@@ -91,7 +91,7 @@ const typeDefs = gql`
       doneVideos: Int = 0
     ): Task
 
-    deleteTask(name: String): Boolean
+    deleteTask(name: String): Task
 
     updateTask(
       name: String
