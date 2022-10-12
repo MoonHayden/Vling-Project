@@ -1,4 +1,5 @@
 import React /*, {useState}*/ from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {View, Image, Text, StyleSheet, Button} from 'react-native';
 import {gql, useMutation} from '@apollo/client';
 import {
@@ -38,7 +39,6 @@ GoogleSignin.configure({
 });
 
 export default function Login({navigation}) {
-  // const [user, setUser] = useState();
   const [LoginInfo] = useMutation(LOGINGQL);
 
   const signIn = async () => {
@@ -47,28 +47,34 @@ export default function Login({navigation}) {
       const userInfo = await GoogleSignin.signIn();
       // setUser(userInfo);
       // console.log(userInfo);
+
       const {email, name, photo, id} = userInfo.user;
 
-      if (userInfo) {
-        return (
-          navigation.navigate('MainScreen', {
-            email: email,
-            userName: name,
-            photo: photo,
-            googleId: id,
-          }),
-          LoginInfo({
-            variables: {
-              email: userInfo.user.email,
-              googleId: userInfo.user.id,
-              name: userInfo.user.name,
-              idToken: userInfo.idToken,
-            },
-          })
-        );
-      } else {
-        console.log('로그인 실패');
-      }
+      await AsyncStorage.setItem('googleId', id);
+      await AsyncStorage.setItem('name', name);
+      await AsyncStorage.setItem('email', email);
+      await AsyncStorage.setItem('photo', photo);
+
+      // if ('googleId') {
+      return (
+        navigation.navigate('MainScreen', {
+          email: email,
+          userName: name,
+          photo: photo,
+          googleId: id,
+        }),
+        LoginInfo({
+          variables: {
+            email: userInfo.user.email,
+            googleId: userInfo.user.id,
+            name: userInfo.user.name,
+            idToken: userInfo.idToken,
+          },
+        })
+      );
+      // } else {
+      //   console.log('로그인 실패');
+      // }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -104,7 +110,7 @@ export default function Login({navigation}) {
       />
       <View>
         <GoogleSigninButton style={styles.Google} onPress={signIn} />
-        <Button title="signOut" style={styles.Google} onPress={signOut} />
+        {/* <Button title="signOut" style={styles.Google} onPress={signOut} /> */}
       </View>
       <View style={styles.companyInfo}>
         <Text style={styles.legalInfo}>Trade name : Sway mobile Co., Ltd</Text>

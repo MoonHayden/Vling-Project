@@ -25,17 +25,14 @@ const VIDEOS = gql`
       category_label
       category_predict
       taskName
-      in_progress
-      labeler {
-        _id
-      }
-      label {
-        name
-      }
-      check
     }
   }
 `;
+// const LABEL = gql`
+//   mutation AddCategoryValue($id: ID, $labeler: ID, $label: String) {
+//     addCategoryValue(_id: $id, labeler: $labeler, label: $label)
+//   }
+// `;
 const LABEL = gql`
   mutation AddCategoryValue($id: ID, $labeler: ID, $label: String) {
     addCategoryValue(_id: $id, labeler: $labeler, label: $label)
@@ -51,9 +48,6 @@ const categoryList = [
   {category: 'LIFE'},
   {category: 'TRAVEL'},
   {category: 'ASMR'},
-];
-
-const categoryList2 = [
   {category: 'GAME'},
   {category: 'PET'},
   {category: 'TECH'},
@@ -62,9 +56,6 @@ const categoryList2 = [
   {category: 'MUSIC'},
   {category: 'SPORTS'},
   {category: 'FUN'},
-];
-
-const categoryList3 = [
   {category: 'POLITICS'},
   {category: 'EDU'},
   {category: 'SOCIETY'},
@@ -77,7 +68,8 @@ const categoryList3 = [
 
 export default function Categorization({route, navigation}) {
   const [category, setCategory] = useState({
-    videoId: '',
+    id: '',
+    labeler: '',
     label: '',
   });
   const {name, labeler} = route.params;
@@ -86,14 +78,13 @@ export default function Categorization({route, navigation}) {
   // console.log(labeler);
 
   const [addLabel] = useMutation(LABEL);
-  const {data} = useQuery(VIDEOS, {
+
+  const {data, refetch} = useQuery(VIDEOS, {
     variables: {labeler: labeler, taskName: name},
   });
   if (data === undefined) {
     return;
   }
-  // console.log(data);
-  // console.log(DATA);
 
   const DATA = data.getRandomVideo;
   const VideoUrl = DATA.videoId;
@@ -101,11 +92,11 @@ export default function Categorization({route, navigation}) {
   const description = DATA.description;
   const tags = DATA.tags;
   const myArray = tags.split(',');
+  const VideoObjectId = DATA._id;
+  // console.log(DATA);
   // console.log(title);
-
   // const myArray = JSON.stringify(tags);
   // const TAGS = JSON.parse(myArray);
-
   // console.log(typeof myArray);
   // console.log(myArray);
 
@@ -113,73 +104,26 @@ export default function Categorization({route, navigation}) {
     const categoryTag = item.category;
 
     const handleInput = () => {
-      setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
+      setCategory(() => ({
+        id: VideoObjectId,
+        labeler: labeler,
+        label: categoryTag,
+      }));
       addLabel({
-        variables: {videoId: VideoUrl, label: categoryTag},
+        variables: {id: VideoObjectId, labeler: labeler, label: categoryTag},
       });
-      // return navigation.navigate('Categorization');
+      refetch();
     };
-
     return (
-      <View>
+      <View style={styles.categoryWrap}>
         <TouchableOpacity>
-          <Text style={styles.Button} onPress={handleInput}>
+          <Text style={styles.categoryName} onPress={handleInput}>
             {categoryTag}
           </Text>
         </TouchableOpacity>
       </View>
     );
   };
-
-  const renderItem2 = ({item}) => {
-    const categoryTag = item.category;
-    const handleInput = () => {
-      setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
-      addLabel({
-        variables: {videoId: VideoUrl, label: categoryTag},
-      });
-      // return navigation.navigate('Categorization');
-    };
-
-    return (
-      <View>
-        <TouchableOpacity>
-          <Text style={styles.Button} onPress={handleInput}>
-            {categoryTag}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-  const renderItem3 = ({item}) => {
-    const categoryTag = item.category;
-    const handleInput = () => {
-      setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
-      addLabel({
-        variables: {videoId: VideoUrl, label: categoryTag},
-      });
-      // return navigation.navigate('Categorization');
-    };
-
-    return (
-      <View>
-        <TouchableOpacity>
-          <Text style={styles.Button} onPress={handleInput}>
-            {categoryTag}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  // const renderItem4 = ({item}) => {
-  //   console.log(item);
-  //   return (
-  //     <View style={styles.Tags}>
-  //       <Text style={styles.tags}>{item}</Text>
-  //     </View>
-  //   );
-  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -197,29 +141,13 @@ export default function Categorization({route, navigation}) {
           onError={e => console.log('onError: ', e.error)}
         />
         <Text style={styles.title}>{title}</Text>
-
-        <View style={styles.ButtonDirection}>
-          <View style={styles.Buttons}>
-            <FlatList
-              data={categoryList}
-              renderItem={renderItem}
-              keyExtractor={item => item.category}
-            />
-          </View>
-          <View style={styles.Buttons}>
-            <FlatList
-              data={categoryList2}
-              renderItem={renderItem2}
-              keyExtractor={item => item.category}
-            />
-          </View>
-          <View style={styles.Buttons}>
-            <FlatList
-              data={categoryList3}
-              renderItem={renderItem3}
-              keyExtractor={item => item.category}
-            />
-          </View>
+        <View style={styles.flatWrap}>
+          <FlatList
+            data={categoryList}
+            renderItem={renderItem}
+            keyExtractor={item => item.category}
+            numColumns={3}
+          />
         </View>
         <Text style={styles.description}>
           {'\n'}
@@ -229,15 +157,10 @@ export default function Categorization({route, navigation}) {
           {description}
           {'\n'}
         </Text>
-        <Text style={styles.tagTop}>
+        <Text>
           <Text style={styles.tagsTitle}>[Tags]</Text>
           {'\n'}
           {'\n'}
-          {/* <FlatList
-            data={myArray}
-            renderItem={renderItem4}
-            keyExtractor={item => item.tags}
-          /> */}
           <Text style={styles.tags}>{myArray}</Text>
         </Text>
       </ScrollView>
@@ -246,25 +169,31 @@ export default function Categorization({route, navigation}) {
 }
 
 const styles = StyleSheet.create({
+  flatWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryWrap: {
+    alignItems: 'center',
+    borderRadius: 5,
+    width: 100,
+    marginTop: 8,
+    marginLeft: 17,
+    marginRight: 17,
+    backgroundColor: '#FFBFCB',
+  },
+  categoryName: {
+    color: '#7f424d',
+
+    fontSize: 17,
+  },
   Description: {
     fontSize: 25,
   },
   description: {
-    // height: 300,
     color: 'black',
-    // height: 100,
   },
-  tagTop: {
-    // flex: 1,
-    // borderWidth: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
-  Tags: {
-    // borderWidth: 1,
-    // justifyContent: 'center',
-    alignItems: 'center',
-  },
+
   tags: {
     color: 'black',
     borderWidth: 3,
@@ -274,50 +203,21 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   title: {
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    fontSize: 17,
+    fontWeight: 'bold',
     color: 'black',
+    marginLeft: 5,
   },
   youtube: {
-    // borderWidth: 10,
-    // borderColor: 'red',
     width: '100%',
     height: 300,
   },
-
-  Button: {
-    backgroundColor: '#e8e8ce',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 80,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: '#FF0044',
-    marginTop: 10,
-    fontWeight: 'bold',
-    color: '#6250ed',
-  },
-  Buttons: {
-    flex: 1,
-    // borderWidth: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  ButtonDirection: {
-    flex: 1,
-    // borderWidth: 10,
-    // borderColor: 'lightblue',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   container: {
     flex: 1,
+
     backgroundColor: 'white',
     alignitems: 'center',
     justifyContent: 'center',
-    // borderWidth: 10,
-    // borderColor: 'gray',
   },
 });
 
@@ -428,3 +328,90 @@ const styles = StyleSheet.create({
 //   </View>
 // );
 //빌드 APK 한번 해보기 배포하는 단계 경험하기
+
+// const renderItem2 = ({item}) => {
+//   const categoryTag = item.category;
+//   const handleInput = () => {
+//     setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
+//     addLabel({
+//       variables: {videoId: VideoUrl, label: categoryTag},
+//     });
+//     // window.location.reload();
+//     // return navigation.navigate('Categorization');
+//   };
+
+//   return (
+//     <View>
+//       <TouchableOpacity>
+//         <Text style={styles.Button} onPress={handleInput}>
+//           {categoryTag}
+//         </Text>
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
+// const renderItem3 = ({item}) => {
+//   const categoryTag = item.category;
+//   const handleInput = () => {
+//     setCategory(() => ({label: categoryTag, videoId: VideoUrl}));
+//     addLabel({
+//       variables: {videoId: VideoUrl, label: categoryTag},
+//     });
+//     // return navigation.navigate('Categorization');
+//   };
+
+//   return (
+//     <View>
+//       <TouchableOpacity>
+//         <Text style={styles.Button} onPress={handleInput}>
+//           {categoryTag}
+//         </Text>
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
+
+// const renderItem4 = ({item}) => {
+//   console.log(item);
+//   return (
+//     <View style={styles.Tags}>
+//       <Text style={styles.tags}>{item}</Text>
+//     </View>
+//   );
+// };
+
+// const categoryList2 = [
+//   {category: 'GAME'},
+//   {category: 'PET'},
+//   {category: 'TECH'},
+//   {category: 'FILM'},
+//   {category: 'CAR'},
+//   {category: 'MUSIC'},
+//   {category: 'SPORTS'},
+//   {category: 'FUN'},
+// ];
+
+// const categoryList3 = [
+//   {category: 'POLITICS'},
+//   {category: 'EDU'},
+//   {category: 'SOCIETY'},
+//   {category: 'KIDS'},
+//   {category: 'ECONOMY'},
+//   {category: 'INFO'},
+//   {category: 'NEWS'},
+//   {category: 'ETC'},
+// ];
+
+// useEffect(() => {
+//   console.log('data', data);
+// }, [data]);
+// const {Data} = useLazyQuery(VIDEOS, {
+//   variables: {labeler: labeler, taskName: name},
+// });
+// useEffect((
+//data 유즈쿼리
+//유즈쿼리 날려서 받아온 데이터를 ㅅ긑에ㅣ트 에 저장하고
+// ),[])
+//핸들러에 이제 또 유즈쿼라 날려서
+// 셋스테이트에 저장해서 업데이트 시키기
+// console.log(data);

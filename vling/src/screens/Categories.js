@@ -10,18 +10,18 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-// const idSearch = gql`
-//   query SearchLabelerByGId($googleId: String) {
-//     searchLabelerByGId(googleId: $googleId) {
-//       _id
-//       googleId
-//       email
-//       name
-//       value
-//       created_at
-//     }
-//   }
-// `;
+const idSearch = gql`
+  query SearchLabelerByGId($googleId: String) {
+    searchLabelerByGId(googleId: $googleId) {
+      _id
+      googleId
+      email
+      name
+      value
+      created_at
+    }
+  }
+`;
 
 const TASKS = gql`
   query GetLabelersTasks($id: ID) {
@@ -31,27 +31,27 @@ const TASKS = gql`
   }
 `;
 export default function CategoriesScreen({navigation, route}) {
-  const {googleId, objectId} = route.params;
+  const {googleId} = route.params;
+
+  const {data: objId} = useQuery(idSearch, {
+    variables: {googleId: googleId},
+  });
+  const objectId = objId?.searchLabelerByGId?._id;
   console.log(objectId);
-  // const {data: objId} = useQuery(idSearch, {
-  //   variables: {googleId: googleId},
-  // });
-  // const objectId = objId.searchLabelerByGId._id;
-  // console.log(objectId);
-  // 633f8cdcd91b030398d27faf
+
   const {data} = useQuery(TASKS, {
-    variables: {id: googleId},
+    variables: {id: objectId},
   });
   if (data === undefined) {
     return;
   }
-  console.log(data);
+  // console.log(data);
 
-  const DATA = data.getLabelersTasks;
+  const DATA = data?.getLabelersTasks;
   // console.log(DATA);
 
   const renderItem = ({item}) => {
-    const categoryTitle = item.name;
+    const categoryTitle = item?.name;
     // console.log(categoryTitle);
     return (
       <View style={styles.wrap}>

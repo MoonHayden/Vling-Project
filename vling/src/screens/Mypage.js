@@ -1,16 +1,21 @@
 import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {Text, View, Image, TouchableOpacity} from 'react-native';
 import {StyleSheet} from 'react-native';
 
 export default function Mypage({navigation, route}) {
   const {userName, email, photo} = route.params;
-
+  console.log('Params', route.params);
   const signOut = async () => {
     try {
       await GoogleSignin.revokeAccess();
       await GoogleSignin.signOut();
-      navigation.reset({routes: [{name: 'Login'}]});
+      await AsyncStorage.removeItem('googleId');
+      await AsyncStorage.removeItem('email');
+      await AsyncStorage.removeItem('name');
+      await AsyncStorage.removeItem('photo');
+      await navigation.navigate('Login');
     } catch (error) {
       console.error('error', error);
     }
