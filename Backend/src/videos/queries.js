@@ -3,7 +3,7 @@ const DB = require("../../models/db");
 const db = new DB();
 
 const GetRandomVideo = async (_, args, context, info) => {
-  const videoColl = await db.connectDB("videosTest");
+  const videoColl = await db.connectDB("videos");
 
   const result = await videoColl
     .aggregate([
@@ -64,7 +64,7 @@ const GetRandomVideo = async (_, args, context, info) => {
 };
 
 const AddCategoryValue = async (_, args, context, info) => {
-  const videoColl = await db.connectDB("videosTest");
+  const videoColl = await db.connectDB("videos");
   const taskColl = await db.connectDB("tasks")
   await videoColl.updateMany({ label: { $size: 3 } }, { $set: { check: true } });
 
