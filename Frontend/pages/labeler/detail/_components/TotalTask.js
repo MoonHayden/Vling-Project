@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useMutation } from '@apollo/client';
 import { ADD_TASK_TO_LABELER } from '../../../../components/gql';
 import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
+
 const TotalTask = ({
   name,
   category,
@@ -25,17 +27,22 @@ const TotalTask = ({
   const isOverlap = ongoingTasks.find(task => task.name === name);
 
   const addOngoinTask = async clickedTask => {
-    await addTaskToLabeler({
-      variables: {
-        email: labelerInformation.email,
-        id: labelerInformation._id,
-        name: clickedTask,
-      },
-    });
-    setLabelersTasks([
-      { name: clickedTask, expiration_date: expirationDate, kind: category },
-      ...labelersTasks,
-    ]);
+    try {
+      await addTaskToLabeler({
+        variables: {
+          email: labelerInformation.email,
+          id: labelerInformation._id,
+          name: clickedTask,
+        },
+      });
+      toast.success(`'${clickedTask}'를 할당하였습니다.`);
+      setLabelersTasks([
+        { name: clickedTask, expiration_date: expirationDate, kind: category },
+        ...labelersTasks,
+      ]);
+    } catch (e) {
+      toast.error(e);
+    }
   };
 
   return (

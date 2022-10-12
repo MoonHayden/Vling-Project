@@ -1,12 +1,14 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 
 const Logout = () => {
   const router = useRouter();
 
   const logoutHandler = () => {
     localStorage.removeItem('masterToken');
+    toast.success('로그아웃 되었습니다.');
     router.push('/login');
   };
 

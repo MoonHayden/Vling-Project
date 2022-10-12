@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-
+import { toast } from 'react-toastify';
 import styled, { css } from 'styled-components';
 import back from '../../../public/images/back.png';
 import reset from '../../../public/images/reset.png';
@@ -22,7 +22,7 @@ const Search = ({ labelers, searchLabelers, setSearchLabelers }) => {
     if (!value) {
       setSearchLabelers([]);
     } else if (filteredLabelers.length === 0) {
-      alert('찾으시는 라벨러가 없습니다!');
+      toast.error('찾으시는 라벨러가 없습니다.');
     } else {
       setSearchLabelers(
         labelers.filter(labeler => labeler.email.includes(value))

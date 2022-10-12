@@ -70,11 +70,8 @@ function labelerDetail(props) {
             />
           </SubWrap>
           <TaskListBox>
-            <ListBoxTitle>
-              <BoldText>테스크 리스트</BoldText>
-            </ListBoxTitle>
+            <BoldText>테스크 리스트</BoldText>
             <TaskBox>
-              {/* //온고잉이랑 겹치고, status ture빼 */}
               <TaskList
                 ongoingTasks={ongoingTasks}
                 labelerInformation={labelerInformation}
@@ -174,7 +171,7 @@ const SubWrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 40%;
+  width: 45%;
 `;
 
 const ImageWrap = styled.span`

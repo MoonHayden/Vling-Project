@@ -11,7 +11,7 @@ const CompleteTasks = ({ completedTasks }) => {
   const ishaveCompleteTask = completedTasks.length > 0;
   return (
     <Wrap>
-      <BoldText>완료한 테스크</BoldText>
+      <BoldText>완료한 테스크 {`(${completedTasks.length})`}</BoldText>
       <Tasks>
         {ishaveCompleteTask ? (
           completedTasks.map((task, idx) => {
