@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { gql, useMutation } from '@apollo/client';
-import { useRouter } from 'next/router';
 import axios from 'axios';
-import Spinner from 'react-bootstrap/Spinner';
+import ModalPortal from '../../../components/ModalPortal';
 
 export default function CreateModal({
   setModalOpen,
@@ -14,19 +12,21 @@ export default function CreateModal({
   expDate,
   bodyFormData,
 }) {
-  const [loading, setLoading] = useState(false);
-  console.log(labelerList);
-
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     bodyFormData.append('taskName', taskName);
-    addTask({
-      variables: {
-        name: taskName,
-        kind: taskKind,
-        labelers: labelerList,
-        expirationDate: expDate.split('-').join(''),
-      },
-    });
+    try {
+      await addTask({
+        variables: {
+          name: taskName,
+          kind: taskKind,
+          labelers: labelerList,
+          expirationDate: expDate.split('-').join(''),
+        },
+      });
+    } catch (err) {
+      alert(err);
+      window.location.reload();
+    }
     axios({
       method: 'POST',
       url: 'http://www2.wecode.buzzntrend.com:4000/upload',
@@ -46,31 +46,29 @@ export default function CreateModal({
   };
 
   return (
-    <Wrap>
-      <Title>Task를 등록 하시겠습니까?</Title>
-      <Text>등록할 Task:</Text>
-      <SubWrap>
-        <Text>Name: </Text>
-        <TextValue>{taskName}</TextValue>
-        <Text>Kind: </Text>
-        <TextValue>{taskKind}</TextValue>
-        <Text>ExpDate: </Text>
-        <TextValue>{expDate}</TextValue>
-        <Text>#Labelers ({labelerList.length}): </Text>
-        {labelerList.map(labeler => (
-          <TextValue>{labeler.email}</TextValue>
-        ))}
-      </SubWrap>
-      <BtnWrap>
-        <DeleteBtn onClick={handleAddTask}>등록하기</DeleteBtn>
-        <CancleBtn onClick={() => setModalOpen(false)}>취소</CancleBtn>
-      </BtnWrap>
-      <Spinner
-        as="div"
-        style={{ display: loading ? 'block' : 'null' }}
-        animation="border"
-      />
-    </Wrap>
+    <ModalPortal>
+      <BlurWrap />
+      <Wrap>
+        <Title>Task를 등록 하시겠습니까?</Title>
+        <Text>등록할 Task:</Text>
+        <SubWrap>
+          <Text>Name: </Text>
+          <TextValue>{taskName}</TextValue>
+          <Text>Kind: </Text>
+          <TextValue>{taskKind}</TextValue>
+          <Text>ExpDate: </Text>
+          <TextValue>{expDate}</TextValue>
+          <Text>#Labelers ({labelerList.length}): </Text>
+          {labelerList.map(labeler => (
+            <TextValue key={labeler._id}>{labeler.email}</TextValue>
+          ))}
+        </SubWrap>
+        <BtnWrap>
+          <DeleteBtn onClick={handleAddTask}>등록하기</DeleteBtn>
+          <CancleBtn onClick={() => setModalOpen(false)}>취소</CancleBtn>
+        </BtnWrap>
+      </Wrap>
+    </ModalPortal>
   );
 }
 
@@ -135,4 +133,12 @@ const DeleteBtn = styled.button`
 const CancleBtn = styled.button`
   height: 3rem;
   width: 7rem;
+`;
+
+const BlurWrap = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
 `;

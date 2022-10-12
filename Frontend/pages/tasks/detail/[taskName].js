@@ -34,18 +34,19 @@ export default function TaskDetail({ taskName, allLabelers, taskInfo }) {
           <AllLabelersList
             taskName={taskName}
             allLabelers={labelersList}
-            setAllLabelers={setLabelersList}
             currLabelersList={currLabelersList}
             setCurrLabelersList={setCurrLabelersList}
           />
         </LabelersInfoWrap>
         <ProgressInfo>
-          {/* <RateNumber>{Math.round(taskDetail.rate)}%</RateNumber> */}
+          <RateNumber>
+            {Math.round((4 / taskDetail.totalVideos) * 100)}%
+          </RateNumber>
           <ProgressWrap>
             <FullBar status={taskDetail.status}></FullBar>
             <RateBar
               status={taskDetail.status}
-              rate={taskDetail.rate}
+              rate={Math.round((4 / taskDetail.totalVideos) * 100)}
             ></RateBar>
           </ProgressWrap>
         </ProgressInfo>
@@ -67,6 +68,7 @@ export async function getServerSideProps({ params }) {
   });
 
   const taskName = params.taskName;
+
   return {
     props: { taskName, allLabelers, taskInfo },
   };
@@ -113,7 +115,11 @@ const FullBar = styled.div`
   position: absolute;
   max-width: 100%;
   height: 1rem;
-  border: 0.5px solid ${props => (props.status ? '#4cd137' : '#fbc531')};
+  border: 0.5px solid
+    ${props =>
+      props.status
+        ? 'linear-gradient(.25turn, #b0ff57, 50%, #32cb00)'
+        : 'linear-gradient(.25turn, #ffff56, 50%, #c7b800)'};
   background-color: none;
 `;
 
@@ -121,6 +127,13 @@ const RateBar = styled.div`
   position: relative;
   max-width: ${props => props.rate}%;
   height: 1rem;
-  border: 0.5px solid ${props => (props.status ? '#4cd137' : '#fbc531')};
-  background-color: ${props => (props.status ? '#4cd137' : '#fbc531')};
+  border: 0.5px solid
+    ${props =>
+      props.status
+        ? 'linear-gradient(.25turn, #b0ff57, 50%, #32cb00)'
+        : 'linear-gradient(.25turn, #ffff56, 50%, #c7b800)'};
+  background: ${props =>
+    props.status
+      ? 'linear-gradient(.25turn, #b0ff57, 50%, #32cb00)'
+      : 'linear-gradient(.25turn, #ffff56, 50%, #c7b800)'};
 `;

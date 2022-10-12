@@ -12,6 +12,8 @@ export default function DetailNav({ taskName, taskDetail }) {
   const [editName, setEditName] = useState('');
   const [deleteModal, setDeleteModal] = useState(false);
 
+  const { kind, status, expiration_date, totalVideos } = taskDetail;
+
   const [deleteTask] = useMutation(DELETE_TASK);
   const [updateTask] = useMutation(UPDATE_TASK);
 
@@ -32,6 +34,12 @@ export default function DetailNav({ taskName, taskDetail }) {
     alert('task 이름이 수정되었습니다.');
     setEdit(!edit);
     router.push(`/tasks/detail/${editName}`);
+  };
+
+  const setTaskDone = () => {
+    updateTask({ variables: { name: taskName, status: !status } });
+    alert('task가 완료되었습니다.');
+    window.location.reload();
   };
 
   return (
@@ -67,8 +75,8 @@ export default function DetailNav({ taskName, taskDetail }) {
             </>
           )}
         </TaskNameNav>
-        <TaskCategory>Kind: {taskDetail.kind}</TaskCategory>
-        <ExpireDate>Exp.Date: {taskDetail.expiration_date}</ExpireDate>
+        <TaskCategory>Kind: {kind}</TaskCategory>
+        <ExpireDate>Exp.Date: {expiration_date}</ExpireDate>
       </TaskInfo>
       <ButtonsWrap>
         <Link href="/tasks">
@@ -78,18 +86,20 @@ export default function DetailNav({ taskName, taskDetail }) {
         {deleteModal && (
           <DeleteModal
             taskName={taskName}
-            taskKind={taskDetail.kind}
-            expDate={taskDetail.expiration_date}
+            taskKind={kind}
+            expDate={expiration_date}
             deleteTask={deleteTask}
             setDeleteModal={setDeleteModal}
           />
         )}
         <CompleteBtn
           disabled={
-            Math.round(taskDetail.rate) == 100 && taskDetail.status === false
+            Math.round((4 / totalVideos) * 100) == 100 &&
+            taskDetail.status === false
               ? false
               : true
           }
+          onClick={setTaskDone}
         >
           Task 완료
         </CompleteBtn>

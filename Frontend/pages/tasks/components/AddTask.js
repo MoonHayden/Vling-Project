@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import CreateModal from './CreateModal';
 import { ADD_TASK } from '../../../components/gql';
 
-export default function AddTask({ labelersAll, setAllLabelers }) {
+export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
   const [showLabelerList, setShowLabelerList] = useState(false);
   const [taskName, setTaskName] = useState('');
   const [taskKind, setTaskKind] = useState('');
@@ -21,7 +21,7 @@ export default function AddTask({ labelersAll, setAllLabelers }) {
     setTaskName(e.target.value);
   };
 
-  const handleTaskKindSelect = () => {
+  const handleTaskKindSelect = e => {
     const kindSelect = document.getElementById('kindSelect');
     const selected = kindSelect.options[kindSelect.selectedIndex].value;
     setTaskKind(selected);
@@ -54,20 +54,31 @@ export default function AddTask({ labelersAll, setAllLabelers }) {
 
   const [addTask] = useMutation(ADD_TASK);
 
+  const isNotValid =
+    // bodyFormData.get('file') == undefined ||
+    taskName.length === 0 ||
+    tasksAll.find(task => task.name === taskName) ||
+    taskKind === '---선택---' ||
+    taskKind.length === 0 ||
+    expDate.length === 0 ||
+    labelerList.length === 0;
+
+  console.log(tasksAll);
+
   return (
     <>
       <TaskAddWrap>
         <TaskInfoWrap>
           <TaskNameWrap>
             <CsvUploadTitle>CSV File Upload:</CsvUploadTitle>
-            <form encType="multipart/form-data">
+            <CsvForm encType="multipart/form-data">
               <CsvUploadBtn
                 type={'file'}
                 accept={'.csv'}
                 name="file"
                 onChange={handleFileChange}
               />
-            </form>
+            </CsvForm>
           </TaskNameWrap>
           <TaskNameWrap>
             <TaskName>Task Name:</TaskName>
@@ -79,8 +90,11 @@ export default function AddTask({ labelersAll, setAllLabelers }) {
           </TaskNameWrap>
           <TaskNameWrap>
             <TaskName>Task Kind:</TaskName>
-            <TaskKindSelect id="kindSelect" onChange={handleTaskKindSelect}>
-              <TaskKindOption selected disabled>
+            <TaskKindSelect
+              id="kindSelect"
+              onChange={e => handleTaskKindSelect(e)}
+            >
+              <TaskKindOption defaultValue="---선택---">
                 ---선택---
               </TaskKindOption>
               <TaskKindOption value="카테고리">카테고리</TaskKindOption>
@@ -118,13 +132,14 @@ export default function AddTask({ labelersAll, setAllLabelers }) {
         <LabelerListAllWrap>
           <NavTop>
             <AllLabelers>
-              Labelers ({showLabelerList && labelersAll.length}):
+              All Labelers ({showLabelerList && labelersAll.length}):
             </AllLabelers>
 
             <SubmitButton
               onClick={() => {
                 setModalOpen(true);
               }}
+              disabled={isNotValid}
             >
               task 등록
             </SubmitButton>
@@ -185,9 +200,9 @@ const CsvUploadTitle = styled.p`
   font-weight: bold;
 `;
 
-const CsvUploadBtn = styled.input``;
+const CsvForm = styled.form``;
 
-const UploadFileBtn = styled.button``;
+const CsvUploadBtn = styled.input``;
 
 const TaskName = styled.h1`
   margin-bottom: 1rem;
@@ -237,7 +252,7 @@ const LabelersListIcon = styled.img`
 
 const LabelersListWrap = styled.div`
   width: 80%;
-  height: 80%;
+  height: 70%;
   margin-left: 5rem;
   background-color: #dcdde1;
   overflow-y: scroll;

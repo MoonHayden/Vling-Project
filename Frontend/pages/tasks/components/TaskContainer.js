@@ -2,7 +2,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 export default function TaskContainer({ task }) {
-  const { name, kind, labelers, status, rate } = task;
+  const { name, kind, labelers, totalVideos, status } = task;
   return (
     <>
       <Link href={`/tasks/detail/${name}`}>
@@ -12,17 +12,18 @@ export default function TaskContainer({ task }) {
           </StatusWrap>
           <TaskInfo>
             <FolderIcon src="./images/folder.png" alt="folderIcon" />
-            {/*<NumOfVideos>#videos : </NumOfVideos>*/}
-            <NumOfVideos>Kind : {kind}</NumOfVideos>
+
+            <NumOfVideos>{kind}</NumOfVideos>
+            <NumOfVideos>#Videos : {totalVideos}</NumOfVideos>
             <NumOfVideos>#Labelers : {labelers?.length}</NumOfVideos>
           </TaskInfo>
           <ProgressInfo>
             <TaskName>{name}</TaskName>
             <ProgressWrap>
               <FullBar status={status}></FullBar>
-              <RateBar status={status} rate={rate}></RateBar>
+              <RateBar status={status} rate={(4 / totalVideos) * 100}></RateBar>
             </ProgressWrap>
-            {/* <RateNumber>{Math.round(rate)}%</RateNumber> */}
+            <RateNumber>{Math.round((4 / totalVideos) * 100)}%</RateNumber>
           </ProgressInfo>
         </TaskWrap>
       </Link>
@@ -57,7 +58,7 @@ const Status = styled.div`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background-color: ${props => (props.status ? '#4cd137' : '#fbc531')};
+  background-color: ${props => (props.status ? '#32cb00' : '#ffea00')};
 `;
 
 const TaskInfo = styled.div`
@@ -104,7 +105,7 @@ const FullBar = styled.div`
   position: absolute;
   max-width: 100%;
   height: 0.2rem;
-  border: 0.5px solid ${props => (props.status ? '#4cd137' : '#fbc531')};
+  border: 0.5px solid ${props => (props.status ? '#32cb00' : '#ffea00')};
   background-color: none;
 `;
 
@@ -112,6 +113,6 @@ const RateBar = styled.div`
   position: relative;
   max-width: ${props => props.rate}%;
   height: 0.2rem;
-  border: 0.5px solid ${props => (props.status ? '#4cd137' : '#fbc531')};
-  background-color: ${props => (props.status ? '#4cd137' : '#fbc531')};
+  border: 0.5px solid ${props => (props.status ? '#32cb00' : '#ffea00')};
+  background-color: ${props => (props.status ? '#32cb00' : '#ffea00')};
 `;
