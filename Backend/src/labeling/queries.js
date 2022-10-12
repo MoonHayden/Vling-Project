@@ -175,5 +175,4 @@ module.exports = {
   AddTaskToLabeler,
   DeleteLabelers,
   DeleteTaskOfLabeler,
-  SearchLabelerByGId,
 };
