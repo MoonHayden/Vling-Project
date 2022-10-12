@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import Spinner from 'react-bootstrap/Spinner';
 
 export default function CreateModal({
   setModalOpen,
@@ -65,11 +64,6 @@ export default function CreateModal({
         <DeleteBtn onClick={handleAddTask}>등록하기</DeleteBtn>
         <CancleBtn onClick={() => setModalOpen(false)}>취소</CancleBtn>
       </BtnWrap>
-      <Spinner
-        as="div"
-        style={{ display: loading ? 'block' : 'null' }}
-        animation="border"
-      />
     </Wrap>
   );
 }

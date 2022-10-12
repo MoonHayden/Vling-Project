@@ -35,6 +35,7 @@ const Search = ({ labelers, searchLabelers, setSearchLabelers }) => {
   }
 
   function resetSearchDatas() {
+    router.push('/labeler');
     setSearchLabelers([]);
   }
 
