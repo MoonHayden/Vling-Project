@@ -4,6 +4,8 @@ const db = new DB();
 
 const GetRandomVideo = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videos");
+  const taskColl = await db.connectDB("tasks");
+  
   const result = await videoColl
     .aggregate([
       {
@@ -61,15 +63,21 @@ const GetRandomVideo = async (_, args, context, info) => {
     }
   );
 
+  const doneVideos = await videoColl.aggregate([{$match: {$and:[{taskName: args.taskName},{check: true}]}}]).toArray();
+  
+  console.log(doneVideos)
+
+  await taskColl.updateOne({name: args.taskName}, {$set:{doneVideos: doneVideos.length}});
+
   console.log(result[0])
   return result[0];
 };
 
 const AddCategoryValue = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videos");
-
+  
   await videoColl.updateMany({ label: { $size: 3 } }, { $set: { check: true } });
-
+  
   await videoColl.updateOne(
     {
       _id: ObjectId(args._id),
