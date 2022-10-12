@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
+import ModalPortal from '../../../../components/ModalPortal';
 
 export default function DeleteModal({
   taskName,
@@ -11,30 +11,39 @@ export default function DeleteModal({
   deleteTask,
 }) {
   const router = useRouter();
-  const handleDeleteTask = () => {
-    deleteTask({ variables: { name: taskName } });
-    alert(`${taskName}이 삭제 되었습니다.`);
+  const handleDeleteTask = async () => {
+    try {
+      await deleteTask({ variables: { name: taskName } });
+      alert(`${taskName}이 삭제 되었습니다.`);
+    } catch (err) {
+      alert(err);
+    }
     setDeleteModal(false);
     router.push('/tasks');
   };
 
   return (
-    <DeleteWrap>
-      <DeleteTitle>Task를 삭제 하시겠습니까?</DeleteTitle>
-      <DeleteText>삭제할 Task:</DeleteText>
-      <DeleteSubWrap>
-        <DeleteText>Name: </DeleteText>
-        <DeleteTextValue>{taskName}</DeleteTextValue>
-        <DeleteText>Kind: </DeleteText>
-        <DeleteTextValue>{taskKind}</DeleteTextValue>
-        <DeleteText>Name: </DeleteText>
-        <DeleteTextValue>{expDate}</DeleteTextValue>
-      </DeleteSubWrap>
-      <DeleteBtnWrap>
-        <DeleteButton onClick={handleDeleteTask}>삭제하기</DeleteButton>
-        <CancleButton onClick={() => setDeleteModal(false)}>취소</CancleButton>
-      </DeleteBtnWrap>
-    </DeleteWrap>
+    <ModalPortal>
+      <BlurWrap />
+      <DeleteWrap>
+        <DeleteTitle>Task를 삭제 하시겠습니까?</DeleteTitle>
+        <DeleteText>삭제할 Task:</DeleteText>
+        <DeleteSubWrap>
+          <DeleteText>Name: </DeleteText>
+          <DeleteTextValue>{taskName}</DeleteTextValue>
+          <DeleteText>Kind: </DeleteText>
+          <DeleteTextValue>{taskKind}</DeleteTextValue>
+          <DeleteText>Exp.Date: </DeleteText>
+          <DeleteTextValue>{expDate}</DeleteTextValue>
+        </DeleteSubWrap>
+        <DeleteBtnWrap>
+          <DeleteButton onClick={handleDeleteTask}>삭제하기</DeleteButton>
+          <CancleButton onClick={() => setDeleteModal(false)}>
+            취소
+          </CancleButton>
+        </DeleteBtnWrap>
+      </DeleteWrap>
+    </ModalPortal>
   );
 }
 
@@ -99,4 +108,12 @@ const DeleteButton = styled.button`
 const CancleButton = styled.button`
   height: 3rem;
   width: 7rem;
+`;
+
+const BlurWrap = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
 `;

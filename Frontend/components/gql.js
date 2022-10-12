@@ -47,10 +47,19 @@ export const DELETE_TASK = gql`
   }
 `;
 
+// export const UPDATE_TASK = gql`
+//   mutation ($name: String, $newName: String) {
+//     updateTask(name: $name, newName: $newName) {
+//       name
+//     }
+//   }
+// `;
+
 export const UPDATE_TASK = gql`
-  mutation ($name: String, $newName: String) {
-    updateTask(name: $name, newName: $newName) {
+  mutation ($status: Boolean, $name: String) {
+    updateTask(status: $status, name: $name) {
       name
+      status
     }
   }
 `;

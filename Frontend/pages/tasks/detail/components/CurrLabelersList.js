@@ -29,7 +29,7 @@ export default function CurrLabelersList({
         {currLabelersList?.map(labeler => (
           <CurrentListWrap key={labeler._id}>
             <LabelerListNav>
-              <Link href={`/labeler/detail/${labeler.email}`}>
+              <Link href={`/labeler/detail/${labeler._id}`}>
                 <LabelerName>{labeler.email}</LabelerName>
               </Link>
               <AddButton

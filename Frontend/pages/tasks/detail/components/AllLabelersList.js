@@ -6,7 +6,6 @@ import { ADD_TASK_TO_LABELER } from '../../../../components/gql';
 export default function AllLabelersList({
   taskName,
   allLabelers,
-  setAllLabelers,
   currLabelersList,
   setCurrLabelersList,
 }) {
@@ -16,24 +15,38 @@ export default function AllLabelersList({
     await addTaskToLabeler({
       variables: { id: id, email: e.target.value, name: taskName },
     });
-    /*
-    setAllLabelers(
-      allLabelers.filter(labeler => labeler.email !== e.target.value)
-    );
-    */
+
     setCurrLabelersList([
       ...currLabelersList,
       { _id: id, email: e.target.value },
     ]);
   };
 
+  const sortedLabelers = allLabelers.sort(function (a, b) {
+    if (
+      currLabelersList.find(
+        curr => curr.email === a.email && curr.email !== b.email
+      )
+    ) {
+      return 1;
+    } else if (
+      currLabelersList.find(
+        curr => curr.email === b.email && curr.email !== a.email
+      )
+    ) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+
   return (
     <ListWrap>
       <AllLabelers>Labelers: ({allLabelers.length})</AllLabelers>
       <LabelerListWrap>
-        {allLabelers.map(labeler => (
+        {sortedLabelers.map(labeler => (
           <LabelerWrap key={labeler._id}>
-            <Link href={`/labeler/detail/${labeler.email}`}>
+            <Link href={`/labeler/detail/${labeler._id}`}>
               <LabelerName>{labeler.email}</LabelerName>
             </Link>
             <AddButton

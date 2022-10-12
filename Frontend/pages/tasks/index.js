@@ -9,10 +9,13 @@ import client from '../../components/apollo-client';
 export default function Tasks({ allTasks, allLabelers }) {
   const [addTask, setAddTask] = useState(false);
   const [labelersAll, setLabelersAll] = useState([]);
+  const [tasksAll, setTasksAll] = useState([]);
+  const [sortHigh, setSortHigh] = useState(false);
 
   useEffect(() => {
     setLabelersAll(allLabelers.data.getAllLabelers);
-  }, [allLabelers]);
+    setTasksAll(allTasks.data.getAllTasks);
+  }, [allLabelers, allTasks]);
 
   const onClickAddTask = () => {
     setAddTask(true);
@@ -21,31 +24,70 @@ export default function Tasks({ allTasks, allLabelers }) {
     setAddTask(false);
   };
 
+  const sortedByStatusLow = [...tasksAll].sort(function (a, b) {
+    return Number(a.status) - Number(b.status);
+  });
+
+  const sortedByStatusHigh = [...tasksAll].sort(function (a, b) {
+    return Number(b.status) - Number(a.status);
+  });
+
+  const onClickSort = () => {
+    setSortHigh(!sortHigh);
+  };
+
   return (
     <>
-      <InnerWrap addTask={addTask}>
+      <InnerWrap>
         <TaskNav addTask={addTask}>
           {addTask ? (
             <AddTaskBtn onClick={onClickBack}>뒤로가기</AddTaskBtn>
           ) : (
-            <Link href="/">
-              <AddTaskBtn>메인으로 이동</AddTaskBtn>
-            </Link>
+            <div>
+              <Link href="/">
+                <AddTaskBtn>메인으로</AddTaskBtn>
+              </Link>
+              <SortByStatus onClick={onClickSort}>
+                {sortHigh ? '완료순 ⬆️' : '완료순 ⬇️'}
+              </SortByStatus>
+            </div>
           )}
           {addTask === false && (
             <AddTaskBtn onClick={onClickAddTask}>Task 등록</AddTaskBtn>
           )}
         </TaskNav>
-        {addTask === false &&
-          allTasks?.data?.getAllTasks?.map(task => (
+        {addTask ? (
+          <AddTask
+            labelersAll={labelersAll}
+            setAllLabelers={setLabelersAll}
+            tasksAll={tasksAll}
+          />
+        ) : sortHigh ? (
+          sortedByStatusHigh.map(task => (
             <TaskContainer key={task._id} task={task} />
-          ))}
-        {addTask === true && (
-          <AddTask labelersAll={labelersAll} setAllLabelers={setLabelersAll} />
+          ))
+        ) : (
+          sortedByStatusLow.map(task => (
+            <TaskContainer key={task._id} task={task} />
+          ))
         )}
       </InnerWrap>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const allTasks = await client.query({
+    query: GET_ALL_TASKS,
+    fetchPolicy: 'network-only',
+  });
+  const allLabelers = await client.query({
+    query: GET_ALL_LABELERS,
+    fetchPolicy: 'network-only',
+  });
+  return {
+    props: { allTasks, allLabelers },
+  };
 }
 
 const InnerWrap = styled.div`
@@ -66,21 +108,13 @@ const TaskNav = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${props => (props.addTask ? '2rem' : '0.5rem')};
+  margin-bottom: 0.5rem;
 `;
 
 const AddTaskBtn = styled.button``;
 
-export async function getServerSideProps() {
-  const allTasks = await client.query({
-    query: GET_ALL_TASKS,
-    fetchPolicy: 'network-only',
-  });
-  const allLabelers = await client.query({
-    query: GET_ALL_LABELERS,
-    fetchPolicy: 'network-only',
-  });
-  return {
-    props: { allTasks, allLabelers },
-  };
-}
+const SortByStatus = styled(AddTaskBtn)`
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+`;
