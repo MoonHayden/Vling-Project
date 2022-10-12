@@ -8,7 +8,12 @@ const GetRandomVideo = async (_, args, context, info) => {
     .aggregate([
       {
         $match: {
-          taskName: args.taskName
+          $and: [
+            {taskName: args.taskName},
+            { labeler: { $nin: [args.labeler] } },
+            { in_progress: { $nin: [args.labeler]}},
+            { check: false }
+          ]
         },
       },
       {
@@ -28,14 +33,12 @@ const GetRandomVideo = async (_, args, context, info) => {
           in_progress: 1,
           labeler: 1,
           label: 1,
-          lessThanThree: { $lte: [{ $size: "$in_progress" }, 3] }
+          lessThanThree: { $lt: [{ $size: "$in_progress" }, 3] }
         }
       },
       {
         $match: {
-          $and: [{ lessThanThree: true },
-          { check: false },
-          { labeler: { $nin: [args.labeler] } }]
+          lessThanThree: true 
         }
       },
       {
@@ -64,7 +67,6 @@ const GetRandomVideo = async (_, args, context, info) => {
 
 const AddCategoryValue = async (_, args, context, info) => {
   const videoColl = await db.connectDB("videos");
-  // const taskColl = await db.connectDB("tasks");
 
   await videoColl.updateMany({ label: { $size: 3 } }, { $set: { check: true } });
 
@@ -88,16 +90,6 @@ const AddCategoryValue = async (_, args, context, info) => {
         label: args.label
       }
     });
-
-  // await videoColl.updateOne({
-  //   _id: ObjectId(args._id)
-  // },
-  //   {
-  //     $pull: {
-  //       in_progress: args.labeler
-  //     }
-  //   }
-  // );
 
   return true;
 };

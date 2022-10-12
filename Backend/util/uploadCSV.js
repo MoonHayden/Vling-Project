@@ -42,6 +42,7 @@ router.post("/upload", (req, res) => {
             in_progress: [],
             labeler: [],
             label: [],
+            majority: "",
             check: false
           };
 
