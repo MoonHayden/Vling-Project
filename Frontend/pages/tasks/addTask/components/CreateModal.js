@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import ModalPortal from '../../../components/ModalPortal';
+import ModalPortal from '../../../../components/ModalPortal';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 
 export default function CreateModal({
   setModalOpen,
@@ -12,6 +14,7 @@ export default function CreateModal({
   expDate,
   bodyFormData,
 }) {
+  const router = useRouter();
   const handleAddTask = async () => {
     bodyFormData.append('taskName', taskName);
     try {
@@ -24,8 +27,7 @@ export default function CreateModal({
         },
       });
     } catch (err) {
-      alert(err);
-      window.location.reload();
+      toast.error(err.message);
     }
     axios({
       method: 'POST',
@@ -34,13 +36,14 @@ export default function CreateModal({
       data: bodyFormData,
     }).then(response => {
       if (response.data.success == true) {
-        alert('task 등록이 완료되었습니다.');
         setModalOpen(false);
-        window.location.reload();
-      } else if (response.data.success == false) {
-        alert('task 등록이 실패하였습니다.');
+        toast.success('task 등록이 완료되었습니다.');
+        router.push('/tasks');
+      }
+      if (response.data.success == false) {
         setModalOpen(false);
-        window.location.reload();
+        toast.error('task 등록이 실패하였습니다.');
+        router.push('/tasks');
       }
     });
   };
@@ -58,7 +61,7 @@ export default function CreateModal({
           <TextValue>{taskKind}</TextValue>
           <Text>ExpDate: </Text>
           <TextValue>{expDate}</TextValue>
-          <Text>#Labelers ({labelerList.length}): </Text>
+          <Text>Labelers ({labelerList.length}): </Text>
           {labelerList.map(labeler => (
             <TextValue key={labeler._id}>{labeler.email}</TextValue>
           ))}

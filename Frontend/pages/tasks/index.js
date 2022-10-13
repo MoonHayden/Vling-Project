@@ -1,78 +1,86 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { GET_ALL_TASKS, GET_ALL_LABELERS } from '../../components/gql';
+import { GET_ALL_TASKS } from '../../components/gql';
+import { useRouter } from 'next/router';
 import TaskContainer from './components/TaskContainer';
-import AddTask from './components/AddTask';
 import client from '../../components/apollo-client';
 
-export default function Tasks({ allTasks, allLabelers }) {
-  const [addTask, setAddTask] = useState(false);
-  const [labelersAll, setLabelersAll] = useState([]);
+export default function Tasks({ allTasks }) {
   const [tasksAll, setTasksAll] = useState([]);
   const [sortHigh, setSortHigh] = useState(false);
+  const [sortOngoing, setSortOngoing] = useState(false);
 
+  const router = useRouter();
   useEffect(() => {
-    setLabelersAll(allLabelers.data.getAllLabelers);
     setTasksAll(allTasks.data.getAllTasks);
-  }, [allLabelers, allTasks]);
+  }, [allTasks]);
 
   const onClickAddTask = () => {
-    setAddTask(true);
-  };
-  const onClickBack = () => {
-    setAddTask(false);
+    router.push('/tasks/addTask');
   };
 
   const sortedByStatusLow = [...tasksAll].sort(function (a, b) {
-    return Number(a.status) - Number(b.status);
+    if (a.status === false && b.status === true) {
+      return -1;
+    } else if (a.status === true && b.status === false) {
+      return 1;
+    } else if (a.status === b.status) {
+      if (a.doneVideos / a.totalVideos < b.doneVideos / b.totalVideos) {
+        return -1;
+      } else if (a.doneVideos / a.totalVideos > b.doneVideos / b.totalVideos) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
   });
 
   const sortedByStatusHigh = [...tasksAll].sort(function (a, b) {
-    return Number(b.status) - Number(a.status);
+    if (a.status === false && b.status === true) {
+      return 1;
+    } else if (a.status === true && b.status === false) {
+      return -1;
+    } else if (a.status === b.status) {
+      if (a.doneVideos / a.totalVideos > b.doneVideos / b.totalVideos) {
+        return -1;
+      } else if (a.doneVideos / a.totalVideos < b.doneVideos / b.totalVideos) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
   });
+
+  const onGoingTasks = [...tasksAll].filter(task => task.status === false);
+
+  const completedTasks = [...tasksAll].filter(task => task.status === true);
 
   const onClickSort = () => {
     setSortHigh(!sortHigh);
   };
 
   return (
-    <>
-      <InnerWrap>
-        <TaskNav addTask={addTask}>
-          {addTask ? (
-            <AddTaskBtn onClick={onClickBack}>뒤로가기</AddTaskBtn>
-          ) : (
-            <div>
-              <Link href="/">
-                <AddTaskBtn>메인으로</AddTaskBtn>
-              </Link>
-              <SortByStatus onClick={onClickSort}>
-                {sortHigh ? '완료순 ⬆️' : '완료순 ⬇️'}
-              </SortByStatus>
-            </div>
-          )}
-          {addTask === false && (
-            <AddTaskBtn onClick={onClickAddTask}>Task 등록</AddTaskBtn>
-          )}
-        </TaskNav>
-        {addTask ? (
-          <AddTask
-            labelersAll={labelersAll}
-            setAllLabelers={setLabelersAll}
-            tasksAll={tasksAll}
-          />
-        ) : sortHigh ? (
-          sortedByStatusHigh.map(task => (
+    <InnerWrap>
+      <TaskNav>
+        <div>
+          <Link href="/">
+            <AddTaskBtn>메인으로</AddTaskBtn>
+          </Link>
+          <SortByStatus onClick={onClickSort}>
+            {sortHigh ? '완료순↑' : '완료순↓'}
+          </SortByStatus>
+        </div>
+        <AddTaskBtn onClick={onClickAddTask}>Task 등록</AddTaskBtn>
+      </TaskNav>
+      {sortHigh
+        ? sortedByStatusHigh.map(task => (
             <TaskContainer key={task._id} task={task} />
           ))
-        ) : (
-          sortedByStatusLow.map(task => (
+        : sortedByStatusLow.map(task => (
             <TaskContainer key={task._id} task={task} />
-          ))
-        )}
-      </InnerWrap>
-    </>
+          ))}
+    </InnerWrap>
   );
 }
 
@@ -81,12 +89,8 @@ export async function getServerSideProps() {
     query: GET_ALL_TASKS,
     fetchPolicy: 'network-only',
   });
-  const allLabelers = await client.query({
-    query: GET_ALL_LABELERS,
-    fetchPolicy: 'network-only',
-  });
   return {
-    props: { allTasks, allLabelers },
+    props: { allTasks },
   };
 }
 

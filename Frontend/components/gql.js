@@ -17,6 +17,7 @@ export const GET_ALL_TASKS = gql`
       }
       status
       totalVideos
+      doneVideos
     }
   }
 `;
@@ -35,6 +36,7 @@ export const TASK_DETAIL = gql`
       status
       expiration_date
       totalVideos
+      doneVideos
     }
   }
 `;

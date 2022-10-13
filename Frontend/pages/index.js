@@ -60,7 +60,7 @@ const ButtonWrap = styled.div`
   display: grid;
   place-items: center;
   border-radius: 10px;
-  background: linear-gradient(#c9d6ff, #e2e2e2);
+  background: linear-gradient(#fff7ff, #d1c4e9);
   cursor: pointer;
   &:active {
     transform: scale(0.99);

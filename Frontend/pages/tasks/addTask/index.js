@@ -1,10 +1,18 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation } from '@apollo/client';
-import CreateModal from './CreateModal';
-import { ADD_TASK } from '../../../components/gql';
+import CreateModal from './components/CreateModal';
+import {
+  ADD_TASK,
+  GET_ALL_TASKS,
+  GET_ALL_LABELERS,
+} from '../../../components/gql';
+import { useRouter } from 'next/router';
+import client from '../../../components/apollo-client';
 
-export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
+export default function AddTask({ allTasks, allLabelers }) {
+  const [labelersAll, setLabelersAll] = useState([]);
+  const [tasksAll, setTasksAll] = useState([]);
   const [showLabelerList, setShowLabelerList] = useState(false);
   const [taskName, setTaskName] = useState('');
   const [taskKind, setTaskKind] = useState('');
@@ -12,6 +20,13 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
   const [labelerList, setLabelerList] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [bodyFormData, setBodyFormData] = useState(new FormData());
+
+  useEffect(() => {
+    setLabelersAll(allLabelers.data.getAllLabelers);
+    setTasksAll(allTasks.data.getAllTasks);
+  }, [allLabelers, allTasks]);
+
+  const router = useRouter();
 
   const onClickShowList = () => {
     setShowLabelerList(true);
@@ -33,7 +48,7 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
 
   const handleAddLabeler = (e, id) => {
     setLabelerList([...labelerList, { _id: id, email: e.target.value }]);
-    setAllLabelers(
+    setLabelersAll(
       labelersAll.filter(labeler => labeler.email !== e.target.value)
     );
   };
@@ -43,7 +58,7 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
       labelerList.filter(labeler => labeler.email !== e.target.value)
     );
     labelersAll.push({ email: e.target.value });
-    setAllLabelers(labelersAll);
+    setLabelersAll(labelersAll);
   };
 
   const handleFileChange = e => {
@@ -55,7 +70,7 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
   const [addTask] = useMutation(ADD_TASK);
 
   const isNotValid =
-    // bodyFormData.get('file') == undefined ||
+    bodyFormData.get('file') == undefined ||
     taskName.length === 0 ||
     tasksAll.find(task => task.name === taskName) ||
     taskKind === '---선택---' ||
@@ -63,10 +78,23 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
     expDate.length === 0 ||
     labelerList.length === 0;
 
-  console.log(tasksAll);
+  const onClickBack = () => {
+    router.push('/tasks');
+  };
 
   return (
-    <>
+    <InnerWrap>
+      <TaskNav>
+        <AddTaskBtn onClick={onClickBack}>뒤로가기</AddTaskBtn>
+        <SubmitButton
+          onClick={() => {
+            setModalOpen(true);
+          }}
+          disabled={isNotValid}
+        >
+          task 등록
+        </SubmitButton>
+      </TaskNav>
       <TaskAddWrap>
         <TaskInfoWrap>
           <TaskNameWrap>
@@ -86,7 +114,13 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
               value={taskName}
               placeholder="예: 영상목록1"
               onChange={handleTaskNameInput}
+              duplicated={tasksAll.find(task => task.name === taskName)}
             ></TaskNameInput>
+            <ErrorMsg
+              duplicated={tasksAll.find(task => task.name === taskName)}
+            >
+              ! 중복된 이름입니다.
+            </ErrorMsg>
           </TaskNameWrap>
           <TaskNameWrap>
             <TaskName>Task Kind:</TaskName>
@@ -113,7 +147,7 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
           <LabelersInfoWrap>
             <TaskName>Labelers ({labelerList.length}):</TaskName>
             <LabelersListIcon
-              src="./images/labelers.png"
+              src="/images/labelers.png"
               alt="showLabelersList"
               onClick={onClickShowList}
             />
@@ -134,15 +168,6 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
             <AllLabelers>
               All Labelers ({showLabelerList && labelersAll.length}):
             </AllLabelers>
-
-            <SubmitButton
-              onClick={() => {
-                setModalOpen(true);
-              }}
-              disabled={isNotValid}
-            >
-              task 등록
-            </SubmitButton>
             {modalOpen && (
               <CreateModal
                 modalOpen={modalOpen}
@@ -173,9 +198,42 @@ export default function AddTask({ labelersAll, setAllLabelers, tasksAll }) {
           )}
         </LabelerListAllWrap>
       </TaskAddWrap>
-    </>
+    </InnerWrap>
   );
 }
+
+export async function getServerSideProps() {
+  const allTasks = await client.query({
+    query: GET_ALL_TASKS,
+    fetchPolicy: 'network-only',
+  });
+  const allLabelers = await client.query({
+    query: GET_ALL_LABELERS,
+    fetchPolicy: 'network-only',
+  });
+  return {
+    props: { allTasks, allLabelers },
+  };
+}
+
+const InnerWrap = styled.div`
+  width: 90%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 1rem;
+`;
+
+const TaskNav = styled.div`
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+`;
 
 const TaskAddWrap = styled.div`
   width: 100%;
@@ -192,7 +250,7 @@ const TaskInfoWrap = styled.div`
 
 const TaskNameWrap = styled.div`
   width: 100%;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 `;
 
 const CsvUploadTitle = styled.p`
@@ -215,7 +273,8 @@ const TaskNameInput = styled.input`
   padding-bottom: 5px;
   font-size: 16px;
   border: none;
-  border-bottom: 2px solid black;
+  border-bottom: ${props =>
+    props.duplicated ? '2px solid red' : '2px solid black'};
   background-color: transparent;
   &:focus {
     outline: none;
@@ -223,6 +282,13 @@ const TaskNameInput = styled.input`
   &:focus::placeholder {
     color: transparent;
   }
+`;
+
+const ErrorMsg = styled.p`
+  margin-top: 10px;
+  color: red;
+  font-size: 12px;
+  visibility: ${props => (props.duplicated ? 'visible' : 'hidden')};
 `;
 
 const TaskKindSelect = styled.select`
@@ -240,7 +306,7 @@ const LabelersInfoWrap = styled.div`
 `;
 
 const AddedLabelers = styled.div`
-  height: 12rem;
+  height: 8rem;
   overflow-y: scroll;
 `;
 
@@ -290,3 +356,5 @@ const AllLabelers = styled.h1`
 `;
 
 const SubmitButton = styled.button``;
+
+const AddTaskBtn = styled.button``;
