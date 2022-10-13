@@ -1,5 +1,6 @@
 import React /*, {useState}*/ from 'react';
-import {View, Image, StyleSheet} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {View, Image, Text, StyleSheet} from 'react-native';
 import {gql, useMutation} from '@apollo/client';
 import {
   GoogleSignin,
@@ -38,7 +39,6 @@ GoogleSignin.configure({
 });
 
 export default function Login({navigation}) {
-  // const [user, setUser] = useState();
   const [LoginInfo] = useMutation(LOGINGQL);
 
   const signIn = async () => {
@@ -46,39 +46,35 @@ export default function Login({navigation}) {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       // setUser(userInfo);
-      // console.log('userInfo:', userInfo);
-      const {email, name, photo} = userInfo.user;
-      console.log(email);
-      console.log(name);
-      console.log(photo);
+      // console.log(userInfo);
 
-      if (userInfo) {
-        return (
-          navigation.navigate('MainScreen', {
-            email: email,
-            userName: name,
-            photo: photo,
-          }),
-          // navigation.reset(
-          //   {routes: [{name: 'MainScreen'}]},
-          //   {
-          //     email: userInfo.user.email,
-          //     name: userInfo.user.name,
-          //     photo: userInfo.user.photo,
-          //   },
-          // ),
-          LoginInfo({
-            variables: {
-              email: userInfo.user.email,
-              googleId: userInfo.user.id,
-              name: userInfo.user.name,
-              idToken: userInfo.idToken,
-            },
-          })
-        );
-      } else {
-        console.log('로그인 실패');
-      }
+      const {email, name, photo, id} = userInfo.user;
+
+      await AsyncStorage.setItem('googleId', id);
+      await AsyncStorage.setItem('name', name);
+      await AsyncStorage.setItem('email', email);
+      await AsyncStorage.setItem('photo', photo);
+
+      // if ('googleId') {
+      return (
+        navigation.navigate('MainScreen', {
+          email: email,
+          userName: name,
+          photo: photo,
+          googleId: id,
+        }),
+        LoginInfo({
+          variables: {
+            email: userInfo.user.email,
+            googleId: userInfo.user.id,
+            name: userInfo.user.name,
+            idToken: userInfo.idToken,
+          },
+        })
+      );
+      // } else {
+      //   console.log('로그인 실패');
+      // }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -95,6 +91,14 @@ export default function Login({navigation}) {
       }
     }
   };
+  // const signOut = async () => {
+  //   try {
+  //     await GoogleSignin.revokeAccess();
+  //     await GoogleSignin.signOut();
+  //   } catch (error) {
+  //     console.error('error', error);
+  //   }
+  // };
 
   return (
     <View style={styles.login}>
@@ -106,12 +110,29 @@ export default function Login({navigation}) {
       />
       <View>
         <GoogleSigninButton style={styles.Google} onPress={signIn} />
+        {/* <Button title="signOut" style={styles.Google} onPress={signOut} /> */}
+      </View>
+      <View style={styles.companyInfo}>
+        <Text style={styles.legalInfo}>Trade name : Sway mobile Co., Ltd</Text>
+        <Text style={styles.legalInfo}>Address : 경기도 성남시 분당구</Text>
+        <Text style={styles.legalInfo}>
+          분당내곡로 117, 크래프톤타워 스웨이모바일㈜
+        </Text>
+        <Text style={styles.legalInfo}>
+          Copyright 2021 Sway mobile. All Rights Reserved.
+        </Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  legalInfo: {
+    fontSize: 10,
+  },
+  companyInfo: {
+    top: 100,
+  },
   Google: {
     marginTop: 20,
     width: 300,
@@ -158,3 +179,11 @@ const styles = StyleSheet.create({
 //     console.error(error);
 //   }
 // };
+// navigation.reset(
+//   {routes: [{name: 'MainScreen'}]},
+//   {
+//     email: userInfo.user.email,
+//     name: userInfo.user.name,
+//     photo: userInfo.user.photo,
+//   },
+// ),
