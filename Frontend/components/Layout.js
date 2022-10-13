@@ -3,14 +3,20 @@ import Nav from './Nav';
 import Alram from './Alram';
 import Logout from './Logout';
 import { useRouter } from 'next/router';
-
+import { ToastContainer } from 'react-toastify';
+import { injectStyle } from 'react-toastify/dist/inject-style';
 export default function Layout({ children }) {
   const router = useRouter();
   const isVisible = router.pathname !== '/login';
 
+  if (typeof window !== 'undefined') {
+    injectStyle();
+  }
+
   return (
     <>
       <MainWrap>
+        <ToastContainer autoClose={2000} />
         <MenuWrap isVisible={isVisible}>
           <Alram />
           <Logout />

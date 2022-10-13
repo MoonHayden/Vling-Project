@@ -7,19 +7,48 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { MESSAGE_LIST } from '../data/MESSAGE_LIST';
 import { useEffect } from 'react';
-
+import { GET_ALL_LABELERS_TIME } from './gql';
+import { useQuery } from '@apollo/client';
 const Alram = () => {
   const router = useRouter();
   const [isMessageBoxOpen, setIsMessageBoxOpen] = useState(false);
   const [messages, setMessages] = useState([]);
+  const { data } = useQuery(GET_ALL_LABELERS_TIME);
+  const [newLabelers, setNewLabelers] = useState([]);
 
-  useEffect(() => {
-    setMessages(MESSAGE_LIST);
-  }, []);
+  // useEffect(() => {
+  //   const b = JSON.parse(localStorage.getItem('eeeee'));
+  //   const filter = b.filter(c => c.watch === false);
+  //   setNewLabelers(b);
+  // }, []);
 
-  useEffect(() => {
-    setIsMessageBoxOpen(false);
-  }, [router]);
+  // if (data === undefined) return;
+
+  // const labelers = data?.getAllLabelers;
+  // const today = new Date().getTime();
+  // const millisecondsOfDay = 86400000;
+
+  // const endDt = new Date(today - 86400000);
+  // const isNewMember = createdDate => today - createdDate < millisecondsOfDay;
+
+  // const ass = labelers.filter(c => {
+  //   return isNewMember(c.created_at);
+  // });
+
+  // const newMembers = data.filter((c)=>isNewMember(c.createDate))
+
+  // useEffect(() => {
+  //   setTest(data);
+  //   console.log(test, 'zz');
+  // }, []);
+
+  // useEffect(() => {
+  //   setMessages(MESSAGE_LIST);
+  // }, []);
+
+  // useEffect(() => {
+  //   setIsMessageBoxOpen(false);
+  // }, [router]);
 
   const boxHandler = () => {
     isMessageBoxOpen === true
@@ -29,12 +58,20 @@ const Alram = () => {
 
   const messageHandler = message => {
     setIsMessageBoxOpen(false);
+    newLabelers._id.watch = true;
     setMessages(messages.filter(item => item.id !== message.id));
-    router.push(message.url);
+    // router.push(message.url);
   };
 
   const isHaveAlarm = messages?.length > 0;
   const adminSrc = isHaveAlarm ? adminAlarm : admin;
+
+  const setLocalStorage = () => {
+    // const a = { aaa: 'ss', ggg: 'ssss' };
+    localStorage.setItem('eeeee', JSON.stringify(ass));
+    const b = JSON.parse(localStorage.getItem('eeeee'));
+    console.log(b);
+  };
 
   return (
     <Wrap>

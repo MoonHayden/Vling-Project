@@ -5,6 +5,7 @@ import { useMutation } from '@apollo/client';
 import { LABELER_DELETE } from '../../../../components/gql';
 import ModalFrame from '../../../../components/ModalFrame';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const DeleteModal = ({ labelerInformation }) => {
   const router = useRouter();
@@ -18,9 +19,10 @@ const DeleteModal = ({ labelerInformation }) => {
   const deleteHandler = async () => {
     try {
       await deleteLabelers();
+      toast.success(`라벨러 '${labelerInformation.email}'님을 삭제했습니다.`);
       initialization();
     } catch (e) {
-      alert(e);
+      toast.error(e);
     }
   };
 

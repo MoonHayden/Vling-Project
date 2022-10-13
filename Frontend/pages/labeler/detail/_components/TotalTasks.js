@@ -9,6 +9,7 @@ const TotalTasks = ({
   labelersTasks,
 }) => {
   if (totalTasks === undefined) return;
+
   const availableTasks = totalTasks.filter(task => !task.status);
 
   return (
@@ -22,6 +23,8 @@ const TotalTasks = ({
             ongoingTasks={ongoingTasks}
             name={task.name}
             category={task.kind}
+            totalVideos={task.totalVideos}
+            doneVideos={task.doneVideos}
             expirationDate={task.expiration_date}
             labelerInformation={labelerInformation}
             labelersTasks={labelersTasks}

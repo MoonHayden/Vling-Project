@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useMutation } from '@apollo/client';
 import { DELETE_TASK_OF_LABELER } from '../../../../components/gql';
 import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
+
 const OngoingTasks = ({
   ongoingTasks,
   setLabelersTasks,
@@ -17,27 +19,32 @@ const OngoingTasks = ({
   };
 
   const deleteOngoingTask = async clickedTask => {
-    await deleteTaskOfLabeler({
-      variables: {
-        email: labelerInformation.email,
-        id: labelerInformation._id,
-        name: clickedTask,
-      },
-    });
-
     const changedTask = labelersTasks.filter(task => {
       return task.name !== clickedTask;
     });
+    try {
+      await deleteTaskOfLabeler({
+        variables: {
+          email: labelerInformation.email,
+          id: labelerInformation._id,
+          name: clickedTask,
+        },
+      });
 
-    setLabelersTasks(changedTask);
+      toast.success(`'${clickedTask}'를 할당 취소하였습니다.`);
+      setLabelersTasks(changedTask);
+    } catch (e) {
+      toast.error(e);
+    }
   };
 
   if (ongoingTasks === undefined) return;
 
+  console.log(ongoingTasks.doneVideos);
   const isHaveOngoingTask = ongoingTasks.length > 0;
   return (
     <Wrap>
-      <BoldText>진행중인 테스크</BoldText>
+      <BoldText>진행중인 테스크 {`(${ongoingTasks.length})`}</BoldText>
       <TaskWrap>
         {isHaveOngoingTask ? (
           ongoingTasks.map((task, idx) => {
