@@ -35,7 +35,6 @@ function labelerDetail(props) {
     router.push('/labeler');
   };
 
-  console.log(labelersTasks, completedTasks);
   return (
     <>
       <Wrap>

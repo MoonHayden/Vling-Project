@@ -40,6 +40,7 @@ const OngoingTasks = ({
 
   if (ongoingTasks === undefined) return;
 
+  console.log(ongoingTasks.doneVideos);
   const isHaveOngoingTask = ongoingTasks.length > 0;
   return (
     <Wrap>

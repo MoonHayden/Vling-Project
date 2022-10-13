@@ -8,6 +8,8 @@ import { toast } from 'react-toastify';
 const TotalTask = ({
   name,
   category,
+  totalVideos,
+  doneVideos,
   ongoingTasks,
   setLabelersTasks,
   expirationDate,
