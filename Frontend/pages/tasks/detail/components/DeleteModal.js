@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import ModalPortal from '../../../../components/ModalPortal';
+import { toast } from 'react-toastify';
 
 export default function DeleteModal({
   taskName,
@@ -14,9 +15,9 @@ export default function DeleteModal({
   const handleDeleteTask = async () => {
     try {
       await deleteTask({ variables: { name: taskName } });
-      alert(`${taskName}이 삭제 되었습니다.`);
+      toast.success(`${taskName}이 삭제 되었습니다.`);
     } catch (err) {
-      alert(err);
+      toast.error(err);
     }
     setDeleteModal(false);
     router.push('/tasks');

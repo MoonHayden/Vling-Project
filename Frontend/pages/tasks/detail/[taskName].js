@@ -40,13 +40,18 @@ export default function TaskDetail({ taskName, allLabelers, taskInfo }) {
         </LabelersInfoWrap>
         <ProgressInfo>
           <RateNumber>
-            {Math.round((4 / taskDetail.totalVideos) * 100)}%
+            {((taskDetail?.doneVideos / taskDetail?.totalVideos) * 100).toFixed(
+              2
+            )}
+            %
           </RateNumber>
           <ProgressWrap>
-            <FullBar status={taskDetail.status}></FullBar>
+            <FullBar status={taskDetail?.status}></FullBar>
             <RateBar
-              status={taskDetail.status}
-              rate={Math.round((4 / taskDetail.totalVideos) * 100)}
+              status={taskDetail?.status}
+              rate={Math.round(
+                (taskDetail.doneVideos / taskDetail?.totalVideos) * 100
+              )}
             ></RateBar>
           </ProgressWrap>
         </ProgressInfo>

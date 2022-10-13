@@ -2,7 +2,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 export default function TaskContainer({ task }) {
-  const { name, kind, labelers, totalVideos, status } = task;
+  const { name, labelers, totalVideos, doneVideos, status } = task;
   return (
     <>
       <Link href={`/tasks/detail/${name}`}>
@@ -12,18 +12,21 @@ export default function TaskContainer({ task }) {
           </StatusWrap>
           <TaskInfo>
             <FolderIcon src="./images/folder.png" alt="folderIcon" />
-
-            <NumOfVideos>{kind}</NumOfVideos>
-            <NumOfVideos>#Videos : {totalVideos}</NumOfVideos>
-            <NumOfVideos>#Labelers : {labelers?.length}</NumOfVideos>
+            <NumOfVideos># Videos : {totalVideos}</NumOfVideos>
+            <NumOfVideos># Labelers : {labelers?.length}</NumOfVideos>
           </TaskInfo>
           <ProgressInfo>
             <TaskName>{name}</TaskName>
             <ProgressWrap>
               <FullBar status={status}></FullBar>
-              <RateBar status={status} rate={(4 / totalVideos) * 100}></RateBar>
+              <RateBar
+                status={status}
+                rate={(doneVideos / totalVideos) * 100}
+              ></RateBar>
             </ProgressWrap>
-            <RateNumber>{Math.round((4 / totalVideos) * 100)}%</RateNumber>
+            <RateNumber>
+              {Math.round((doneVideos / totalVideos) * 100)}%
+            </RateNumber>
           </ProgressInfo>
         </TaskWrap>
       </Link>
@@ -73,7 +76,7 @@ const FolderIcon = styled.img`
 `;
 
 const NumOfVideos = styled.p`
-  margin: 0;
+  margin-bottom: 5px;
   font-size: 14px;
   color: #7f8c8d;
 `;
@@ -97,6 +100,7 @@ const ProgressWrap = styled.div`
 `;
 
 const RateNumber = styled.p`
+  margin-bottom: 5px;
   font-size: 14px;
   color: #353b48;
 `;

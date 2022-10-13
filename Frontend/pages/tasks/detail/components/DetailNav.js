@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { DELETE_TASK, UPDATE_TASK } from '../../../../components/gql';
+import { toast } from 'react-toastify';
 
 export default function DetailNav({ taskName, taskDetail }) {
   const router = useRouter();
@@ -12,7 +13,11 @@ export default function DetailNav({ taskName, taskDetail }) {
   const [editName, setEditName] = useState('');
   const [deleteModal, setDeleteModal] = useState(false);
 
-  const { kind, status, expiration_date, totalVideos } = taskDetail;
+  if (taskDetail == undefined) {
+    return;
+  }
+
+  const { kind, status, expiration_date, totalVideos, doneVideos } = taskDetail;
 
   const [deleteTask] = useMutation(DELETE_TASK);
   const [updateTask] = useMutation(UPDATE_TASK);
@@ -36,10 +41,14 @@ export default function DetailNav({ taskName, taskDetail }) {
     router.push(`/tasks/detail/${editName}`);
   };
 
-  const setTaskDone = () => {
-    updateTask({ variables: { name: taskName, status: !status } });
-    alert('task가 완료되었습니다.');
-    window.location.reload();
+  const setTaskDone = async () => {
+    try {
+      await updateTask({ variables: { name: taskName, status: !status } });
+      toast.success(`"${taskName}" 을 완료하였습니다.`);
+    } catch (err) {
+      toast.error(err);
+    }
+    router.push('/tasks');
   };
 
   return (
@@ -94,7 +103,7 @@ export default function DetailNav({ taskName, taskDetail }) {
         )}
         <CompleteBtn
           disabled={
-            Math.round((4 / totalVideos) * 100) == 100 &&
+            Math.round((doneVideos / totalVideos) * 100) == 100 &&
             taskDetail.status === false
               ? false
               : true
