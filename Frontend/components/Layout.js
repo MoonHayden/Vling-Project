@@ -5,7 +5,6 @@ import Logout from './Logout';
 import { useRouter } from 'next/router';
 import { ToastContainer } from 'react-toastify';
 import { injectStyle } from 'react-toastify/dist/inject-style';
-
 export default function Layout({ children }) {
   const router = useRouter();
   const isVisible = router.pathname !== '/login';

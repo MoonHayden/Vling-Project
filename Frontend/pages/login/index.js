@@ -4,6 +4,7 @@ import logo from '../../public/images/vling_logo.png';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
+import { toast } from 'react-toastify';
 
 const MASTER_LOGIN = gql`
   mutation MasterLogIn($name: String, $password: String) {
@@ -41,6 +42,7 @@ function loginPage() {
       setIsLoginFailed(true);
     } else {
       localStorage.setItem('masterToken', 'master');
+      toast.success('로그인에 성공했습니다.');
       router.push('/');
     }
   };

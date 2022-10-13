@@ -1,4 +1,4 @@
-const { ObjectID, ObjectId } = require("bson");
+const { ObjectId } = require("mongodb");
 const DB = require("../../models/db");
 
 const db = new DB();
@@ -54,11 +54,13 @@ const GetTasksByLabeler = async (_, args, context, info) => {
 };
 
 const DeleteTask = async (_, args, context, info) => {
-
   const taskColl = await db.connectDB("tasks");
+  const videoColl = await db.connectDB("videos");
 
   await taskColl.deleteOne({ name: args.name });
-
+  
+  await videoColl.deleteMany({taskName: args.name});
+  
   console.log(args);
 
   return args;
@@ -67,8 +69,6 @@ const DeleteTask = async (_, args, context, info) => {
 const UpdateTask = async (_, args, context, info) => {
 
   const taskColl = await db.connectDB("tasks");
-
-  // const result = await taskColl.updateOne({ _id: ObjectId(`${args._id}`) });
 
   const check = await args.newName;
 

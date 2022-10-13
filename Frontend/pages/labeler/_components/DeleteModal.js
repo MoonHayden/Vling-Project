@@ -3,6 +3,8 @@ import { useMutation } from '@apollo/client';
 import { LABELER_DELETE } from '../../../components/gql';
 import ModalFrame from '../../../components/ModalFrame';
 import DeleteButton from './DeleteButton';
+import { toast } from 'react-toastify';
+
 const DeleteModal = ({
   setIsDeleteButtonClicked,
   setClickedLabelers,
@@ -13,6 +15,7 @@ const DeleteModal = ({
 }) => {
   const [deleteLabelers] = useMutation(LABELER_DELETE);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const clickedNumber = clickedLabelers.length;
 
   const deleteHandler = async () => {
     try {
@@ -21,9 +24,10 @@ const DeleteModal = ({
           variables: { id: labeler.id },
         });
       });
+      toast.success(`${clickedNumber}명의 라벨러를 삭제했습니다.`);
       initialization();
     } catch (e) {
-      alert(e);
+      toast.error(e);
     }
   };
 

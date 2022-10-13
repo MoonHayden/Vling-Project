@@ -99,6 +99,8 @@ export const ONGOING_TASK_LIST = gql`
       kind
       status
       expiration_date
+      totalVideos
+      doneVideos
     }
   }
 `;
@@ -137,6 +139,16 @@ export const GET_ALL_LABELERS = gql`
   }
 `;
 
+export const GET_ALL_LABELERS_TIME = gql`
+  query GetAllLabelers {
+    getAllLabelers {
+      _id
+      email
+      created_at
+    }
+  }
+`;
+
 export const TOTAL_TASK_LIST = gql`
   query GetAllTasks {
     getAllTasks {
@@ -156,13 +168,14 @@ export const TOTAL_TASK_DETAIL_LIST = gql`
       _id
       name
       kind
+      status
+      totalVideos
+      doneVideos
+      expiration_date
       labelers {
         _id
         email
       }
-      status
-      totalVideos
-      expiration_date
     }
   }
 `;

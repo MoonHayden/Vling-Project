@@ -7,6 +7,7 @@ import DeleteModal from './_components/DeleteModal';
 import { GET_ALL_LABELERS } from '../../components/gql';
 import TitleTab from './_components/TitleTab';
 import { ONGOING_TASK_LIST } from '../../components/gql';
+import { toast } from 'react-toastify';
 
 function labelersPage({ labelersData, tasksData }) {
   const [labelers, setLabelers] = useState([]);
@@ -27,7 +28,6 @@ function labelersPage({ labelersData, tasksData }) {
   if (!labelers) return;
 
   const isSearch = searchLabelers.length > 0;
-
   return (
     <Wrap>
       <Menus>
