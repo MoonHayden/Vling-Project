@@ -1,6 +1,6 @@
 import React /*, {useState}*/ from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {View, Image, Text, StyleSheet, Button} from 'react-native';
+import {View, Image, Text, StyleSheet} from 'react-native';
 import {gql, useMutation} from '@apollo/client';
 import {
   GoogleSignin,
@@ -91,14 +91,14 @@ export default function Login({navigation}) {
       }
     }
   };
-  const signOut = async () => {
-    try {
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
-    } catch (error) {
-      console.error('error', error);
-    }
-  };
+  // const signOut = async () => {
+  //   try {
+  //     await GoogleSignin.revokeAccess();
+  //     await GoogleSignin.signOut();
+  //   } catch (error) {
+  //     console.error('error', error);
+  //   }
+  // };
 
   return (
     <View style={styles.login}>

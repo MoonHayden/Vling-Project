@@ -80,7 +80,7 @@ export default function Categorization({route, navigation}) {
 
   const [addLabel] = useMutation(LABEL);
 
-  const {data, refetch} = useQuery(VIDEOS, {
+  const {data, refetch, error} = useQuery(VIDEOS, {
     variables: {labeler: labeler, taskName: name},
   });
 
@@ -105,6 +105,12 @@ export default function Categorization({route, navigation}) {
   const renderItem = ({item}) => {
     const categoryTag = item.category;
 
+    const showAlert = err => {
+      Alert.alert('Alert Title', err, [
+        {text: 'OK', onPress: () => console.log('ok')},
+      ]);
+    };
+
     const handleInput = async () => {
       setCategory(() => ({
         id: VideoObjectId,
@@ -114,12 +120,11 @@ export default function Categorization({route, navigation}) {
       addLabel({
         variables: {id: VideoObjectId, labeler: labeler, label: categoryTag},
       });
-      try {
-        await refetch();
-      } catch (err) {
-        if (err) {
-          Alert.alert(err);
-        }
+      refetch();
+      if (error) {
+        showAlert(error.message); // navigation.navigate('Categories');
+        navigation.navigate('MainScreen');
+        navigation.navigate('MainScreen');
       }
     };
     return (
